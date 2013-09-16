@@ -1,16 +1,16 @@
 <?php
 // application/controllers/account.php
-class Account_Controller extends Base_Controller
+class AccountController extends Base_Controller
 {
-	public function action_index()
+	public function showIndex()
 	{
 		echo "This is the profile page.";
 	}
-	public function action_login()
+	public function showLogin()
 	{
 		echo "This is the login form.";
 	}
-	public function action_logout()
+	public function showLogout()
 	{
 		echo "This is the logout action.";
 	}
