@@ -16,6 +16,6 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::get('account', 'ArticleController@showIndex'); 
-Route::get('account/login', 'ArticleController@showLogin'); 
-Route::get('account/logout', 'ArticleController@showLogout'); 
+Route::get('account', 'AccountController@showIndex'); 
+Route::get('account/login', 'AccountController@showLogin'); 
+Route::get('account/logout', 'AccountController@showLogout'); 
