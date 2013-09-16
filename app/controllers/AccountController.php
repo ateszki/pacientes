@@ -1,6 +1,6 @@
 <?php
 // application/controllers/account.php
-class AccountController extends Base_Controller
+class AccountController extends BaseController
 {
 	public function showIndex()
 	{
