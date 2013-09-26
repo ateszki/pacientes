@@ -24,12 +24,20 @@ class UserTableSeeder extends Seeder {
          User::create(array(
                  'id' => 1,
                  'nombre' => 'admin',
-         	'email' => 'sistemas@consulmed.com.ar',
+         		 'email' => 'sistemas@consulmed.com.ar',
                  'password' => Hash::make('admin'),
                  'created_at' => new DateTime,
                  'updated_at' => new DateTime
          ));
-     }
+         User::create(array(
+                 'id' => 2,
+                 'nombre' => 'fabio',
+         		 'email' => 'fnovello@consulmed.com.ar',
+                 'password' => 'fabio',
+                 'created_at' => new DateTime,
+                 'updated_at' => new DateTime
+         ));
+      }
 }
  
 class OdontologoTableSeeder extends Seeder {
@@ -39,7 +47,7 @@ class OdontologoTableSeeder extends Seeder {
         Odontologo::create(array(
                 'id' => 1,
                 'nombre' => 'Martin',
-		'apellido' => 'Palermo',
+				'apellido' => 'Palermo',
                 'matricula' => 'MN 123456',
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime
@@ -47,7 +55,7 @@ class OdontologoTableSeeder extends Seeder {
         Odontologo::create(array(
                 'id' => 1,
                 'nombre' => 'Guillermo',
-		'apellido' => 'Barros Schelotto',
+				'apellido' => 'Barros Schelotto',
                 'matricula' => 'MN 654321',
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime
