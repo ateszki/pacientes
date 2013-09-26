@@ -16,6 +16,12 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
+Route::get('/authtest', array('before' => 'auth.basic', function()
+{
+    return View::make('hello authtest');
+}));
+
+
 Route::get('account', 'AccountController@showIndex'); 
 Route::get('account/login', 'AccountController@showLogin'); 
 Route::get('account/logout', 'AccountController@showLogout'); 
