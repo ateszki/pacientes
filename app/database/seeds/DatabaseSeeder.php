@@ -33,7 +33,7 @@ class UserTableSeeder extends Seeder {
                  'id' => 2,
                  'nombre' => 'fabio',
          		 'email' => 'fnovello@consulmed.com.ar',
-                 'password' => 'fabio',
+                 'password' => Hash::make('fabio'),
                  'created_at' => new DateTime,
                  'updated_at' => new DateTime
          ));
@@ -53,7 +53,7 @@ class OdontologoTableSeeder extends Seeder {
                 'updated_at' => new DateTime
         ));
         Odontologo::create(array(
-                'id' => 1,
+                'id' => 2,
                 'nombre' => 'Guillermo',
 				'apellido' => 'Barros Schelotto',
                 'matricula' => 'MN 654321',

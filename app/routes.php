@@ -16,10 +16,12 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::get('/authtest', array('before' => 'auth.basic', function()
+Route::resource('odontologo', 'OdontologoController');
+
+Route::get('/api',function()
 {
-    return View::make('hello authtest');
-}));
+    return View::make('hello');
+});
 
 
 Route::get('account', 'AccountController@showIndex'); 

@@ -120,6 +120,6 @@ return array(
 	|
 	*/
 
-	'domain' => null,
+	'domain' => 'pacientes.consulmed.com.ar',
 
 );
