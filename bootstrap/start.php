@@ -29,6 +29,7 @@ $app->redirectIfTrailingSlash();
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
+	'webfaction'=>array('pacientes.consulmed.com.ar')
 
 ));
 
