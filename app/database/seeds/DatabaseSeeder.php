@@ -60,5 +60,16 @@ class OdontologoTableSeeder extends Seeder {
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime
         ));
+		for ($i=3;$i<1000;$i++){
+			$mn = 999000 + $i;
+	        Odontologo::create(array(
+	                'id' => $i,
+	                'nombre' => 'Nombre-'.$i,
+					'apellido' => 'Apellido-'.$i,
+					'matricula' => 'MN '.$mn,
+	                'created_at' => new DateTime,
+	                'updated_at' => new DateTime
+	        ));
+		}
     }
 }
