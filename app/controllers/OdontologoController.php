@@ -46,6 +46,17 @@ class OdontologoController extends \BaseController {
 	 */
 	public function store()
 	{
+		$odontologo = new Odontologo;
+		$odontologo->nombre = Request::get('nombre');
+		$odontologo->apellido = Request::get('apellido');
+		$odontologo->matricula = Request::get('matricula');
+
+		$odontolog->save();
+
+		return Response::json(array(
+			'error'=>false,
+			'odontologo'=>$odontologo->toArray()),
+			200);
 		//
 	}
 
