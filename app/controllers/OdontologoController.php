@@ -31,7 +31,7 @@ class OdontologoController extends \BaseController {
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
 
-		$odontolog->save();
+		$odontologo->save();
 
 		return Response::json(array(
 			'error'=>false,
@@ -51,7 +51,7 @@ class OdontologoController extends \BaseController {
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
 
-		$odontolog->save();
+		$odontologo->save();
 
 		return Response::json(array(
 			'error'=>false,
