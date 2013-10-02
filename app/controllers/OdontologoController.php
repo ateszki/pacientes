@@ -69,13 +69,15 @@ class OdontologoController extends \BaseController {
 	public function show($id)
 	{
 	    $odontologos = Odontologo::find($id);
-	 
+	    //return $odontologos->toJson();	
+return Response::json(DB::select('SHOW COLUMNS from odontologos'));
+		/*
 	    return Response::json(array(
 		'error' => false,
 		'odontologos' => $odontologos->toArray()),
 		200
 	    );
-		//
+		*/
 	}
 
 	/**
