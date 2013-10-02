@@ -17,7 +17,7 @@ class CreateOdontologos extends Migration {
 			$table->increments('id');
 			$table->string('nombre',128);
 			$table->string('apellido',128);
-			$table->string('matricula')->unique();
+			$table->string('matricula');
 			$table->timestamps();
 		});
 	}

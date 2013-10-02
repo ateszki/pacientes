@@ -6,11 +6,18 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AccountController' => $baseDir . '/app/controllers/AccountController.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
+    'CreateOdontologos' => $baseDir . '/app/database/migrations/2013_09_26_153431_create_odontologos.php',
+    'CreateUsers' => $baseDir . '/app/database/migrations/2013_09_26_130233_create_users.php',
     'DatabaseSeeder' => $baseDir . '/app/database/seeds/DatabaseSeeder.php',
     'HomeController' => $baseDir . '/app/controllers/HomeController.php',
     'IlluminateQueueClosure' => $vendorDir . '/laravel/framework/src/Illuminate/Queue/IlluminateQueueClosure.php',
+    'Odontologo' => $baseDir . '/app/models/Odontologo.php',
+    'OdontologoController' => $baseDir . '/app/controllers/OdontologoController.php',
+    'OdontologoTableSeeder' => $baseDir . '/app/database/seeds/DatabaseSeeder.php',
     'SessionHandlerInterface' => $vendorDir . '/symfony/http-foundation/Symfony/Component/HttpFoundation/Resources/stubs/SessionHandlerInterface.php',
     'TestCase' => $baseDir . '/app/tests/TestCase.php',
     'User' => $baseDir . '/app/models/User.php',
+    'UserTableSeeder' => $baseDir . '/app/database/seeds/DatabaseSeeder.php',
 );

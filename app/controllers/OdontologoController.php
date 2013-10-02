@@ -100,6 +100,17 @@ return Response::json(DB::select('SHOW COLUMNS from odontologos'));
 	public function update($id)
 	{
 		//
+		$odontologo = Odontologo::find($id);
+		$odontologo->nombre = Request::get('nombre');
+		$odontologo->apellido = Request::get('apellido');
+		$odontologo->matricula = Request::get('matricula');
+
+		$odontologo->save();
+
+		return Response::json(array(
+			'error'=>false,
+			'odontologo'=>$odontologo->toArray()),
+			200);
 	}
 
 	/**
@@ -111,6 +122,8 @@ return Response::json(DB::select('SHOW COLUMNS from odontologos'));
 	public function destroy($id)
 	{
 		//
+		$odontologo = Odontologo::find($id);
+		return Response::json(array('eliminado'=>$odontologo->delete()),200);
 	}
 
 }
