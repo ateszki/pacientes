@@ -16,7 +16,17 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::resource('odontologo', 'OdontologoController');
+Route::filter('apiauth', function()
+{
+    if (Input::get('apikey') != Config::get('app.apikey'))
+    {
+	App::abort(401, 'You are not authorized.');
+    }
+});
+Route::group(array('before' => 'apiauth'), function()
+{
+	Route::resource('odontologo', 'OdontologoController');
+});
 
 Route::get('/api',function()
 {

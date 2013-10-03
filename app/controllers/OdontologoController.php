@@ -2,6 +2,12 @@
 
 class OdontologoController extends \BaseController {
 
+	var $esquema;
+	public function __construct(){
+	//	$this->filter
+		//$this->beforeFilter('apiauth');
+		$this->esquema = $this->getEsquema();
+	}		
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -13,6 +19,7 @@ class OdontologoController extends \BaseController {
 	 
 	    return Response::json(array(
 		'error' => false,
+		'esquema'=>$this->esquema,
 		'odontologos' => $odontologos->toArray()),
 		200
 	    );
@@ -26,17 +33,6 @@ class OdontologoController extends \BaseController {
 	 */
 	public function create()
 	{
-		$odontologo = new Odontologo;
-		$odontologo->nombre = Request::get('nombre');
-		$odontologo->apellido = Request::get('apellido');
-		$odontologo->matricula = Request::get('matricula');
-
-		$odontologo->save();
-
-		return Response::json(array(
-			'error'=>false,
-			'odontologo'=>$odontologo->toArray()),
-			200);
 	}
 
 	/**
@@ -55,6 +51,7 @@ class OdontologoController extends \BaseController {
 
 		return Response::json(array(
 			'error'=>false,
+			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
 			200);
 		//
@@ -70,14 +67,14 @@ class OdontologoController extends \BaseController {
 	{
 	    $odontologos = Odontologo::find($id);
 	    //return $odontologos->toJson();	
-return Response::json(DB::select('SHOW COLUMNS from odontologos'));
-		/*
+		
 	    return Response::json(array(
 		'error' => false,
+		'esquema'=>$this->esquema,
 		'odontologos' => $odontologos->toArray()),
 		200
 	    );
-		*/
+		
 	}
 
 	/**
@@ -109,6 +106,7 @@ return Response::json(DB::select('SHOW COLUMNS from odontologos'));
 
 		return Response::json(array(
 			'error'=>false,
+			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
 			200);
 	}
@@ -126,4 +124,7 @@ return Response::json(DB::select('SHOW COLUMNS from odontologos'));
 		return Response::json(array('eliminado'=>$odontologo->delete()),200);
 	}
 
+	public function getEsquema(){
+		return DB::select('SHOW COLUMNS from odontologos');
+	}
 }
