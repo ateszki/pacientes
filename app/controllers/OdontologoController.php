@@ -15,8 +15,15 @@ class OdontologoController extends \BaseController {
 	 */
 	public function index()
 	{
-	    $odontologos = Odontologo::All();
 	 
+	$cant = (Request::get('cant') == '') ? 0 : Request::get('cant');
+	$offset = (Request::get('offset') == '') ? 0 : Request::get('offset');
+
+	if($cant>0){  // 
+	 $odontologos = Odontologo::take($cant)->skip($offset)->get();
+	} else {
+	$odontologos = Odontologo::All();
+	}
 	    return Response::json(array(
 		'error' => false,
 		'esquema'=>$this->esquema,
