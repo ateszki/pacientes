@@ -46,7 +46,7 @@ class OdontologoTableSeeder extends Seeder {
         DB::table('odontologos')->delete();
         Odontologo::create(array(
                 'id' => 1,
-                'nombre' => 'Martin',
+                'nombres' => 'Martin',
 				'apellido' => 'Palermo',
                 'matricula' => 'MN 123456',
                 'created_at' => new DateTime,
@@ -54,7 +54,7 @@ class OdontologoTableSeeder extends Seeder {
         ));
         Odontologo::create(array(
                 'id' => 2,
-                'nombre' => 'Guillermo',
+                'nombres' => 'Guillermo',
 				'apellido' => 'Barros Schelotto',
                 'matricula' => 'MN 654321',
                 'created_at' => new DateTime,
@@ -64,7 +64,7 @@ class OdontologoTableSeeder extends Seeder {
 			$mn = 999000 + $i;
 	        Odontologo::create(array(
 	                'id' => $i,
-	                'nombre' => 'Nombre-'.$i,
+	                'nombres' => 'Nombre-'.$i,
 					'apellido' => 'Apellido-'.$i,
 					'matricula' => 'MN '.$mn,
 	                'created_at' => new DateTime,

@@ -49,8 +49,28 @@ class OdontologoController extends \BaseController {
 	 */
 	public function store()
 	{
-		$odontologo = new Odontologo;
-		$odontologo->nombre = Request::get('nombre');
+
+		$s = $this->odontologo->create(Input::all());
+		 
+		  if($s->isSaved())
+		  {
+		   return Response::json(array(
+			'error'=>false,
+			'esquema'=>$this->esquema,
+			'odontologo'=>$odontologo->toArray()),
+			200);
+		  } else {
+		   return Response::json(array(
+			'error'=>true,
+			'message'->$s->errors(),
+			'esquema'=>$this->esquema,
+			'odontologo'=>$odontologo->toArray()),
+			200);
+		  	
+		  }
+		 
+		/*$odontologo = new Odontologo;
+		$odontologo->nombres = Request::get('nombres');
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
 
@@ -60,7 +80,7 @@ class OdontologoController extends \BaseController {
 			'error'=>false,
 			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
-			200);
+			200);*/
 		//
 	}
 
@@ -105,7 +125,7 @@ class OdontologoController extends \BaseController {
 	{
 		//
 		$odontologo = Odontologo::find($id);
-		$odontologo->nombre = Request::get('nombre');
+		$odontologo->nombres = Request::get('nombres');
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
 
