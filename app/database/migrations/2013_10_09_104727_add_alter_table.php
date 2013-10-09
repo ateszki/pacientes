@@ -14,10 +14,14 @@ class AddAlterTable extends Migration {
 	{
 		Schema::table('odontologos', function(Blueprint $table)
 		{
-			$table->string('nombre',50);
-			$table->string('apellido',50);
-			$table->renameColumn('nombre', 'nombres');
-			$table->string('matricula',10)->unique();
+
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE `nombre` `nombres` varchar(50) NOT NULL;"));
+	 
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE `apellido` `apellido` varchar(50) NOT NULL;"));
+				
+
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE `matricula` `matricula` varchar(10) NOT NULL;"));
+ 
 			$table->date('fechaalta')->nullable();
 			$table->date('fechabaja')->nullable();
 			$table->string('sexo',1)->nullable();
@@ -46,10 +50,6 @@ class AddAlterTable extends Migration {
 	{
 		Schema::table('odontologos', function(Blueprint $table)
 		{
-			$table->renameColumn('nombres', 'nombre');
-			$table->string('nombre',128);
-			$table->string('apellido',128);
-			$table->string('matricula')->unique();
 			$table->dropColumn('fechaalta');
 			$table->dropColumn('fechabaja');
 			$table->dropColumn('sexo');
@@ -66,6 +66,12 @@ class AddAlterTable extends Migration {
 			$table->dropColumn('seguropropio');
 			$table->dropColumn('ciaseguropropio');
 			$table->dropColumn('vtoseguropropio');
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE  `nombres` `nombre` varchar(128) NOT NULL;"));
+	 
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE  `apellido` `apellido` varchar(128) NOT NULL;"));
+				
+
+			DB::update(DB::raw("ALTER TABLE `odontologos` CHANGE  `matricula` `matricula` varchar(255) NOT NULL;"));
 		});
 	}
 

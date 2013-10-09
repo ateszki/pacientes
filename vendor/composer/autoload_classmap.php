@@ -7,7 +7,12 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AccountController' => $baseDir . '/app/controllers/AccountController.php',
+    'AddAlterTable' => $baseDir . '/app/database/migrations/2013_10_09_104727_add_alter_table.php',
+    'AddUniqueMatricula' => $baseDir . '/app/database/migrations/2013_10_02_172320_add_unique_matricula.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
+    'CreateCentros' => $baseDir . '/app/database/migrations/2013_10_09_115521_create_centros.php',
+    'CreateCentrosOdontologosEspecialidades' => $baseDir . '/app/database/migrations/2013_10_09_115629_create_centros_odontologos_especialidades.php',
+    'CreateEspecialidades' => $baseDir . '/app/database/migrations/2013_10_09_115441_create_especialidades.php',
     'CreateOdontologos' => $baseDir . '/app/database/migrations/2013_09_26_153431_create_odontologos.php',
     'CreateUsers' => $baseDir . '/app/database/migrations/2013_09_26_130233_create_users.php',
     'DatabaseSeeder' => $baseDir . '/app/database/seeds/DatabaseSeeder.php',

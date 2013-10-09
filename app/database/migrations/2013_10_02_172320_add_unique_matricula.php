@@ -27,7 +27,7 @@ class AddUniqueMatricula extends Migration {
 	{
 		Schema::table('odontologos', function(Blueprint $table)
 		{
-			$table->dropUnique('matricula');
+			$table->dropUnique('odontologos_matricula_unique');
 		});
 	}
 
