@@ -62,7 +62,7 @@ class OdontologoController extends \BaseController {
 		  } else {
 		   return Response::json(array(
 			'error'=>true,
-			'message'->$s->errors(),
+			'message' => $s->errors(),
 			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
 			200);
