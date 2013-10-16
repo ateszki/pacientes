@@ -49,25 +49,28 @@ class OdontologoController extends \BaseController {
 	 */
 	public function store()
 	{
+		$odontologo = new Odontologo;
+		$new = Input::all();
+		unset($new['apikey']);
+		$new_odontologo = $odontologo->create($new);
 
-		$s = $this->odontologo->create(Input::all());
-		 
-		  if($s->isSaved())
-		  {
+		if ($new_odontologo->save()){
+		   //$odontologo = $odontologo->create($new);
 		   return Response::json(array(
 			'error'=>false,
 			'esquema'=>$this->esquema,
-			'odontologo'=>$odontologo->toArray()),
+			'odontologo'=>$new_odontologo->toArray()),
 			200);
-		  } else {
-		   return Response::json(array(
-			'error'=>true,
-			'message' => $s->errors(),
-			'esquema'=>$this->esquema,
-			'odontologo'=>$odontologo->toArray()),
-			200);
-		  	
-		  }
+		} else {
+			$messages = $new_odontologo->validator->messages();
+			 return Response::json(array(
+                        'error'=>true,
+                        'message' => $messages->all(),
+                        'esquema'=>$this->esquema,
+                        'odontologo'=>$new,
+                        ),200);
+
+		}
 		 
 		/*$odontologo = new Odontologo;
 		$odontologo->nombres = Request::get('nombres');
@@ -125,17 +128,44 @@ class OdontologoController extends \BaseController {
 	{
 		//
 		$odontologo = Odontologo::find($id);
+		/*
 		$odontologo->nombres = Request::get('nombres');
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
+		*/
+		$data = Input::all();
+		unset($data['apikey']);
 
-		$odontologo->save();
+		if(isset($data["matricula"]) && $odontologo->matricula == $data['matricula']){
+			$odontologo->rules["matricula"] .= ',matricula,'.$odontologo->id;
+		}
+		if(!isset($data["matricula"])){
+			$odontologo->rules["matricula"] .= ',matricula,'.$odontologo->id;
+		}
 
-		return Response::json(array(
+		foreach ($data as $k => $v) {
+			$odontologo->$k = $v;
+		}
+		//$v = $odontologo->validate($data);
+		if ($odontologo->save() !== false){
+
+			$odontologo->save($data);
+
+			return Response::json(array(
 			'error'=>false,
 			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
 			200);
+		}else {
+			
+			$messages = $odontologo->validator->messages();
+			 return Response::json(array(
+                        'error'=>true,
+                        'message' => $messages->all(),
+                        'esquema'=>$this->esquema,
+                        'odontologo'=>$odontologo->toArray(),
+                        ),200);
+		}
 	}
 
 	/**
