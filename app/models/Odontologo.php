@@ -1,6 +1,6 @@
 <?php
 
-class Odontologo extends Eloquent {
+class Odontologo extends Maestro {
 
 	protected $table = 'odontologos'; 	
 
@@ -26,41 +26,13 @@ class Odontologo extends Eloquent {
 		'vtoseguropropio'
 		);
 
-	public $validator = NULL;	
 
 	public $rules = array(
                         'nombres' => 'Required|Min:3|Max:50',
                         'apellido' => 'Required|Min:3|Max:50',
                         'matricula'     => 'Required|Max:10|Unique:odontologos',
+                        'fechaalta' => 'Required|Date',
+                        'sexo' => 'Required|In:M,F,m,f',
 
                 );
-
-
-	public function isValid() {
-		/*if(!$this->changed('matricula')){
-			$unique_matricula = 'Unique:odontologos,matricula,'.$this->id;
-		} else {
-			$unique_matricula = 'Unique:odontologos';
-		}*/	
-
-
-		$this->validator =  Validator::make($this->toArray(), $this->rules);
-		return $this->validator->passes();
-	}
-
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function($odontologo)
-        {
-            return $odontologo->isValid();
-        });
- 
-        static::updating(function($odontologo)
-        {
-            return $odontologo->isValid();
-        });
-    }
-	
 }

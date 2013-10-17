@@ -26,6 +26,8 @@ Route::filter('apiauth', function()
 Route::group(array('before' => 'apiauth'), function()
 {
 	Route::resource('odontologo', 'OdontologoController');
+	Route::resource('centro', 'CentroController');
+	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 
 Route::get('/api',function()

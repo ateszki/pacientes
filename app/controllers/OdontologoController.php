@@ -2,11 +2,7 @@
 
 class OdontologoController extends \BaseController {
 
-	var $esquema;
 	public function __construct(){
-	//	$this->filter
-		//$this->beforeFilter('apiauth');
-		$this->esquema = $this->getEsquema();
 	}		
 	/**
 	 * Display a listing of the resource.
@@ -26,7 +22,6 @@ class OdontologoController extends \BaseController {
 	}
 	    return Response::json(array(
 		'error' => false,
-		'esquema'=>$this->esquema,
 		'odontologos' => $odontologos->toArray()),
 		200
 	    );
@@ -58,15 +53,21 @@ class OdontologoController extends \BaseController {
 		   //$odontologo = $odontologo->create($new);
 		   return Response::json(array(
 			'error'=>false,
-			'esquema'=>$this->esquema,
-			'odontologo'=>$new_odontologo->toArray()),
+			'odontologo'=>array($new_odontologo->toArray())),
 			200);
 		} else {
-			$messages = $new_odontologo->validator->messages();
-			 return Response::json(array(
+			/*
+			$messages = $new_odontologo->validator->messages()->toArray();
+			$errormessages = array("error"=>"");
+			foreach ($messages as $v){
+				if(is_array($v)){$errormessages["error"] .= " | ".implode(',',$v);} else {$errormessages["error"] .= " | ".$v;}
+			}
+			if(strlen($errormessages["error"])){$errormessages["error"] = substr($errormessages["error"],3);}
+			//var_dump($messages->toArray()); 
+			*/
+			return Response::json(array(
                         'error'=>true,
-                        'message' => $messages->all(),
-                        'esquema'=>$this->esquema,
+                        'mensaje' => HerramientasController::getErrores($new_odontologo->validator),//array($errormessages),
                         'odontologo'=>$new,
                         ),200);
 
@@ -100,7 +101,6 @@ class OdontologoController extends \BaseController {
 		
 	    return Response::json(array(
 		'error' => false,
-		'esquema'=>$this->esquema,
 		'odontologos' => $odontologos->toArray()),
 		200
 	    );
@@ -153,7 +153,6 @@ class OdontologoController extends \BaseController {
 
 			return Response::json(array(
 			'error'=>false,
-			'esquema'=>$this->esquema,
 			'odontologo'=>$odontologo->toArray()),
 			200);
 		}else {
@@ -161,8 +160,7 @@ class OdontologoController extends \BaseController {
 			$messages = $odontologo->validator->messages();
 			 return Response::json(array(
                         'error'=>true,
-                        'message' => $messages->all(),
-                        'esquema'=>$this->esquema,
+                        'mensaje' => $messages->all(),
                         'odontologo'=>$odontologo->toArray(),
                         ),200);
 		}
@@ -181,7 +179,4 @@ class OdontologoController extends \BaseController {
 		return Response::json(array('eliminado'=>$odontologo->delete()),200);
 	}
 
-	public function getEsquema(){
-		return DB::select('SHOW COLUMNS from odontologos');
-	}
 }
