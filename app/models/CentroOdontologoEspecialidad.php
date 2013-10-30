@@ -1,22 +1,22 @@
 <?php
 
-class CentroOdontologoEspecialidad extends Eloquent {
-	protected $table = 'centros_odontologos_especialidades'; 	
-	
-	public function odontologo()
-    {
-        return $this->belongsTo('Odontologo');
-    }
-	
-	public function especialidad()
-    {
-        return $this->belongsTo('Especialidad');
-    }
+class CentroOdontologoEspecialidad extends Maestro {
 
-	public function centro()
-    {
-        return $this->belongsTo('Centro');
-    }
-	
+	protected $table = 'centros_odontologos_especialidades'; 	
+
+	protected $fillable = array(
+		'centro_id',
+		'odontologo_id',
+		'especialidad_id',
+		);
+
+
+	public $rules = array(
+                        'centro_id' => 'Required|integer|exists:centros,id',
+                        'odontologo_id' => 'Required|integer|exists:odontologos,id',
+                        'especialidad_id' => 'Required|integer|exists:especialidades,id',
+                );
+
+
 	
 }

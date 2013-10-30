@@ -9,7 +9,33 @@ class MaestroController extends \BaseController {
 
 	}
 
-	public function getErrors($messages){
+	public function postBuscar(){
+		$classname = $this->classname;
+		$m = $classname::whereRaw('1=1');
+$m->where(function($query){
+	    $parametros = Input::all();
+	    unset($parametros['apikey']);
+	
+	foreach ($parametros as $columna => $valor){
+		$query->orWhere($columna,'like','%'.$valor.'%');	
+	}
+
+});		
+
+	$listado = $m->get();
+//$queries = DB::getQueryLog();
+//$last_query = end($queries);	
+		return Response::json(array(
+		'error' => false,
+//		'query' => $last_query,
+		'listado' => $listado->toArray()),
+		200
+	    );
+
+	}
+
+
+	/*public function getErrors($messages){
 
 			$errormessages = array("error"=>"");
 			foreach ($messages as $v){
@@ -18,7 +44,7 @@ class MaestroController extends \BaseController {
 			if(strlen($errormessages["error"])){$errormessages["error"] = substr($errormessages["error"],3);}
 			 return array($errormessages["error"]);
 	}
-			
+	*/		
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -61,7 +87,6 @@ class MaestroController extends \BaseController {
 		$new = Input::all();
 		unset($new['apikey']);
 		$new_modelo = $this->modelo->create($new);
-		var_dump($new_modelo->razonsocial);		
 
 		if ($new_modelo->save()){
 		   return Response::json(array(
@@ -69,10 +94,9 @@ class MaestroController extends \BaseController {
 			'envio'=>array($new_modelo->toArray())),
 			200);
 		} else {
-			$messages = $new_modelo->validator->messages();//->toArray();
 			return Response::json(array(
                         'error'=>true,
-                        'mensaje' => array($messages->all()),
+                        'mensaje' => HerramientasController::getErrores($new_modelo->validator),
                         'envio'=>$new,
                         ),200);
 
@@ -128,10 +152,9 @@ class MaestroController extends \BaseController {
 			200);
 		}else {
 			
-			$messages = $modelo->validator->messages();
 			 return Response::json(array(
                         'error'=>true,
-                        'mensaje' => $messages->all(),
+                        'mensaje' => HerramientasController::getErrores($modelo->validator),
                         'envio'=>$modelo->toArray(),
                         ),200);
 		}
@@ -147,7 +170,16 @@ class MaestroController extends \BaseController {
 	{
 		//
 		$modelo = $this->modelo->find($id);
-		return Response::json(array('eliminado'=>$modelo->delete()),200);
+		try {
+			$eliminado = $modelo->delete();
+			return Response::json(array('error'=>false,'eliminado'=>$eliminado),200);
+		}catch(Exception $e){
+			 return Response::json(array(
+                        'error'=>true,
+                        'mensaje' => $e->getMessage(),
+                        'envio'=>$modelo->toArray(),
+                        ),200);
+		}
 	}
 
 }

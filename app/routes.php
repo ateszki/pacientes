@@ -25,8 +25,18 @@ Route::filter('apiauth', function()
 });
 Route::group(array('before' => 'apiauth'), function()
 {
+	Route::controller('odontologo','OdontologoController');
 	Route::resource('odontologo', 'OdontologoController');
+
+	Route::controller('centro','CentroController');
 	Route::resource('centro', 'CentroController');
+	
+	Route::controller('especialidad','EspecialidadController');
+	Route::resource('especialidad', 'EspecialidadController');
+	
+	Route::controller('centro-odontologo-especialidad','CentroOdontologoEspecialidadController');
+	Route::resource('centro-odontologo-especialidad', 'CentroOdontologoEspecialidadController');
+
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 

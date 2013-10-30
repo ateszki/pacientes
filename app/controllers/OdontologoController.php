@@ -1,9 +1,12 @@
 <?php
 
-class OdontologoController extends \BaseController {
+class OdontologoController extends MaestroController {
 
 	public function __construct(){
+		$this->classname = 'Odontologo';
+		$this->modelo = new $this->classname();
 	}		
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -11,20 +14,7 @@ class OdontologoController extends \BaseController {
 	 */
 	public function index()
 	{
-	 
-	$cant = (Request::get('cant') == '') ? 0 : Request::get('cant');
-	$offset = (Request::get('offset') == '') ? 0 : Request::get('offset');
-
-	if($cant>0){  // 
-	 $odontologos = Odontologo::take($cant)->skip($offset)->get();
-	} else {
-	$odontologos = Odontologo::All();
-	}
-	    return Response::json(array(
-		'error' => false,
-		'odontologos' => $odontologos->toArray()),
-		200
-	    );
+		return parent::index();	 
 
 	}
 
@@ -44,6 +34,8 @@ class OdontologoController extends \BaseController {
 	 */
 	public function store()
 	{
+		return 	parent::store();
+/*
 		$odontologo = new Odontologo;
 		$new = Input::all();
 		unset($new['apikey']);
@@ -56,7 +48,7 @@ class OdontologoController extends \BaseController {
 			'odontologo'=>array($new_odontologo->toArray())),
 			200);
 		} else {
-			/*
+*/			/*
 			$messages = $new_odontologo->validator->messages()->toArray();
 			$errormessages = array("error"=>"");
 			foreach ($messages as $v){
@@ -65,14 +57,14 @@ class OdontologoController extends \BaseController {
 			if(strlen($errormessages["error"])){$errormessages["error"] = substr($errormessages["error"],3);}
 			//var_dump($messages->toArray()); 
 			*/
-			return Response::json(array(
+/*			return Response::json(array(
                         'error'=>true,
                         'mensaje' => HerramientasController::getErrores($new_odontologo->validator),//array($errormessages),
                         'odontologo'=>$new,
                         ),200);
 
 		}
-		 
+*/		 
 		/*$odontologo = new Odontologo;
 		$odontologo->nombres = Request::get('nombres');
 		$odontologo->apellido = Request::get('apellido');
@@ -96,15 +88,7 @@ class OdontologoController extends \BaseController {
 	 */
 	public function show($id)
 	{
-	    $odontologos = Odontologo::find($id);
-	    //return $odontologos->toJson();	
-		
-	    return Response::json(array(
-		'error' => false,
-		'odontologos' => $odontologos->toArray()),
-		200
-	    );
-		
+		return parent::show($id);
 	}
 
 	/**
@@ -126,13 +110,16 @@ class OdontologoController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		return parent::update($id);
+		/*
 		$odontologo = Odontologo::find($id);
+		*/
 		/*
 		$odontologo->nombres = Request::get('nombres');
 		$odontologo->apellido = Request::get('apellido');
 		$odontologo->matricula = Request::get('matricula');
 		*/
+		/*
 		$data = Input::all();
 		unset($data['apikey']);
 
@@ -164,6 +151,7 @@ class OdontologoController extends \BaseController {
                         'odontologo'=>$odontologo->toArray(),
                         ),200);
 		}
+		*/
 	}
 
 	/**
@@ -174,9 +162,7 @@ class OdontologoController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
-		$odontologo = Odontologo::find($id);
-		return Response::json(array('eliminado'=>$odontologo->delete()),200);
+		return parent::destroy($id);
 	}
 
 }
