@@ -25,16 +25,20 @@ Route::filter('apiauth', function()
 });
 Route::group(array('before' => 'apiauth'), function()
 {
-	Route::controller('odontologo','OdontologoController');
+	//Route::controller('odontologo','OdontologoController');
+	Route::post('odontologo/buscar','OdontologoController@postBuscar');
 	Route::resource('odontologo', 'OdontologoController');
 
-	Route::controller('centro','CentroController');
+	//Route::controller('centro','CentroController');
+	Route::post('centro/buscar','CentroController@postBuscar');
 	Route::resource('centro', 'CentroController');
 	
-	Route::controller('especialidad','EspecialidadController');
+	//Route::controller('especialidad','EspecialidadController');
+	Route::post('especialidad/buscar','EspecialidadController@postBuscar');
 	Route::resource('especialidad', 'EspecialidadController');
 	
-	Route::controller('centro-odontologo-especialidad','CentroOdontologoEspecialidadController');
+	//Route::controller('centro-odontologo-especialidad','CentroOdontologoEspecialidadController');
+	Route::post('centro-odontologo-especialidad/buscar','CentroOdontologoEspecialidadController@postBuscar');
 	Route::resource('centro-odontologo-especialidad', 'CentroOdontologoEspecialidadController');
 
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

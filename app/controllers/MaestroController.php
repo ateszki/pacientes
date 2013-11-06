@@ -15,10 +15,29 @@ class MaestroController extends \BaseController {
 $m->where(function($query){
 	    $parametros = Input::all();
 	    unset($parametros['apikey']);
-	
-	foreach ($parametros as $columna => $valor){
-		$query->orWhere($columna,'like','%'.$valor.'%');	
-	}
+
+		//tipo busqueda
+		if(isset($parametros["tipo_busqueda"]) && $parametros["tipo_busqueda"]=='and'){
+			$tipo_busqueda = "where";
+		} else {
+			$tipo_busqueda = "orWhere";
+		}
+		unset($parametros["tipo_busqueda"]);
+		//comparacion
+		if(isset($parametros["comparacion_busqueda"]) && $parametros["comparacion_busqueda"] == 'exacto'){
+			$comparacion = 'exacto';
+		}else{
+			$comparacion = 'like';
+		}
+		unset($parametros["comparacion_busqueda"]);
+		
+		foreach ($parametros as $columna => $valor){
+			if($comparacion == 'like' ){
+				$query->$tipo_busqueda($columna,'like','%'.$valor.'%');	
+			} else {
+				$query->$tipo_busqueda($columna,$valor);
+			}
+		}
 
 });		
 

@@ -8,6 +8,14 @@ class CentroOdontologoEspecialidad extends Maestro {
 		'centro_id',
 		'odontologo_id',
 		'especialidad_id',
+		'dia_semana',
+		'turno',
+		'consultorio_id',
+		'horario_desde',
+		'horario_hasta',
+		'duracion_turno',
+		'cant_max_entreturnos',
+		'habilitado',
 		);
 
 
@@ -15,6 +23,8 @@ class CentroOdontologoEspecialidad extends Maestro {
                         'centro_id' => 'Required|integer|exists:centros,id',
                         'odontologo_id' => 'Required|integer|exists:odontologos,id',
                         'especialidad_id' => 'Required|integer|exists:especialidades,id',
+			'dia_semana' => 'Required|in:Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo',
+			'turno' => 'Required|in:T,M,N',
                 );
 
 

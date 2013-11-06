@@ -9,6 +9,8 @@ return array(
     'AccountController' => $baseDir . '/app/controllers/AccountController.php',
     'AddAlterTable' => $baseDir . '/app/database/migrations/2013_10_09_104727_add_alter_table.php',
     'AddUniqueMatricula' => $baseDir . '/app/database/migrations/2013_10_02_172320_add_unique_matricula.php',
+    'AlterCentrosOdontologosEspecialidades' => $baseDir . '/app/database/migrations/2013_10_30_104028_alter_centros_odontologos_especialidades.php',
+    'AlterCentrosOdontologosEspecialidadesNullable' => $baseDir . '/app/database/migrations/2013_10_30_111141_alter_centros_odontologos_especialidades_nullable.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
     'Centro' => $baseDir . '/app/models/Centro.php',
     'CentroController' => $baseDir . '/app/controllers/CentroController.php',
