@@ -165,4 +165,15 @@ class OdontologoController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+	public function centros_especialidades($id){
+	    //$ce = Odontologo::find($id)->centrosEspecialidades()->with(array('Especialidad','Centro'))->get();
+	$ce = Odontologo::find($id)->vistaCentrosespecialidades();
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $ce),
+		200
+	    );
+
+}
+
 }

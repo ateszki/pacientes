@@ -27,6 +27,13 @@ class CentroOdontologoEspecialidad extends Maestro {
 			'turno' => 'Required|in:T,M,N',
                 );
 
-
-	
+public function odontologo(){
+	return $this->belongsTo('Odontologo');
+} 
+public function especialidad(){
+	return $this->belongsTo('Especialidad');
+}
+public function centro(){
+	return $this->belongsTo('Centro');
+}
 }

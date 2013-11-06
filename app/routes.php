@@ -25,7 +25,11 @@ Route::filter('apiauth', function()
 });
 Route::group(array('before' => 'apiauth'), function()
 {
+	Route::post('cconsultorio/buscar','ConsultorioController@postBuscar');
+	Route::resource('consultorio', 'ConsultorioController');
+	
 	//Route::controller('odontologo','OdontologoController');
+	Route::get('odontologo/{id}/centros-especialidades','OdontologoController@centros_especialidades');
 	Route::post('odontologo/buscar','OdontologoController@postBuscar');
 	Route::resource('odontologo', 'OdontologoController');
 

@@ -35,4 +35,24 @@ class Odontologo extends Maestro {
                         'sexo' => 'Required|In:M,F,m,f',
 
                 );
+
+	public function centrosEspecialidades(){
+		return $this->hasMany('CentroOdontologoEspecialidad');
+	}
+
+	public function vistaCentrosEspecialidades(){
+		return DB::table('centros_odontologos_especialidades')
+                     ->join('centros','centros_odontologos_especialidades.centro_id','=','centros.id')
+->join('especialidades','centros_odontologos_especialidades.especialidad_id','=','especialidades.id')
+			->select(DB::raw("centros_odontologos_especialidades.*,especialidades.especialidad, centros.razonsocial AS centro,
+CASE centros_odontologos_especialidades.turno
+WHEN 'T'
+THEN 'Tarde'
+WHEN 'M'
+THEN 'Maniana'
+END AS turno_nombre"))
+                     ->where('odontologo_id', '=', $this->id)
+                     ->get();
+	}
+
 }
