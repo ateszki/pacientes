@@ -15,7 +15,12 @@ class CreatePacientesPrepagas extends Migration {
 		Schema::create('paciente_prepaga', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('paciente_id')->unsigned();
+			$table->integer('prepaga_id')->unsigned();
 			$table->timestamps();
+			$table->foreign('paciente_id')->references('id')->on('pacientes');
+			$table->foreign('pprepaga_id')->references('id')->on('prepagas');
+			$table->unique(array('paciente_id','prepaga_id'));
 		});
 	}
 
