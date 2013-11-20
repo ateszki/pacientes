@@ -19,7 +19,7 @@ class CreatePacientesPrepagas extends Migration {
 			$table->integer('prepaga_id')->unsigned();
 			$table->timestamps();
 			$table->foreign('paciente_id')->references('id')->on('pacientes');
-			$table->foreign('pprepaga_id')->references('id')->on('prepagas');
+			$table->foreign('prepaga_id')->references('id')->on('prepagas');
 			$table->unique(array('paciente_id','prepaga_id'));
 		});
 	}
