@@ -27,13 +27,31 @@ class CentroOdontologoEspecialidad extends Maestro {
 			'turno' => 'Required|in:T,M,N',
                 );
 
-public function odontologo(){
-	return $this->belongsTo('Odontologo');
-} 
-public function especialidad(){
-	return $this->belongsTo('Especialidad');
-}
-public function centro(){
-	return $this->belongsTo('Centro');
-}
+	public function odontologo(){
+		return $this->belongsTo('Odontologo');
+	} 
+	public function especialidad(){
+		return $this->belongsTo('Especialidad');
+	}
+	public function centro(){
+		return $this->belongsTo('Centro');
+	}
+	public function agendas(){
+		return $this->hasMany('Agenda');
+	}
+	public function vistaDetalladaOdontologosAlta(){
+		return DB::table('centros_odontologos_especialidades')
+                     ->join('centros','centros_odontologos_especialidades.centro_id','=','centros.id')
+		     ->join('especialidades','centros_odontologos_especialidades.especialidad_id','=','especialidades.id')
+		     ->join('odontologos','centros_odontologos_especialidades.odontologo_id','=','odontologos.id')
+			->select(DB::raw("centros_odontologos_especialidades.*,especialidades.especialidad, centros.razonsocial AS centro,concat(odontologos.nombres, ' ',odontologos.apellido) as odontologo,odontologos.matricula,
+CASE centros_odontologos_especialidades.turno
+WHEN 'T'
+THEN 'Tarde'
+WHEN 'M'
+THEN 'Maniana'
+END AS turno_nombre"))
+                     ->whereNull('odontologos.fechabaja')
+                     ->get();
+	}
 }

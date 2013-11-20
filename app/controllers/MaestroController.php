@@ -35,7 +35,12 @@ $m->where(function($query){
 			if($comparacion == 'like' ){
 				$query->$tipo_busqueda($columna,'like','%'.$valor.'%');	
 			} else {
-				$query->$tipo_busqueda($columna,$valor);
+				if($valor=='null'){
+					$tipo_busqueda_null = $tipo_busqueda.'Null';
+					$query->$tipo_busqueda_null($columna);
+				} else {
+					$query->$tipo_busqueda($columna,$valor);
+				}
 			}
 		}
 
@@ -110,7 +115,7 @@ $m->where(function($query){
 		if ($new_modelo->save()){
 		   return Response::json(array(
 			'error'=>false,
-			'envio'=>array($new_modelo->toArray())),
+			'envio'=>array($this->modelo->find($new_modelo->id)->toArray())),
 			200);
 		} else {
 			return Response::json(array(

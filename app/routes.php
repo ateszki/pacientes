@@ -33,6 +33,18 @@ Route::group(array('before' => 'apiauth'), function()
 	Route::post('odontologo/buscar','OdontologoController@postBuscar');
 	Route::resource('odontologo', 'OdontologoController');
 
+	Route::post('paciente/{id}/prepagas/{prepaga_id}','PacienteController@setPrepaga');
+	Route::delete('paciente/{id}/prepagas/{prepaga_id}','PacienteController@unsetPrepaga');
+	Route::get('paciente/{id}/prepagas','PacienteController@prepagas');
+	Route::post('paciente/buscar','PacienteController@postBuscar');
+	Route::resource('paciente', 'PacienteController');
+
+	Route::post('prepaga/{id}/pacientes/{paciente_id}','PrepagaController@setPaciente');
+	Route::delete('prepaga/{id}/pacientes/{paciente_id}','PrepagaController@unsetPaciente');
+	Route::get('prepaga/{id}/pacientes','PrepagaController@pacientes');
+	Route::post('pprepaga/buscar','PrepagaController@postBuscar');
+	Route::resource('prepaga', 'PrepagaController');
+
 	//Route::controller('centro','CentroController');
 	Route::post('centro/buscar','CentroController@postBuscar');
 	Route::resource('centro', 'CentroController');
@@ -42,9 +54,14 @@ Route::group(array('before' => 'apiauth'), function()
 	Route::resource('especialidad', 'EspecialidadController');
 	
 	//Route::controller('centro-odontologo-especialidad','CentroOdontologoEspecialidadController');
+	Route::get('centro-odontologo-especialidad/{id}/agendas','CentroOdontologoEspecialidadController@agendas');
+	Route::get('centro-odontologo-especialidad/detalle','CentroOdontologoEspecialidadController@vista_detallada');
 	Route::post('centro-odontologo-especialidad/buscar','CentroOdontologoEspecialidadController@postBuscar');
 	Route::resource('centro-odontologo-especialidad', 'CentroOdontologoEspecialidadController');
 
+	Route::post('agenda/buscar','AgendaController@postBuscar');
+	Route::resource('agenda', 'AgendaController');
+	
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 

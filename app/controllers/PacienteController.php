@@ -1,9 +1,9 @@
 <?php
 
-class CentroOdontologoEspecialidadController extends MaestroController {
+class PacienteController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'CentroOdontologoEspecialidad';
+		$this->classname= 'Paciente';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,25 +79,36 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function agendas($id){
-		
-		$agendas = CentroOdontologoEspecialidad::find($id)->agendas()->get();
-return Response::json(array(
+	public function prepagas($id){
+	try{	
+		$prepagas = Paciente::findOrFail($id)->prepagas()->get();
+		return Response::json(array(
                 'error' => false,
-                'listado' => $agendas->toArray()),
+                'listado' => $prepagas->toArray()),
                 200
             );
+	}catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()?:'No se encuentra el recurso:'.$id),200);
+	}
 	
 
 	}
 
-	public function vista_detallada(){
-	$listado = $this->modelo->vistaDetalladaOdontologosAlta();
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $listado),
-		200
-	    );
+	public function setPrepaga($id,$prepaga_id){
+		try {
+		Paciente::find($id)->prepagas()->attach($prepaga_id);
+		return Response::json(array('error'=>false),200);
+		} catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
+		}
+	}
 
-}
+	public function unsetPrepaga($id,$prepaga_id){
+		try {
+		Paciente::find($id)->prepagas()->detach($prepaga_id);
+		return Response::json(array('error'=>false),200);
+		} catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
+		}
+	}
 }

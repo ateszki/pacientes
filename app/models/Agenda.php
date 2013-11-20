@@ -14,9 +14,9 @@ class Agenda extends Maestro {
 
 
 	public $rules = array(
-                        'centro_odontologo_especialidad_id' => 'Required|exists:centros_odontologos_especialidades',
+                        'centro_odontologo_especialidad_id' => 'Required|exists:centros_odontologos_especialidades,id',
 			'fecha' => 'Required|date',
-			'odontologo_efector_id' => 'Required|exists:odontologos',
+			'odontologo_efector_id' => 'Required|exists:odontologos,id',
 			'habilitado_turnos' => 'Required|integer|in:1,0',
 			'observaciones' => 'Max:250',
                 );
@@ -24,7 +24,9 @@ class Agenda extends Maestro {
 	public function turnos(){
 		return $this->hasMany('Turno');
 	}
-
+	public function centros_odontologos_especialidades(){
+		return $this->belongsTo('CentroOdontologoEspecialidad');
+	}
 
 	
 }

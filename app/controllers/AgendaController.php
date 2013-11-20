@@ -1,9 +1,9 @@
 <?php
 
-class CentroOdontologoEspecialidadController extends MaestroController {
+class AgendaController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'CentroOdontologoEspecialidad';
+		$this->classname= 'Agenda';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,25 +79,4 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function agendas($id){
-		
-		$agendas = CentroOdontologoEspecialidad::find($id)->agendas()->get();
-return Response::json(array(
-                'error' => false,
-                'listado' => $agendas->toArray()),
-                200
-            );
-	
-
-	}
-
-	public function vista_detallada(){
-	$listado = $this->modelo->vistaDetalladaOdontologosAlta();
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $listado),
-		200
-	    );
-
-}
 }

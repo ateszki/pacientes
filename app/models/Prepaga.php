@@ -7,7 +7,7 @@ class Prepaga extends Maestro {
 	protected $fillable = array(
 		'codigo',
 		'razon_social',
-		'denominacion_omercial',
+		'denominacion_comercial',
 		'cuit',
 		'domicilio',
 		'localidad',
@@ -41,16 +41,18 @@ class Prepaga extends Maestro {
 			'telefono' => 'max:50',
 			'telefono2' => 'max:50',
 			'email' => 'max:254|email',
-			'iva_id' => 'integer'
+			'iva_id' => 'integer',
 			'credencial_propia' => 'max:1',
 			'presenta_padron' => 'max:1',
 			'fecha_alta' => 'date',
 			'fecha_baja' => 'date',
 			'condicion_venta_id' => 'integer',
-			'turnos_habilitados' => 'max:1'
-			'precios_bonificados' => 'max:1'
+			'turnos_habilitados' => 'max:1',
+			'precios_bonificados' => 'max:1',
                 );
 
 
-	
+	public function pacientes(){
+		return $this->belongsToMany('Paciente');
+	}	
 }

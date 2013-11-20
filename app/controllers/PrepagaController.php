@@ -1,9 +1,9 @@
 <?php
-
-class CentroOdontologoEspecialidadController extends MaestroController {
+//use Illuminate\Database\Eloquent\ModelNotFoundException;
+class PrepagaController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'CentroOdontologoEspecialidad';
+		$this->classname= 'Prepaga';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,25 +79,36 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function agendas($id){
-		
-		$agendas = CentroOdontologoEspecialidad::find($id)->agendas()->get();
-return Response::json(array(
+	public function pacientes($id){
+	try {	
+		$pacientes = Prepaga::findOrFail($id)->pacientes()->get();
+		return Response::json(array(
                 'error' => false,
-                'listado' => $agendas->toArray()),
+                'listado' => $pacientes->toArray()),
                 200
             );
-	
+	}catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()?:'No se encuentra el recurso: '.$id),200);
+	}
+
 
 	}
 
-	public function vista_detallada(){
-	$listado = $this->modelo->vistaDetalladaOdontologosAlta();
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $listado),
-		200
-	    );
+	public function setPaciente($id,$paciente_id){
+		try {
+		Prepaga::find($id)->pacientes()->attach($paciente_id);
+		return Response::json(array('error'=>false),200);
+		} catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
+		}
+	}
 
-}
+	public function unsetPaciente($id,$paciente_id){
+		try {
+		Paciente::find($id)->pacientes()->detach($paciente_id);
+		return Response::json(array('error'=>false),200);
+		} catch (Exception $e){
+		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
+		}
+	}
 }
