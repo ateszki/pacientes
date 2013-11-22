@@ -99,5 +99,21 @@ return Response::json(array(
 		200
 	    );
 
-}
+	}
+	
+	public function generarAgendas(){
+		$hoy = date('Y-m-d');	
+		
+		$coes = CentroOdontologoEspecialidad::where('habilitado','=',1);
+		
+		$odontologos = array();
+		foreach ($coes as $coe){
+			$especialidad = $coe->especialidad;
+			$odontologo = $coe->odontologo;
+			$odontologos[] = $odontologo->id;
+			echo $especialidad->lapso;
+			
+		}
+		var_dump($odontologos);
+	}
 }

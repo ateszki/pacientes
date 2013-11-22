@@ -54,6 +54,7 @@ Route::group(array('before' => 'apiauth'), function()
 	Route::resource('especialidad', 'EspecialidadController');
 	
 	//Route::controller('centro-odontologo-especialidad','CentroOdontologoEspecialidadController');
+	Route::get('centro-odontologo-especialidad/agendas','CentroOdontologoEspecialidadController@generarAgendas');
 	Route::get('centro-odontologo-especialidad/{id}/agendas','CentroOdontologoEspecialidadController@agendas');
 	Route::get('centro-odontologo-especialidad/detalle','CentroOdontologoEspecialidadController@vista_detallada');
 	Route::post('centro-odontologo-especialidad/buscar','CentroOdontologoEspecialidadController@postBuscar');
