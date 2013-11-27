@@ -19,11 +19,11 @@ class Turno extends Maestro {
 
 
 	public $rules = array(
-                        'agenda_id' => 'Required|integer|exists:agendas',
+                        'agenda_id' => 'Required|integer|exists:agendas,id',
 			'hora_desde' => 'Required|min:4|max:4',
 			'hora_hasta' => 'Required|min:4|max:4',
-			'tipo_turno' => 'Required|min:1|max:1',
-			'estado' => 'Required|min:1|max:1',
+			'tipo_turno' => 'Required|min:1|max:1|in:T,E',//T = turno, E = entreturno
+			'estado' => 'Required|min:1|max:1|in:A,B,L',//A = asignado, B = bloqueado, L = Libre
 			'prepaga_id' => 'exists:prepagas',
 			'motivo_turno_id' => 'integer',
 			'piezas' => 'max:50',

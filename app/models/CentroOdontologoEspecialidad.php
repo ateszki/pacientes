@@ -54,4 +54,9 @@ END AS turno_nombre"))
                      ->whereNull('odontologos.fechabaja')
                      ->get();
 	}
+
+	public function existeAgenda($fecha){
+		$agenda = Agenda::where('centro_odontologo_especialidad_id','=',$this->id)->where('fecha','=',$fecha)->get()->toArray();
+		return count($agenda);
+	}
 }
