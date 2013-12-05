@@ -24,7 +24,7 @@ class Agenda extends Maestro {
 	public function turnos(){
 		return $this->hasMany('Turno');
 	}
-	public function centros_odontologos_especialidades(){
+	public function centroOdontologoEspecialidad(){
 		return $this->belongsTo('CentroOdontologoEspecialidad');
 	}
 

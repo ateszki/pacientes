@@ -174,6 +174,16 @@ class OdontologoController extends MaestroController {
 		200
 	    );
 
-}
+	}
 
+	public function ver_ausencias($id){
+	    //$ce = Odontologo::find($id)->centrosEspecialidades()->with(array('Especialidad','Centro'))->get();
+	$ausencias = Odontologo::find($id)->ausencias()->get();
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $ausencias),
+		200
+	    );
+
+	}
 }

@@ -40,6 +40,10 @@ class Odontologo extends Maestro {
 		return $this->hasMany('CentroOdontologoEspecialidad');
 	}
 
+	public function ausencias(){
+		return $this->hasMany('AusenciaOdontologo');
+	}
+
 	public function vistaCentrosEspecialidades(){
 		return DB::table('centros_odontologos_especialidades')
                      ->join('centros','centros_odontologos_especialidades.centro_id','=','centros.id')

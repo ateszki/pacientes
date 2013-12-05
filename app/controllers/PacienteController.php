@@ -93,7 +93,7 @@ class PacienteController extends MaestroController {
 	
 
 	}
-
+/*
 	public function setPrepaga($id,$prepaga_id){
 		try {
 		Paciente::find($id)->prepagas()->attach($prepaga_id);
@@ -111,4 +111,5 @@ class PacienteController extends MaestroController {
 		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
 		}
 	}
+*/
 }
