@@ -88,4 +88,38 @@ class PacientePrepagaController extends MaestroController {
 	    );
 
 	}
+
+	public function tomar_turno($paciente_prepaga_id){
+		$params = Input::all();
+		unset($params['apikey']);
+		$turno_id = $params["turno_id"];
+
+		$paciente_prepaga = PacientePrepaga::findOrFail($paciente_prepaga_id);
+		$turno = Turno::findOrFail($turno_id);
+		
+		//falta verificar turno bloqueado x mismo usuario
+		if($turno->estado == 'L'){
+			$turno->estado = 'A';
+			$turno->paciente_prepaga_id = $paciente_prepaga->id;
+			if ($turno->save()){
+			   return Response::json(array(
+				'error'=>false,
+				'envio'=>array($turno->find($turno->id)->toArray())),
+				200);
+			} else {
+				return Response::json(array(
+				'error'=>true,
+				'mensaje' => HerramientasController::getErrores($turno->validator),
+				'envio'=>$params,
+				),200);
+
+			}
+		} else {
+		    return Response::json(array(
+			'error' => true,
+			'mensaje' => "turno tomado"),
+			200
+		    );
+		}
+	}
 }

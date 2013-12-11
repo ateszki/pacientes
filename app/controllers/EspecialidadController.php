@@ -79,4 +79,25 @@ class EspecialidadController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+public function turnos_libres($especialidad_id){
+
+	$parametros = Input::all();
+	unset($parametros['apikey']);
+if (!isset($parametros["param"]) || empty($parametros["param"])){
+	$param = array("odontologos"=>'',"centros"=>'',"turnos"=>'',"dias"=>'');
+} else {
+	$param = $parametros["param"];
+	$param = json_decode($param,true);
+}
+//var_dump($param);
+//die();
+	$listado = Turno::turnos_libres($especialidad_id,$param);
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $listado),
+		200
+	    );
+	
+}
+
 }

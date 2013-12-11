@@ -54,6 +54,7 @@ Route::group(array('before' => 'apiauth'), function()
 	Route::post('prepaga/buscar','PrepagaController@postBuscar');
 	Route::resource('prepaga', 'PrepagaController');
 
+	Route::post('paciente-prepaga/{paciente_prepaga_id}/tomar-turno','PacientePrepagaController@tomar_turno');
 	Route::post('paciente-prepaga/buscar','PacientePrepagaController@postBuscar');
 	Route::resource('paciente-prepaga','PacientePrepagaController');
 
@@ -62,6 +63,7 @@ Route::group(array('before' => 'apiauth'), function()
 	Route::resource('centro', 'CentroController');
 	
 	//Route::controller('especialidad','EspecialidadController');
+	Route::get('especialidad/{especialidad_id}/turnos-libres','EspecialidadController@turnos_libres');
 	Route::post('especialidad/buscar','EspecialidadController@postBuscar');
 	Route::resource('especialidad', 'EspecialidadController');
 	
