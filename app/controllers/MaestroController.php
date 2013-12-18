@@ -110,6 +110,13 @@ $m->where(function($query){
 	{
 		$new = Input::all();
 		unset($new['apikey']);
+//hash passwords for users
+if (isset($new["password"])&& !empty($new["password"])){
+	$new["password"] = Hash::make($new["password"]);
+}
+
+//cambiar 'NUUL? por NULL
+$new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 		$new_modelo = $this->modelo->create($new);
 
 		if ($new_modelo->save()){
@@ -167,6 +174,13 @@ $m->where(function($query){
 		$modelo = $this->modelo->find($id);
 		$data = Input::all();
 		unset($data['apikey']);
+//hash passwords for users
+if (isset($data["password"])&& !empty($data["password"])){
+	$data["password"] = Hash::make($data["password"]);
+}
+
+//cambiar 'NUUL? por NULL
+$data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 		$modelo->fill($data);
 		if ($modelo->save() !== false){
 

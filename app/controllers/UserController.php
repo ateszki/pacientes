@@ -1,9 +1,9 @@
 <?php
 
-class EspecialidadController extends MaestroController {
+class UserController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'Especialidad';
+		$this->classname= 'User';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,28 +79,14 @@ class EspecialidadController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-public function turnos_libres($especialidad_id){
-
-	$parametros = Input::all();
-	unset($parametros['apikey']);
-if (!isset($parametros["param"]) || empty($parametros["param"])){
-	$param = array("odontologos"=>'',"centros"=>'',"turnos"=>'',"dias"=>'');
-} else {
-	$param = $parametros["param"];
-	$param = json_decode($param,true);
-}
-//var_dump($param);
-//die();
-	$listado = Turno::turnos_libres($especialidad_id,$param);
-$queries = DB::getQueryLog();
-$last_query = end($queries);
-//var_dump($last_query);die();
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $listado),
-		200
-	    );
-	
-}
-
+	public function validar(){
+		$data = Input::All();
+		unset($data["apikey"]);
+		if( Auth::attempt($data)){
+			$key = Auth::user()->createSessionKey();
+			return Response::json(array('error'=>false,"listado"=>array('session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
+		} else {
+			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
+		}
+	}
 }

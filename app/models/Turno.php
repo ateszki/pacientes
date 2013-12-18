@@ -15,6 +15,7 @@ class Turno extends Maestro {
 		'piezas',
 		'derivado_por',
 		'observaciones',
+		'user_id',
 		);
 
 
@@ -29,12 +30,16 @@ class Turno extends Maestro {
 			'piezas' => 'max:50',
 			'derivado_por' => 'max:50',
 			'observaciones' => 'max:250',
+			'user_id' => 'exists:users,id',
                 );
 
 	public function agenda(){
 		return $this->belongsTo('Agenda');
 	}
-
+	
+	public function usuario(){
+		return $this->belongsTo('User');
+	}
 	
 	public static function turnos_libres($especialidad_id,$parametros){
 		$odontologos = (isset($parametros["odontologos"]) && !empty($parametros["odontologos"]))?$parametros["odontologos"]:NULL;
@@ -49,13 +54,14 @@ class Turno extends Maestro {
 			->join('centros','centros_odontologos_especialidades.centro_id','=','centros.id')
 			->join('odontologos','centros_odontologos_especialidades.odontologo_id','=','odontologos.id')
 			->select(DB::raw("agendas.*,turnos.*"))
-			->select(DB::raw("agendas.*,turnos.*,especialidades.id as especialidad_id, especialidades.especialidad, centros.id as centro_id, centros.razonsocial AS centro,odontologo_id as odontologo_id, concat(odontologos.nombres, ' ',odontologos.apellido) as odontologo,odontologos.matricula,
+			->select(DB::raw("agendas.centro_odontologo_especialidad_id,centros_odontologos_especialidades.dia_semana,DATE_FORMAT(agendas.fecha,'%d/%m/%Y') as fecha,agendas.odontologo_efector_id,agendas.observaciones as agenda_observaciones,turnos.*,especialidades.id as especialidad_id, especialidades.especialidad, centros.id as centro_id, centros.razonsocial AS centro,odontologo_id as odontologo_id, concat(odontologos.nombres, ' ',odontologos.apellido) as odontologo,odontologos.matricula,
 				CASE centros_odontologos_especialidades.turno
 				WHEN 'T'
 				THEN 'Tarde'
 				WHEN 'M'
 				THEN 'Maniana'
 				END AS turno_nombre"))
+			->where('agendas.fecha','>=',date('Y-m-d'))
                      ->where('turnos.estado','=','L')
 		     ->where('especialidades.id','=',$especialidad_id);
 	
@@ -63,7 +69,7 @@ class Turno extends Maestro {
 		if (!empty($centros)){$query->whereIn('centros.id',$centros);}
 		if (!empty($dias)){$query->whereIn('centros_odontologos_especialidades.dia_semana',$dias);}
 		if (!empty($turnos)){$query->whereIn('centros_odontologos_especialidades.turno',$turnos);}
-	
-		return $query->get();
+		$query->orderBy('agendas.fecha','asc');
+		return $query->skip(0)->take(50)->get();
 	}
 }

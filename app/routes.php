@@ -23,7 +23,21 @@ Route::filter('apiauth', function()
 	App::abort(401, 'You are not authorized.');
     }
 });
-Route::group(array('before' => 'apiauth'), function()
+
+Route::filter('usuarioauth', function()
+{
+	$u = User::where("session_key","=",Input::get("session_key"))->where("session_expira",">=",date("Y-m-d H:i:s"))->get();
+	if (count($u)==0)
+	    {
+		App::abort(401, 'You are not authorized.');
+	    }
+});
+
+Route::group(array('bafore' => 'apiauth'),function()
+{
+	Route::post('usuario/login','UserController@validar');	
+});
+Route::group(array('before' => 'apiauth|usuarioauth'), function()
 {
 	Route::post('consultorio/buscar','ConsultorioController@postBuscar');
 	Route::resource('consultorio', 'ConsultorioController');
@@ -77,6 +91,8 @@ Route::group(array('before' => 'apiauth'), function()
 
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
+
+	Route::resource('usuario', 'UserController');
 	
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
@@ -87,6 +103,3 @@ Route::get('/api',function()
 });
 
 
-Route::get('account', 'AccountController@showIndex'); 
-Route::get('account/login', 'AccountController@showLogin'); 
-Route::get('account/logout', 'AccountController@showLogout'); 
