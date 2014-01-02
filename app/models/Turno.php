@@ -10,7 +10,7 @@ class Turno extends Maestro {
 		'hora_hasta',
 		'tipo_turno',
 		'estado',
-		'prepaga_id',
+		'paciente_prepaga_id',
 		'motivo_turno_id',
 		'piezas',
 		'derivado_por',
@@ -72,4 +72,5 @@ class Turno extends Maestro {
 		$query->orderBy('agendas.fecha','asc');
 		return $query->skip(0)->take(50)->get();
 	}
+
 }

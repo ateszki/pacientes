@@ -15,6 +15,7 @@ class MaestroController extends \BaseController {
 $m->where(function($query){
 	    $parametros = Input::all();
 	    unset($parametros['apikey']);
+	    unset($parametros['session_key']);
 
 		//tipo busqueda
 		if(isset($parametros["tipo_busqueda"]) && $parametros["tipo_busqueda"]=='and'){

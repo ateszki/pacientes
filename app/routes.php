@@ -94,6 +94,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::resource('usuario', 'UserController');
 	
+	Route::post('turno/{id}/liberar','TurnoController@liberar');
+	Route::resource('turno', 'TurnoController');
+	
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 

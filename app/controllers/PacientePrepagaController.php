@@ -93,15 +93,20 @@ class PacientePrepagaController extends MaestroController {
 		$params = Input::all();
 		unset($params['apikey']);
 		$turno_id = $params["turno_id"];
-		$estado = $param["estado"];
 		$user_id = Auth::user()->id;
 		$paciente_prepaga = PacientePrepaga::findOrFail($paciente_prepaga_id);
-		$turno = Turno::where('id','=',$turno_id)->where(function($query){$query->whereNull('user_id')->orWhere('user_id','=',$user_id))->firstOrFail();
+		$turno = Turno::where('id','=',$turno_id)
+				->where(function($query){
+					$query->whereNull('user_id')
+					->orWhere('user_id','=',Auth::user()->id);
+				})
+				->firstOrFail();
 		
 		//falta verificar turno bloqueado x mismo usuario
-		if($turno->estado == 'L' || $turno->estado == 'B'){
-			$turno->estado = $estado;
+		if($turno->estado == 'L'){
+			$turno->estado = 'A';
 			$turno->paciente_prepaga_id = $paciente_prepaga->id;
+			$turno->user_id = $user_id;
 			if ($turno->save()){
 			   return Response::json(array(
 				'error'=>false,
