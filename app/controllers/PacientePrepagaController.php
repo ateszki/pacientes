@@ -93,6 +93,7 @@ class PacientePrepagaController extends MaestroController {
 		$params = Input::all();
 		unset($params['apikey']);
 		$turno_id = $params["turno_id"];
+		$tipo = (isset($params["tipo"]) && !empty($params["tipo"]))?$params["tipo"]:"T";
 		$user_id = Auth::user()->id;
 		$paciente_prepaga = PacientePrepaga::findOrFail($paciente_prepaga_id);
 		$turno = Turno::where('id','=',$turno_id)
@@ -102,6 +103,34 @@ class PacientePrepagaController extends MaestroController {
 				})
 				->firstOrFail();
 		
+		//chequea entreturno
+		if($tipo == 'E'){
+			$otros_entreturnos = Turno::where('padre','=',$turno->id)->get();
+			$new_turno = new Turno();			
+			$new_turno->fill($turno->toArray());
+			$new_turno->id = null;
+			$new_turno->padre = $turno->id;
+			$turno = $new_turno;
+			$turno->tipo_turno = 'E';
+			$desde = strtotime(substr($turno->hora_desde,0,2).":".substr($turno->hora_desde,-2));
+			$hasta = strtotime(substr($turno->hora_hasta,0,2).":".substr($turno->hora_hasta,-2));
+			if (count($otros_entreturnos)==0){
+				$n_desde = $desde + (($hasta - $desde)/2);
+				$turno->hora_desde = date('Hi',$n_desde);
+			} else {
+				$intervalo = ($hasta -$desde) / (2 + count($otros_entreturnos));
+				$n_desde = $desde + $intervalo;
+				foreach ($otros_entreturnos as $entreturno){
+					$entreturno->hora_desde = date('Hi',$n_desde);
+					$entreturno->save();
+					$n_desde += $intervalo; 
+				}
+				$turno->hora_desde =date('Hi',$n_desde);
+			}
+			$turno->estado = 'L';
+
+		}
+
 		//falta verificar turno bloqueado x mismo usuario
 		if($turno->estado == 'L'){
 			$turno->estado = 'A';
@@ -110,7 +139,7 @@ class PacientePrepagaController extends MaestroController {
 			if ($turno->save()){
 			   return Response::json(array(
 				'error'=>false,
-				'envio'=>array($turno->find($turno->id)->toArray())),
+				'listado'=>array($turno->find($turno->id)->toArray())),
 				200);
 			} else {
 				return Response::json(array(

@@ -80,11 +80,23 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 	}
 
 	public function agendas($id){
-		
-		$agendas = CentroOdontologoEspecialidad::find($id)->agendas()->get();
-return Response::json(array(
+		$coe = CentroOdontologoEspecialidad::find($id);
+		$dias = $coe->especialidad->lapso;
+		$params = Input::all();
+		$desde = (isset($params["desde"])&& !empty($params["desde"]))?$params["desde"]:date("Y-m-d");	
+		$hasta = (isset($params["hasta"])&& !empty($params["hasta"]))?$params["hasta"]:date("Y-m-d",strtotime($desde." +".$dias." days"));	
+		$agendas = $coe->agendas()->whereBetween('fecha',array($desde,$hasta))->with(array('turnos'=>function($query){$query->where('estado','=','L');}))->get();
+		/* cuento turnos libres */
+		$agendas_array = $agendas->toArray();
+		function turnoslibres($a){
+			$a["turnos"] = (count($a["turnos"]))?true:false;;
+			return$a;
+		}
+		$agendas_array1 = array_map('turnoslibres',$agendas_array);
+
+		return Response::json(array(
                 'error' => false,
-                'listado' => $agendas->toArray()),
+                'listado' => $agendas_array1),
                 200
             );
 	

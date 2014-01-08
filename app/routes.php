@@ -31,6 +31,7 @@ Route::filter('usuarioauth', function()
 	    {
 		App::abort(401, 'You are not authorized.');
 	    }
+	Auth::loginUsingId($u[0]->id);
 });
 
 Route::group(array('bafore' => 'apiauth'),function()
@@ -89,6 +90,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('centro-odontologo-especialidad/buscar','CentroOdontologoEspecialidadController@postBuscar');
 	Route::resource('centro-odontologo-especialidad', 'CentroOdontologoEspecialidadController');
 
+	Route::get('agenda/{id}/turnos','AgendaController@vistaTurnos');
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
 

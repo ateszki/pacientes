@@ -78,5 +78,13 @@ class AgendaController extends MaestroController {
 	{
 		return parent::destroy($id);
 	}
-
+	
+	public function vistaTurnos($id){
+	$turnos = Agenda::find($id)->vistaTurnos();
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $turnos),
+		200
+	    );
+	}
 }
