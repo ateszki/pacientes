@@ -30,10 +30,10 @@ class Agenda extends Maestro {
 	
 	public function vistaTurnos(){
 		return DB::table('turnos')
-                     ->leftJoin('paciente_prepaga','turno.paciente_prepaga_id','=','paciente_prepaga.id')
+                     ->leftJoin('paciente_prepaga','turnos.paciente_prepaga_id','=','paciente_prepaga.id')
 			->leftJoin('pacientes','paciente_prepaga.paciente_id','=','pacientes.id')
 ->leftJoin('prepagas','paciente_prepaga.prepaga_id','=','prepagas.id')
-			->select(DB::raw("turnos.desde,turnos.hasta,turnos.estado,turnos.tipo,turnos.derivado_por,prepagas.codigo,pacientes.id,concat(pacientes.apellido,' ',pacientes.nombres) as nombre,pacientes.tipo_documento,pacientes.nro_documento"))
+			->select(DB::raw("turnos.hora_desde,turnos.hora_hasta,turnos.estado,turnos.tipo_turno,turnos.derivado_por,prepagas.codigo,pacientes.id,concat(pacientes.apellido,' ',pacientes.nombres) as nombre,pacientes.tipo_documento,pacientes.nro_documento"))
                      ->where('turnos.agenda_id', '=', $this->id)
                      ->get();
 	}

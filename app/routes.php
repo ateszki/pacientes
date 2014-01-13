@@ -20,7 +20,7 @@ Route::filter('apiauth', function()
 {
     if (Input::get('apikey') != Config::get('app.apikey'))
     {
-	App::abort(401, 'You are not authorized.');
+	App::abort(401, 'Ingreso no autorizado.');
     }
 });
 
@@ -29,7 +29,7 @@ Route::filter('usuarioauth', function()
 	$u = User::where("session_key","=",Input::get("session_key"))->where("session_expira",">=",date("Y-m-d H:i:s"))->get();
 	if (count($u)==0)
 	    {
-		App::abort(401, 'You are not authorized.');
+		App::abort(401, 'Ud no está autenticado.');
 	    }
 	Auth::loginUsingId($u[0]->id);
 });
