@@ -11,8 +11,9 @@ class MaestroController extends \BaseController {
 
 	public function postBuscar(){
 		$classname = $this->classname;
-		$m = $classname::whereRaw('1=1');
-$m->where(function($query){
+	try {
+	    $m = $classname::whereRaw('1=1');
+	    $m->where(function($query){
 	    $parametros = Input::all();
 	    unset($parametros['apikey']);
 	    unset($parametros['session_key']);
@@ -45,18 +46,21 @@ $m->where(function($query){
 			}
 		}
 
-});		
+		});		
 
 	$listado = $m->get();
-//$queries = DB::getQueryLog();
-//$last_query = end($queries);	
 		return Response::json(array(
 		'error' => false,
-//		'query' => $last_query,
 		'listado' => $listado->toArray()),
 		200
 	    );
-
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
 	}
 
 
@@ -77,6 +81,7 @@ $m->where(function($query){
 	 */
 	public function index()
 	{
+	try {
 	$cant = (Request::get('cant') == '') ? 0 : Request::get('cant');
 	$offset = (Request::get('offset') == '') ? 0 : Request::get('offset');
 
@@ -91,6 +96,13 @@ $m->where(function($query){
 		200
 	    );
 
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
 	}
 
 	/**
@@ -109,6 +121,7 @@ $m->where(function($query){
 	 */
 	public function store()
 	{
+	try {
 		$new = Input::all();
 		unset($new['apikey']);
 //hash passwords for users
@@ -123,16 +136,23 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 		if ($new_modelo->save()){
 		   return Response::json(array(
 			'error'=>false,
-			'envio'=>array($this->modelo->find($new_modelo->id)->toArray())),
+			'listado'=>array($this->modelo->find($new_modelo->id)->toArray())),
 			200);
 		} else {
 			return Response::json(array(
                         'error'=>true,
                         'mensaje' => HerramientasController::getErrores($new_modelo->validator),
-                        'envio'=>$new,
+                        'listado'=>$new,
                         ),200);
 
 		}
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
 	}
 	/**
 	 * Display the specified resource.
@@ -142,14 +162,22 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 	 */
 	public function show($id)
 	{
+	try{
 	    $modelo = $this->modelo->find($id);
 		
 	    return Response::json(array(
 		'error' => false,
-		'odontologos' => $modelo->toArray()),
+		'listado' => $modelo->toArray()),
 		200
 	    );
 		
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
 	}
 
 	/**
@@ -171,7 +199,8 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 	 */
 	public function update($id)
 	{
-		//
+	
+	try{	
 		$modelo = $this->modelo->find($id);
 		$data = Input::all();
 		unset($data['apikey']);
@@ -187,16 +216,23 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 
 			return Response::json(array(
 			'error'=>false,
-			'modelo'=>$modelo->toArray()),
+			'listado'=>$modelo->toArray()),
 			200);
 		}else {
 			
 			 return Response::json(array(
                         'error'=>true,
                         'mensaje' => HerramientasController::getErrores($modelo->validator),
-                        'envio'=>$modelo->toArray(),
+                        'listado'=>$modelo->toArray(),
                         ),200);
 		}
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
 	}
 
 	/**
@@ -207,16 +243,15 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 	 */
 	public function destroy($id)
 	{
-		//
+	try{	//
 		$modelo = $this->modelo->find($id);
-		try {
 			$eliminado = $modelo->delete();
 			return Response::json(array('error'=>false,'eliminado'=>$eliminado),200);
 		}catch(Exception $e){
 			 return Response::json(array(
                         'error'=>true,
                         'mensaje' => $e->getMessage(),
-                        'envio'=>$modelo->toArray(),
+                        'listado'=>$modelo->toArray(),
                         ),200);
 		}
 	}
