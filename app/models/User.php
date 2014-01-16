@@ -64,15 +64,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 return $this->email;
         }
 
-public function createSessionKey(){
-	$session_key = substr(Hash::make(date('YmdHis').$this->username),-20);
-	$session_expira = date('Y-m-d H:i:s',strtotime("+2 hours"));
-	$data = array("session_key"=>$session_key,"session_expira"=>$session_expira);
-	$this->update($data);
-	return $data;
-}
-public function turnos(){
-	return $this->hasMany('Turno');
-}
+	public function createSessionKey(){
+		$session_key = substr(Hash::make(date('YmdHis').$this->username),-20);
+		$session_expira = date('Y-m-d H:i:s',strtotime("+2 hours"));
+		$data = array("session_key"=>$session_key,"session_expira"=>$session_expira);
+		$this->update($data);
+		return $data;
+	}
+	public function turnos(){
+		return $this->hasMany('Turno');
+	}
+
+	public function pacienteObservaciones(){
+		return $this->hasMany('PacienteObservacion');
+	}
 
 }

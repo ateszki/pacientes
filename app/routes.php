@@ -52,12 +52,11 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	//Route::post('paciente/{id}/prepagas/{prepaga_id}','PacienteController@setPrepaga');
 	Route::resource('tipo-observaciones-pacientes', 'TipoObservacionesController');
 
-	Route::resource('observaciones-pacientes', 'ObservacionPacienteController');
 
 	Route::resource('ausencias-odontologos', 'AusenciaOdontologoController');
 
 	//Route::delete('paciente/{id}/prepagas/{prepaga_id}','PacienteController@unsetPrepaga');
-	Route::get('paciente/{paciente_id}/observaciones','ObservacionPacienteController@vista_detallada');
+	Route::get('paciente/{paciente_id}/observaciones','PacienteController@observaciones_detalladas');
 	Route::get('paciente/{paciente_id}/prepaga','PacientePrepagaController@vista_detallada');
 	//Route::get('paciente/{id}/prepagas','PacienteController@prepagas');
 	Route::post('paciente/buscar','PacienteController@postBuscar');
@@ -73,6 +72,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('paciente-prepaga/buscar','PacientePrepagaController@postBuscar');
 	Route::resource('paciente-prepaga','PacientePrepagaController');
 
+	Route::post('paciente-observacion/buscar','PacienteObservacionController@postBuscar');
+	Route::resource('paciente-observacion', 'PacienteObservacionController');
+	
 	//Route::controller('centro','CentroController');
 	Route::post('centro/buscar','CentroController@postBuscar');
 	Route::resource('centro', 'CentroController');

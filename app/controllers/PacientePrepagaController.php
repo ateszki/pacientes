@@ -96,13 +96,8 @@ class PacientePrepagaController extends MaestroController {
 		$tipo = (isset($params["tipo"]) && !empty($params["tipo"]))?$params["tipo"]:"T";
 		$user_id = Auth::user()->id;
 		$paciente_prepaga = PacientePrepaga::findOrFail($paciente_prepaga_id);
-		$turno = Turno::where('id','=',$turno_id)
-				->where(function($query){
-					$query->whereNull('user_id')
-					->orWhere('user_id','=',Auth::user()->id);
-				})
-				->firstOrFail();
-		
+		//$turno = Turno::where('id','=',$turno_id)->first();
+		$turno = Turno::findorFail($turno_id);
 		//chequea entreturno
 		if($tipo == 'E'){
 			$otros_entreturnos = Turno::where('padre','=',$turno->id)->get();

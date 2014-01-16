@@ -8,6 +8,7 @@ class Especialidad extends Maestro {
 		'especialidad',
 		'lapso',
 		'valor',
+		'requiere_derivacion',
 		);
 
 
@@ -15,6 +16,7 @@ class Especialidad extends Maestro {
                         'especialidad' => 'Required|Max:50',
 			'lapso' => 'Required|integer',
 			'valor' => 'Required|integer',
+			'requiere_derivacion' => 'Required|integer|in:0,1',
                 );
 
 

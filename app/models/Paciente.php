@@ -44,5 +44,8 @@ class Paciente extends Maestro {
 	public function prepagas(){
 		return $this->belongsToMany('Prepaga');
 	}
-	
+
+	public function observaciones(){
+		return $this->hasMany('PacienteObservacion');
+	}	
 }

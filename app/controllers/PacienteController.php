@@ -93,23 +93,24 @@ class PacienteController extends MaestroController {
 	
 
 	}
-/*
-	public function setPrepaga($id,$prepaga_id){
-		try {
-		Paciente::find($id)->prepagas()->attach($prepaga_id);
-		return Response::json(array('error'=>false),200);
-		} catch (Exception $e){
-		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
-		}
-	}
 
-	public function unsetPrepaga($id,$prepaga_id){
-		try {
-		Paciente::find($id)->prepagas()->detach($prepaga_id);
-		return Response::json(array('error'=>false),200);
-		} catch (Exception $e){
-		return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()),200);
-		}
+public function observaciones_detalladas($id){
+	$paciente = Paciente::findOrFail($id);
+	$observaciones = $paciente->observaciones()->with('user')->get();
+	$detallado = array();
+	foreach($observaciones as $obs){
+		$detallado[] = array(
+				"id" => $obs->id,
+				"observacion" => $obs->observacion,
+				"fecha_hora" => date('d-m-Y H:i',strtotime($obs->created_at)),
+				"user_id" => $obs->user_id,
+				"usuario" => $obs->user->nombre,
+		);
 	}
-*/
+		return Response::json(array(
+                'error' => false,
+                'listado' => $detallado),
+                200
+		    );
+}
 }

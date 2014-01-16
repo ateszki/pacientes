@@ -1,8 +1,12 @@
 #################
+## propios
+#################
+.gitaddcommitpush
+
+#################
 ## Database info
 #################
 app/config/database.php
-
 
 #################
 ## Eclipse

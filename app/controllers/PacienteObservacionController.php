@@ -1,9 +1,9 @@
 <?php
 
-class ObservacionPacienteController extends MaestroController {
+class PacienteObservacionController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'ObservacionPaciente';
+		$this->classname= 'PacienteObservacion';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -32,6 +32,7 @@ class ObservacionPacienteController extends MaestroController {
 	 */
 	public function store()
 	{
+		Input::merge(array('user_id' => Auth::user()->id));
 		return parent::store();
 	}
 
@@ -79,13 +80,4 @@ class ObservacionPacienteController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function vista_detallada($paciente_id){
-	$listado = $this->modelo->vistaDetallada($paciente_id);
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $listado),
-		200
-	    );
-
-	}
 }

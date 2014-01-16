@@ -124,13 +124,20 @@ class MaestroController extends \BaseController {
 	try {
 		$new = Input::all();
 		unset($new['apikey']);
+		unset($new['session_key']);
 //hash passwords for users
 if (isset($new["password"])&& !empty($new["password"])){
 	$new["password"] = Hash::make($new["password"]);
 }
 
+//agrega el usuario si el modelo tiene el campo user_id
+/*if (property_exists($this->modelo,'user_id')){
+	$new["user_id"] = Auth::user()->id;
+}*/
+
 //cambiar 'NUUL? por NULL
 $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
+
 		$new_modelo = $this->modelo->create($new);
 
 		if ($new_modelo->save()){
