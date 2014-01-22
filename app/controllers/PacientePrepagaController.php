@@ -132,7 +132,8 @@ class PacientePrepagaController extends MaestroController {
 			$turno->paciente_prepaga_id = $paciente_prepaga->id;
 			$turno->user_id = $user_id;
 			if ($turno->save()){
-			   return Response::json(array(
+			   $this->eventoAuditar($turno);
+				return Response::json(array(
 				'error'=>false,
 				'listado'=>array($turno->find($turno->id)->toArray())),
 				200);

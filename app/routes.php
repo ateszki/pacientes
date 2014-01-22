@@ -98,15 +98,19 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::resource('usuario', 'UserController');
 	
+	Route::post('pais/buscar','PaisController@postBuscar');
+	Route::resource('pais', 'PaisController');
+
+	Route::post('provincia/buscar','ProvinciaController@postBuscar');
+	Route::resource('provincia', 'ProvinciaController');
+
+	Route::resource('motivo-turno', 'MotivoTurnoController');
+
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
 	Route::resource('turno', 'TurnoController');
 	
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 
-Route::get('/api',function()
-{
-    return View::make('hello');
-});
 
 

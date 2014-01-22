@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder {
 
 		$this->call('UserTableSeeder');
 		$this->call('OdontologoTableSeeder');
+		$this->call('ProvinciaTableSeeder');
 	}
 
 }
@@ -73,3 +74,46 @@ class OdontologoTableSeeder extends Seeder {
 		}
     }
 }
+
+class ProvinciaTableSeeder extends Seeder {
+ 
+     public function run()
+     {
+         DB::table('provincias')->delete();
+	$provincias = array(
+		"CABA",
+		"Buenos Aires",
+		"Catamarca",
+		"Chaco",
+		"Chubut",
+		"Córdoba",
+		"Corrientes",
+		"Entre Rios",
+		"Formosa",
+		"Jujuy",
+		"La Pampa",
+		"La Rioja",
+		"Mendoza",
+		"Misiones",
+		"Neuquén",
+		"Rio Negro",
+		"Salta",
+		"San Juan",
+		"San Luis",
+		"Santa Cruz",
+		"Santa Fé",
+		"Santiago del Estero",
+		"Tierra del Fuego",
+		"Tucumán",
+	);
+	foreach ($provincias as $p){
+         Provincia::create(array(
+                 'provincia' => $p,
+         	 'pais_id' => 1,
+                 'created_at' => new DateTime,
+                 'updated_at' => new DateTime
+         ));
+	}
+      }
+}
+

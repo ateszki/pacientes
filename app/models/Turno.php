@@ -26,7 +26,7 @@ class Turno extends Maestro {
 			'tipo_turno' => 'Required|min:1|max:1|in:T,E',//T = turno, E = entreturno
 			'estado' => 'Required|min:1|max:1|in:A,B,L',//A = asignado, B = bloqueado, L = Libre
 			'paciente_prepaga_id' => 'exists:paciente_prepaga,id',
-			'motivo_turno_id' => 'integer',
+			'motivo_turno_id' => 'integer|exists:motivos_turnos,id',
 			'piezas' => 'max:50',
 			'derivado_por' => 'max:50',
 			'observaciones' => 'max:250',
@@ -41,6 +41,10 @@ class Turno extends Maestro {
 		return $this->belongsTo('User');
 	}
 	
+	public function motivo(){
+		return $this->hasOne('Motivo');
+	}
+
 	public static function turnos_libres($especialidad_id,$parametros){
 		$odontologos = (isset($parametros["odontologos"]) && !empty($parametros["odontologos"]))?$parametros["odontologos"]:NULL;
 		$centros = (isset($parametros["centros"]) && !empty($parametros["centros"]))?$parametros["centros"]:NULL;

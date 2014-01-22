@@ -141,6 +141,7 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 		$new_modelo = $this->modelo->create($new);
 
 		if ($new_modelo->save()){
+		   $this->eventoAuditar($new_modelo);
 		   return Response::json(array(
 			'error'=>false,
 			'listado'=>array($this->modelo->find($new_modelo->id)->toArray())),
@@ -154,7 +155,8 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 
 		}
 	} catch (Exception $e){
-			return Response::json(array(
+	
+		return Response::json(array(
 			'error' => true,
 			'mensaje' => $e->getMessage()),
 			200
@@ -220,7 +222,7 @@ if (isset($data["password"])&& !empty($data["password"])){
 $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 		$modelo->fill($data);
 		if ($modelo->save() !== false){
-
+			$this->eventoAuditar($modelo);
 			return Response::json(array(
 			'error'=>false,
 			'listado'=>array($modelo->toArray())),
@@ -253,7 +255,8 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 	try{	//
 		$modelo = $this->modelo->find($id);
 			$eliminado = $modelo->delete();
-			return Response::json(array('error'=>false,'eliminado'=>$eliminado),200);
+			$this->eventoAuditar($modelo);
+			return Response::json(array('error'=>false,'listado'=>$eliminado),200);
 		}catch(Exception $e){
 			 return Response::json(array(
                         'error'=>true,
@@ -263,4 +266,26 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 		}
 	}
 
+	public function eventoAuditar($modelo){
+
+		$queries = DB::getQueryLog();
+		$last_query = end($queries);
+		$c = array();
+		$q =explode("?", $last_query["query"]);
+		$b = $last_query["bindings"];
+		for($i = 0;$i<count($b);$i++){
+			$c[] = $q[$i].$b[$i];
+		}
+		$last_query = implode(" ",$c);
+		$valores = array();
+			$valores[] = $modelo->id;
+			$valores[] = get_class($modelo);
+			$valores[] = $modelo->getTable();
+			$valores[] = $last_query;
+			$valores[] = Auth::user()->id;
+			$valores[] = Auth::user()->nombre;
+			$valores[] = date("Y-m-d H:i:s");
+			$valores[] = date("Y-m-d H:i:s");
+		return DB::insert('INSERT INTO `eventos`(`modelo_id`, `modelo`, `tabla`, `query`, `user_id`, `usuario`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?, ?)', $valores);
+	}
 }

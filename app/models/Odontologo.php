@@ -33,7 +33,8 @@ class Odontologo extends Maestro {
                         'matricula'     => 'Required|Max:10|Unique:odontologos',
                         'fechaalta' => 'Required|Date',
                         'sexo' => 'Required|In:M,F,m,f',
-
+			'pais_id' => 'integer|exists:paises,id',
+			'provincia_id' => 'integer|exists:provincias,id',
                 );
 
 	public function centrosEspecialidades(){

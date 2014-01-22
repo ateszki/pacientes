@@ -37,8 +37,8 @@ class Paciente extends Maestro {
 			'cuit' => 'max:11',
 			'domicilio' => 'max:50',
 			'localidad' => 'max:50',
-			'provincia_id'=>'required|integer',
-			'pais_id'=>'required|integer',
+			'provincia_id'=>'required|integer|exists:provincias,id',
+			'pais_id'=>'required|integer|exists:paises,id',
                 );
 
 	public function prepagas(){
