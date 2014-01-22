@@ -76,6 +76,39 @@ class Maestro extends Eloquent {
         {
             return $modelo->isValid($modelo->id);
         });
+/*
+	static::saved(function($modelo){
+		$queries = DB::getQueryLog();
+		$last_query = end($queries);
+		$c = array();
+		$q =explode("?", $last_query["query"]);
+		$b = $last_query["bindings"];
+		for($i = 0;$i<count($b);$i++){
+			$c[] = $q[$i].$b[$i];
+		}
+		$last_query = implode(" ",$c);
+		$valores = array();
+			$valores[] = $modelo->id;
+			$valores[] = get_class($modelo);
+			$valores[] = $modelo->getTable();
+			$valores[] = $last_query;
+			$valores[] = Auth::user()->id;
+			$valores[] = Auth::user()->nombre;
+			$valores[] = date("Y-m-d H:i:s");
+			$valores[] = date("Y-m-d H:i:s");
+		return DB::insert('INSERT INTO `eventos`(`modelo_id`, `modelo`, `tabla`, `query`, `user_id`, `usuario`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?, ?)', $valores);
+
+		$evento = new Evento();
+		if(!strpos($last_query,"insert into `eventos`")){
+			$evento->modelo_id = $modelo->id;
+			$evento->modelo = get_class($modelo);
+			$evento->tabla = $modelo->getTable();
+			$evento->query = $last_query;
+			$evento->user_id = Auth::user()->id;
+			$evento->usuario = Auth::user()->nombre;
+			$evento->save();
+		}
+	});*/
     }
 
     public  function getEsquema(){

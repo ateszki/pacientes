@@ -223,7 +223,7 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 
 			return Response::json(array(
 			'error'=>false,
-			'listado'=>$modelo->toArray()),
+			'listado'=>array($modelo->toArray())),
 			200);
 		}else {
 			
