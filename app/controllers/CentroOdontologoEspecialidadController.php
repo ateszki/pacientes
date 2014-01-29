@@ -103,6 +103,59 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 
 	}
 
+	public function agendas_multi_dias(){
+		$params = Input::all();
+		$especialidad = Especialidad::findOrFail($params['especialidad_id']);
+		$dias = $especialidad->lapso;
+		$desde = (isset($params["desde"])&& !empty($params["desde"]))?$params["desde"]:date("Y-m-d");	
+		$hasta = (isset($params["hasta"])&& !empty($params["hasta"]))?$params["hasta"]:date("Y-m-d",strtotime($desde." +".$dias." days"));	
+		$coes = CentroOdontologoEspecialidad::where('odontologo_id',$params['odontologo_id'])
+				->where('centro_id',$params['centro_id'])
+				->where('especialidad_id',$params['especialidad_id'])->get();
+
+		$agendas_array = array();
+		foreach ($coes as $coe){
+			$aa = $agendas_array; 
+			$agendas = $coe->agendas()->whereBetween('fecha',array($desde,$hasta))->with(array('turnos'=>function($query){$query->where('estado','=','L');}))->get();
+			$agendas_array = array_merge($aa,$agendas->toArray());
+		}		
+/* cuento turnos libres */
+		function turnoslibres($a){
+			$a["turnos"] = (count($a["turnos"]))?true:false;;
+			return$a;
+		}
+		$agendas_array1 = array_map('turnoslibres',$agendas_array);
+
+		return Response::json(array(
+                'error' => false,
+                'listado' => $agendas_array1),
+                200
+            );
+	
+
+	}
+
+
+	public function vistaTurnos(){
+		$params = Input::all();
+		$coes = CentroOdontologoEspecialidad::where('odontologo_id',$params['odontologo_id'])
+				->where('centro_id',$params['centro_id'])
+				->where('especialidad_id',$params['especialidad_id'])->get();
+		$turnos = array();
+		foreach ($coes as $coe){
+			$agendas = $coe->agendas()->where('fecha','=',$params["fecha"])->get();
+			foreach ($agendas as $a){
+				$ts = $a->vistaTurnos();
+				$turnos = array_merge($turnos,$ts);	
+			}
+		}		
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $turnos),
+		200
+	    );
+	}
+
 	public function vista_detallada(){
 	$listado = $this->modelo->vistaDetalladaOdontologosAlta();
 	    return Response::json(array(
@@ -210,6 +263,9 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
 				} elseif ($coe->existeAgenda($fecha_ini)){
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				} elseif ($coe->odontologo()->existeAusencia($fecha_ini) > 0){
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
 				} else {	

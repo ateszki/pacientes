@@ -35,6 +35,7 @@ class Odontologo extends Maestro {
                         'sexo' => 'Required|In:M,F,m,f',
 			'pais_id' => 'integer|exists:paises,id',
 			'provincia_id' => 'integer|exists:provincias,id',
+			'iva_id' => 'required|integer|exists:iva,id',
                 );
 
 	public function centrosEspecialidades(){
@@ -43,6 +44,11 @@ class Odontologo extends Maestro {
 
 	public function ausencias(){
 		return $this->hasMany('AusenciaOdontologo');
+	}
+
+	public function existeAusencia($fecha){
+		$au = $this->ausencias()->where('fecha_desde','<=',$fecha)->where('fecha_hasta','>=',$fecha)->get();
+		return count($au);
 	}
 
 	public function vistaCentrosEspecialidades(){

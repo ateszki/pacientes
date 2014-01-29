@@ -173,7 +173,6 @@ $new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 	{
 	try{
 	    $modelo = $this->modelo->find($id);
-		
 	    return Response::json(array(
 		'error' => false,
 		'listado' => $modelo->toArray()),

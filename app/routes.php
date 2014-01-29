@@ -88,10 +88,15 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	//Route::get('centro-odontologo-especialidad/agendas','CentroOdontologoEspecialidadController@generarAgendas');
 	//Route::get('centro-odontologo-especialidad/turnos','CentroOdontologoEspecialidadController@generarTurnos');
 	Route::get('centro-odontologo-especialidad/{id}/agendas','CentroOdontologoEspecialidadController@agendas');
+	Route::get('centro-odontologo-especialidad/turnos','CentroOdontologoEspecialidadController@vistaTurnos');
+	Route::get('centro-odontologo-especialidad/agendas','CentroOdontologoEspecialidadController@agendas_multi_dias');
 	Route::get('centro-odontologo-especialidad/detalle','CentroOdontologoEspecialidadController@vista_detallada');
 	Route::post('centro-odontologo-especialidad/buscar','CentroOdontologoEspecialidadController@postBuscar');
 	Route::resource('centro-odontologo-especialidad', 'CentroOdontologoEspecialidadController');
 
+	Route::post('agenda/{id}/habilitar','AgendaController@habilitarTurnos');
+	Route::post('agenda/{id}/deshabilitar','AgendaController@deshabilitarTurnos');
+	Route::post('agenda/{id}/efector/{efector_id}','AgendaController@cambiaEfector');
 	Route::get('agenda/{id}/turnos','AgendaController@vistaTurnos');
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
@@ -103,6 +108,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('provincia/buscar','ProvinciaController@postBuscar');
 	Route::resource('provincia', 'ProvinciaController');
+
+	Route::post('iva/buscar','IvaController@postBuscar');
+	Route::resource('iva', 'IvaController');
 
 	Route::resource('motivo-turno', 'MotivoTurnoController');
 

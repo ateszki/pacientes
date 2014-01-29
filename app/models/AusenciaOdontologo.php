@@ -6,7 +6,7 @@ class AusenciaOdontologo extends Maestro {
 
 	protected $fillable = array(
 		'odontologo_id',
-		'fehca_desde',
+		'fecha_desde',
 		'fecha_hasta',
 		'motivo',
 		);

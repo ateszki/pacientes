@@ -33,7 +33,7 @@ class Paciente extends Maestro {
                         'tipo_documento' => 'Required|In:CI,DU,LE,LC,PS',
 			'nro_documento' => 'Required|integer',
                         'sexo' => 'Required|In:M,F,m,f',
-			'iva_id' => 'Required|integer',
+			'iva_id' => 'Required|integer|exists:iva,id',
 			'cuit' => 'max:11',
 			'domicilio' => 'max:50',
 			'localidad' => 'max:50',

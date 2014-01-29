@@ -87,4 +87,82 @@ class AgendaController extends MaestroController {
 		200
 	    );
 	}
+
+	public function cambiaEfector($id,$efector_id){
+		try {
+			$a = Agenda::findOrFail($id);
+			$a->odontologo_efector_id = $efector_id;
+			if ($a->save()){
+				    return Response::json(array(
+					'error' => false,
+					'listado' => $a->toArray()),
+					200
+				    );
+			} else {
+				    return Response::json(array(
+					'error' => true,
+						'mensaje' => HerramientasController::getErrores($a->validator),
+						'listado'=>$a->toArray(),
+						),200);
+			}
+			} catch (Exception $e){
+						return Response::json(array(
+						'error' => true,
+						'mensaje' => $e->getMessage()),
+						200
+					    );
+			}
+	}
+
+	public function deshabilitarTurnos($id){
+		try {
+			$a = Agenda::findOrFail($id);
+			$a->habilitado_turnos = 0;
+			if ($a->save()){
+				    return Response::json(array(
+					'error' => false,
+					'listado' => $a->toArray()),
+					200
+				    );
+			} else {
+				    return Response::json(array(
+					'error' => true,
+						'mensaje' => HerramientasController::getErrores($a->validator),
+						'listado'=>$a->toArray(),
+						),200);
+			}
+			} catch (Exception $e){
+						return Response::json(array(
+						'error' => true,
+						'mensaje' => $e->getMessage()),
+						200
+					    );
+			}
+	}
+
+	public function habilitarTurnos($id){
+		try {
+			$a = Agenda::findOrFail($id);
+			$a->habilitado_turnos = 1;
+			if ($a->save()){
+				    return Response::json(array(
+					'error' => false,
+					'listado' => $a->toArray()),
+					200
+				    );
+			} else {
+				    return Response::json(array(
+					'error' => true,
+						'mensaje' => HerramientasController::getErrores($a->validator),
+						'listado'=>$a->toArray(),
+						),200);
+			}
+			} catch (Exception $e){
+						return Response::json(array(
+						'error' => true,
+						'mensaje' => $e->getMessage()),
+						200
+					    );
+			}
+	}
 }
