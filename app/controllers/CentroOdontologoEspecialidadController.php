@@ -143,7 +143,7 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 				->where('especialidad_id',$params['especialidad_id'])->get();
 		$turnos = array();
 		foreach ($coes as $coe){
-			$agendas = $coe->agendas()->where('fecha','=',$params["fecha"])->get();
+			$agendas = $coe->agendas()->where('habilitado_turnos','=',1)->where('fecha','=',$params["fecha"])->get();
 			foreach ($agendas as $a){
 				$ts = $a->vistaTurnos();
 				$turnos = array_merge($turnos,$ts);	
