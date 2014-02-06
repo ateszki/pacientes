@@ -136,13 +136,40 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 	}
 
 
+	public function observacionesAgenda(){
+		$params = Input::all();
+		$dow = array('Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado');
+		$coes = CentroOdontologoEspecialidad::where('odontologo_id',$params['odontologo_id'])
+				->where('centro_id',$params['centro_id'])
+				->where('especialidad_id',$params['especialidad_id'])
+				->where('dia_semana',$dow[date('w',strtotime($params["fecha"]))] )
+				->get();
+		$observaciones = array();
+		foreach ($coes as $coe){
+			if(!empty($coe->observaciones)){
+				$observaciones[] = array("observacion"=>$coe->observaciones);
+			}
+		}		
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $observaciones,
+		),
+		200
+		    );
+
+	}
+
 	public function vistaTurnos(){
 		$params = Input::all();
 		$coes = CentroOdontologoEspecialidad::where('odontologo_id',$params['odontologo_id'])
 				->where('centro_id',$params['centro_id'])
 				->where('especialidad_id',$params['especialidad_id'])->get();
 		$turnos = array();
+		$observaciones = array();
 		foreach ($coes as $coe){
+			if(!empty($coe->observaciones)){
+				$observaciones[] = $coe->observaciones;
+			}
 			$agendas = $coe->agendas()->where('habilitado_turnos','=',1)->where('fecha','=',$params["fecha"])->get();
 			foreach ($agendas as $a){
 				$ts = $a->vistaTurnos();
@@ -151,7 +178,8 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		}		
 	    return Response::json(array(
 		'error' => false,
-		'listado' => $turnos),
+		'listado' => $turnos,
+		),
 		200
 	    );
 	}

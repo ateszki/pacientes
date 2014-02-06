@@ -255,7 +255,7 @@ $data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 		$modelo = $this->modelo->find($id);
 			$eliminado = $modelo->delete();
 			$this->eventoAuditar($modelo);
-			return Response::json(array('error'=>false,'listado'=>$eliminado),200);
+			return Response::json(array('error'=>false,'listado'=>$modelo->toArray()),200);
 		}catch(Exception $e){
 			 return Response::json(array(
                         'error'=>true,

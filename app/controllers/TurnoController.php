@@ -79,30 +79,42 @@ class TurnoController extends MaestroController {
 		return parent::destroy($id);
 	}
 	public function liberar($id){
-		$modelo = $this->modelo->find($id);
-		$data = array(
-		"estado" => 'L',
-		"paciente_prepaga_id" => null,
-		"motivo_turno_id" => null,
-		"piezas" => null,
-		"derivado_por" => null,
-		"observaciones" => null,
-		"user_id" => Auth::user()->id,
-		);
-		$modelo->fill($data);
-		if ($modelo->save() !== false){
-			$this->eventoAuditar($modelo);
+		try{
+			$modelo = $this->modelo->find($id);
+			//elimina si es entreturno
+			if($modelo->tipo_turno == 'E'){
+				return $this->destroy($id);
+			}
+			$data = array(
+			"estado" => 'L',
+			"paciente_prepaga_id" => null,
+			"motivo_turno_id" => null,
+			"piezas" => null,
+			"derivado_por" => null,
+			"observaciones" => null,
+			"user_id" => Auth::user()->id,
+			);
+			$modelo->fill($data);
+			if ($modelo->save() !== false){
+				$this->eventoAuditar($modelo);
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>array($modelo->toArray()),),
+				200);
+			}else {
+				
+				 return Response::json(array(
+				'error'=>true,
+				'mensaje' => HerramientasController::getErrores($modelo->validator),
+				'listado'=>array($modelo->toArray()),
+				),200);
+			}
+		} catch(Exception $e){
 			return Response::json(array(
-			'error'=>false,
-			'listado'=>array($modelo->toArray()),),
-			200);
-		}else {
-			
-			 return Response::json(array(
-                        'error'=>true,
-                        'mensaje' => HerramientasController::getErrores($modelo->validator),
-                        'listado'=>array($modelo->toArray()),
-                        ),200);
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			    );
 		}
 	}
 }

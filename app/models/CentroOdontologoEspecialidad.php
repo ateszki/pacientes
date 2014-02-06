@@ -16,6 +16,7 @@ class CentroOdontologoEspecialidad extends Maestro {
 		'duracion_turno',
 		'cant_max_entreturnos',
 		'habilitado',
+		'observaciones',
 		);
 
 
