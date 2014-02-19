@@ -137,6 +137,9 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 
 
 	public function observacionesAgenda(){
+		//$a = Route::currentRouteAction();
+		//$a = Route::getRoutes();
+		//dd($a);
 		$params = Input::all();
 		$dow = array('Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado');
 		$coes = CentroOdontologoEspecialidad::where('odontologo_id',$params['odontologo_id'])
