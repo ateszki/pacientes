@@ -84,7 +84,7 @@ class UserController extends MaestroController {
 		unset($data["apikey"]);
 		if( Auth::attempt($data)){
 			$key = Auth::user()->createSessionKey();
-			return Response::json(array('error'=>false,"listado"=>array('session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
+			return Response::json(array('error'=>false,"listado"=>array('id'=>Auth::user()->id,'nombre'=>Auth::user()->nombre,'session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
 		} else {
 			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
 		}

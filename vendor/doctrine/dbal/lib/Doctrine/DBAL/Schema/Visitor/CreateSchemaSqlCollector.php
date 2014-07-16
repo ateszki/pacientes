@@ -105,7 +105,11 @@ class CreateSchemaSqlCollector extends AbstractVisitor
      */
     private function getNamespace($asset)
     {
-        $namespace = $asset->getNamespaceName() ?: 'default';
+        $namespace = $asset->getNamespaceName();
+
+        if ( !isset($namespace)) {
+            $namespace = $this->platform->supportsSchemas() ? $this->platform->getDefaultSchemaName() : 'default';
+        }
 
         if ( !isset($this->createTableQueries[$namespace])) {
             $this->createTableQueries[$namespace] = array();
@@ -138,7 +142,7 @@ class CreateSchemaSqlCollector extends AbstractVisitor
         foreach (array_keys($this->createTableQueries) as $namespace) {
             if ($this->platform->supportsSchemas() && $this->platform->schemaNeedsCreation($namespace)) {
                 $query = $this->platform->getCreateSchemaSQL($namespace);
-                array_push($sql, $query);
+                $sql[] = $query;
             }
         }
 

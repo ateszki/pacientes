@@ -34,7 +34,7 @@ Route::filter('usuarioauth', function()
 	Auth::loginUsingId($u[0]->id);
 });
 
-Route::group(array('bafore' => 'apiauth'),function()
+Route::group(array('before' => 'apiauth'),function()
 {
 	Route::post('usuario/login','UserController@validar');	
 });
@@ -43,7 +43,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('consultorio/buscar','ConsultorioController@postBuscar');
 	Route::resource('consultorio', 'ConsultorioController');
 	
-	Route::get('odontologo/{id}/ausencias','OdontologoController@ver_ausencias');
+	Route::get('odontologo/{id}/ausencia-odontologo','OdontologoController@ver_ausencias');
 	Route::get('odontologo/{id}/centros-especialidades','OdontologoController@centros_especialidades');
 	Route::post('odontologo/buscar','OdontologoController@postBuscar');
 	Route::resource('odontologo', 'OdontologoController');
@@ -51,7 +51,8 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('tipo-observaciones-pacientes', 'TipoObservacionesController');
 
 
-	Route::resource('ausencias-odontologos', 'AusenciaOdontologoController');
+	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
+	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
 	Route::get('paciente/{paciente_id}/observaciones','PacienteController@observaciones_detalladas');
 	Route::get('paciente/{paciente_id}/prepaga','PacientePrepagaController@vista_detallada');

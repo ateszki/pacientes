@@ -7,9 +7,25 @@ class Maestro extends Eloquent {
 
 	public $rules = array();
 
+    // Override the parent method
+    public function newCollection(array $models = Array())
+    {
+        return new Extensions\CustomCollection($models);
+    }
 
+	public function toArrayFechas()
+	{
+	     $array = parent::toArray();
+	     $esquema = $this->getEsquema();
+	     foreach ($esquema as $col)
+		{
+		    if(strtolower(substr($col->Type,0,4)) == 'date'){
+			$array[$col->Field] = date('d/m/Y',strtotime($this->{$col->Field}));   
+		    }
+		}
+	     return $array;
+	}
 	public function isValid($id=null){
-
 		$this->validator =  Validator::make($this->toArray(), $this->getValidationRules($id));
 		return $this->validator->passes();
 	}

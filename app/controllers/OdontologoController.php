@@ -177,13 +177,15 @@ class OdontologoController extends MaestroController {
 	}
 
 	public function ver_ausencias($id){
-	    //$ce = Odontologo::find($id)->centrosEspecialidades()->with(array('Especialidad','Centro'))->get();
-	$ausencias = Odontologo::find($id)->ausencias()->get();
-	    return Response::json(array(
-		'error' => false,
-		'listado' => $ausencias),
-		200
-	    );
+		$params = Input::all();
+		$desde = (isset($params["desde"])&& !empty($params["desde"]))?$params["desde"]:date("Y-m-d");	
+		$hasta = (isset($params["hasta"])&& !empty($params["hasta"]))?$params["hasta"]:date("Y-m-d",strtotime($desde." +90 days"));	
+		$ausencias = Odontologo::find($id)->ausencias()->where("fecha_hasta",">=",$desde)->where("fecha_desde","<=",$hasta)->get();
+		    return Response::json(array(
+			'error' => false,
+			'listado' => $ausencias->toArrayFechas()),
+			200
+		    );
 
 	}
 }

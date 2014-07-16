@@ -1,6 +1,13 @@
-Version 0.9.4-dev
+Version 0.9.5-dev
 -----------------
 
+* Add `NodeTraverser::removeVisitor()` method, which removes a visitor from the node traverser. This also modifies the
+  corresponding `NodeTraverserInterface`.
+
+* Fix alias resolution in `NameResolver`: Class names are now correctly handled as case-insensitive.
+
+Version 0.9.4 (25.08.2013)
+--------------------------
 * [PHP 5.5] Add support for `ClassName::class`. This is parsed as an `Expr_ClassConstFetch` with `'class'` being the
   constant name.
 
@@ -28,6 +35,8 @@ Version 0.9.4-dev
 * Fix pretty printing of `include` expressions (precedence information was missing).
 
 * Fix "undefined index" notices when generating the expected tokens for a syntax error.
+
+* Improve performance of `PrettyPrinter` construction by no longer using the `uniqid()` function.
 
 Version 0.9.3 (22.11.2012)
 --------------------------

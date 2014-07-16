@@ -38,4 +38,7 @@ class Agenda extends Maestro {
                      ->where('turnos.agenda_id', '=', $this->id)
                      ->get();
 	}
+
+
 }
+
