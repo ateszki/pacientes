@@ -68,7 +68,7 @@ return array(
     'Extensions\\CustomCollection' => $baseDir . '/app/extensions/customCollection.php',
     'FkPacienteObservaciones' => $baseDir . '/app/database/migrations/2013_12_04_124615_fk_paciente_observaciones.php',
     'FksPacienteObs' => $baseDir . '/app/database/migrations/2014_01_16_160755_fks_paciente_obs.php',
-    'Group' => $baseDir . '/app/models/Group.php',
+    'Group' => $baseDir . '/app/models/Role.php',
     'HerramientasController' => $baseDir . '/app/controllers/HerramientasController.php',
     'HomeController' => $baseDir . '/app/controllers/HomeController.php',
     'IlluminateQueueClosure' => $vendorDir . '/laravel/framework/src/Illuminate/Queue/IlluminateQueueClosure.php',
