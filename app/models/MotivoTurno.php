@@ -13,6 +13,9 @@ class MotivoTurno extends Maestro {
                         'motivo' => 'Required|Min:2',
                 );
 
+	public function especialidades(){
+		return $this->hasMany('Especialidad');
+	}
 
 	
 }

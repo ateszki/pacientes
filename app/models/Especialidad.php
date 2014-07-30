@@ -19,6 +19,9 @@ class Especialidad extends Maestro {
 			'requiere_derivacion' => 'Required|integer|in:0,1',
                 );
 
+	public function motivosTurnos(){
+		return $this->hasMany('MotivoTurno');
+	}
 
 	
 }

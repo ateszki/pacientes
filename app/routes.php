@@ -73,6 +73,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('centro/buscar','CentroController@postBuscar');
 	Route::resource('centro', 'CentroController');
 	
+	Route::get('especialidad/{especialidad_id}/motivos-turnos','EspecialidadMotivoTurnoController@vista_detallada');
 	Route::get('especialidad/{especialidad_id}/turnos-libres','EspecialidadController@turnos_libres');
 	Route::post('especialidad/buscar','EspecialidadController@postBuscar');
 	Route::resource('especialidad', 'EspecialidadController');
