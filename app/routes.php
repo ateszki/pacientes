@@ -77,6 +77,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('especialidad/{especialidad_id}/turnos-libres','EspecialidadController@turnos_libres');
 	Route::post('especialidad/buscar','EspecialidadController@postBuscar');
 	Route::resource('especialidad', 'EspecialidadController');
+
+	Route::resource('especialidad-motivo-turno', 'EspecialidadMotivoTurnoController');
+
 	
 	Route::get('centro-odontologo-especialidad/{id}/agendas','CentroOdontologoEspecialidadController@agendas');
 	Route::get('centro-odontologo-especialidad/turnos','CentroOdontologoEspecialidadController@vistaTurnos');
