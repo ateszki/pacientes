@@ -296,7 +296,8 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 				} elseif ($coe->existeAgenda($fecha_ini)){
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
-				} elseif ($coe->odontologo()->existeAusencia($fecha_ini) > 0){
+				//} elseif ($coe->odontologo()->existeAusencia($fecha_ini) > 0){
+				} elseif ($odontologo->existeAusencia($fecha_ini) > 0){
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
 				} else {	
