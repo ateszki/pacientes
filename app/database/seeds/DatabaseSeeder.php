@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder {
 	public function run()
 	{
 		Eloquent::unguard();
-
+		$this->call('FeriadoTableSeeder');
 		$this->call('UserTableSeeder');
 		$this->call('OdontologoTableSeeder');
 		$this->call('ProvinciaTableSeeder');
@@ -115,5 +115,79 @@ class ProvinciaTableSeeder extends Seeder {
          ));
 	}
       }
+
+
 }
 
+ 
+class FeriadoTableSeeder extends Seeder {
+    public function run()
+    {
+        DB::table('feriados')->delete();
+$feriados = array(
+"01/01/2014"=>"Año Nuevo"
+,"03/03/2014"=>"Carnaval"
+,"04/03/2014"=>"Carnaval"
+,"24/03/2014"=>"Memoria por la verdad y la justicia."
+,"02/04/2014"=>"Caidos en la Guerra de Malvinas"
+,"18/04/2014"=>"Viernes Santo"
+,"01/05/2014"=>"Día del trabajador"
+,"02/05/2014"=>"Feriado Puente"
+,"25/05/2014"=>"Revolución de Mayo"
+,"20/06/2014"=>"Inmortalidad de Manuel Belgrano"
+,"09/07/2014"=>"Día de la Independencia"
+,"18/08/2014"=>"Inmortalidad de Gral. San Martín"
+,"13/10/2014"=>"Respeto por la Diversidad Cultural"
+,"24/11/2014"=>"Soberanía Nacional"
+,"08/12/2014"=>"Inmaculada Concepción de María"
+,"25/12/2014"=>"Navidad"
+,"26/12/2014"=>"Feriado Puente"
+,"31/12/2014"=>"No Trabajamos."
+,"01/01/2015"=>"Año Nuevo"
+,"03/03/2015"=>"Carnaval"
+,"04/03/2015"=>"Carnaval"
+,"23/03/2015"=>"Feriado Puente"
+,"24/03/2015"=>"Memoria por la verdad y la justicia."
+,"02/04/2015"=>"Caidos en la Guerra de Malvinas"
+,"18/04/2015"=>"Viernes Santo"
+,"01/05/2015"=>"Día del trabajador"
+,"25/05/2015"=>"Revolución de Mayo"
+,"20/06/2015"=>"Inmortalidad de Manuel Belgrano"
+,"09/07/2015"=>"Día de la Independencia"
+,"18/08/2015"=>"Inmortalidad de Gral. San Martín"
+,"13/10/2015"=>"Respeto por la Diversidad Cultural"
+,"24/11/2015"=>"Soberanía Nacional"
+,"07/12/2015"=>"Feriado Puente"
+,"08/12/2015"=>"Inmaculada Concepción de María"
+,"25/12/2015"=>"Navidad"
+,"31/12/2015"=>"No Trabajamos."
+,"01/01/2016"=>"Año Nuevo"
+,"03/03/2016"=>"Carnaval"
+,"04/03/2016"=>"Carnaval"
+,"24/03/2016"=>"Memoria por la verdad y la justicia."
+,"02/04/2016"=>"Caidos en la Guerra de Malvinas"
+,"18/04/2016"=>"Viernes Santo"
+,"01/05/2016"=>"Día del trabajador"
+,"25/05/2016"=>"Revolución de Mayo"
+,"20/06/2016"=>"Inmortalidad de Manuel Belgrano"
+,"08/07/2016"=>"Feriado Puente"
+,"09/07/2016"=>"Día de la Independencia"
+,"18/08/2016"=>"Inmortalidad de Gral. San Martín"
+,"13/10/2016"=>"Respeto por la Diversidad Cultural"
+,"24/11/2016"=>"Soberanía Nacional"
+,"08/12/2016"=>"Inmaculada Concepción de María"
+,"09/12/2016"=>"Feriado Puente"
+,"25/12/2016"=>"Navidad"
+,"31/12/2016"=>"No Trabajamos."
+);
+
+foreach ($feriados as $fecha=>$feriado){
+	 Feriado::create(array(
+                'fecha' => substr($fecha,6,4)."-".substr($fecha,3,2)."-".substr($fecha,0,2),
+		'feriado' => $feriado,
+                'created_at' => new DateTime,
+                'updated_at' => new DateTime
+        ));
+}
+     }
+}
