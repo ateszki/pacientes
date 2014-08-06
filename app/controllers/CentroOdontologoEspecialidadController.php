@@ -290,7 +290,11 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 			$fecha_fin = date("Y-m-d",strtotime("+".$lapso." days", strtotime($fecha_ini)));
 			$agendas = array();
 			while (strtotime($fecha_ini) <= strtotime($fecha_fin)) {
-				if($dow[$coe->dia_semana] != date('w',strtotime($fecha_ini))){
+				$f = Feriado::esFeriado($fecha_ini);
+				if($f){
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				} elseif ($dow[$coe->dia_semana] != date('w',strtotime($fecha_ini))){
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
 				} elseif ($coe->existeAgenda($fecha_ini)){
