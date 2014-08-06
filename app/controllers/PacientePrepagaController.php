@@ -96,61 +96,96 @@ class PacientePrepagaController extends MaestroController {
 		$tipo = (isset($params["tipo"]) && !empty($params["tipo"]))?$params["tipo"]:"T";
 		$user_id = Auth::user()->id;
 		$paciente_prepaga = PacientePrepaga::findOrFail($paciente_prepaga_id);
-		//$turno = Turno::where('id','=',$turno_id)->first();
-		$turno = Turno::findorFail($turno_id);
-		//chequea entreturno
-		if($tipo == 'E'){
-			$otros_entreturnos = Turno::where('padre','=',$turno->id)->get();
-			$new_turno = new Turno();			
-			$new_turno->fill($turno->toArray());
-			$new_turno->id = null;
-			$new_turno->padre = $turno->id;
-			$turno = $new_turno;
-			$turno->tipo_turno = 'E';
-			$desde = strtotime(substr($turno->hora_desde,0,2).":".substr($turno->hora_desde,-2));
-			$hasta = strtotime(substr($turno->hora_hasta,0,2).":".substr($turno->hora_hasta,-2));
-			if (count($otros_entreturnos)==0){
-				$n_desde = $desde + (($hasta - $desde)/2);
-				$turno->hora_desde = date('Hi',$n_desde);
-			} else {
-				$intervalo = ($hasta -$desde) / (2 + count($otros_entreturnos));
-				$n_desde = $desde + $intervalo;
-				foreach ($otros_entreturnos as $entreturno){
-					$entreturno->hora_desde = date('Hi',$n_desde);
-					$entreturno->save();
-					$n_desde += $intervalo; 
+		$turnos = explode(",",$turno_id);
+		
+		//si son muchos turnos
+		if (count($turnos) > 1){
+			$objTurnos = Turno::whereIn('id',$turnos)->where('estado','L')->get();
+			if (count($objTurnos) == count($turnos)){
+				$affectedRows = Turno::whereIn('id',$turnos)->where('estado','L')->update(array('estado' => 'A','paciente_prepaga_id'=>$paciente_prepaga->id, 'user_id'=>$user_id));
+				if ($affectedRows == count($turnos)){
+				foreach($objTurnos as $cadaTurno)	{
+					$this->eventoAuditar($cadaTurno);
 				}
-				$turno->hora_desde =date('Hi',$n_desde);
-			}
-			$turno->estado = 'L';
-
-		}
-
-		//falta verificar turno bloqueado x mismo usuario
-		if($turno->estado == 'L'){
-			$turno->estado = 'A';
-			$turno->paciente_prepaga_id = $paciente_prepaga->id;
-			$turno->user_id = $user_id;
-			if ($turno->save()){
-			   $this->eventoAuditar($turno);
-				return Response::json(array(
-				'error'=>false,
-				'listado'=>array($turno->find($turno->id)->toArray())),
-				200);
+				   
+					return Response::json(array(
+					'error'=>false,
+					'listado'=>array($objTurnos->toArray())),
+					200);
+				} else {
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => 'No se pudieron asignar los turnos',
+					'envio'=>$params,
+					),200);
+	
+				}
+				
 			} else {
-				return Response::json(array(
-				'error'=>true,
-				'mensaje' => HerramientasController::getErrores($turno->validator),
-				'envio'=>$params,
-				),200);
-
+			    return Response::json(array(
+				'error' => true,
+				'mensaje' => "alguno de los turnos está tomado"),
+				200
+			    );
 			}
 		} else {
-		    return Response::json(array(
-			'error' => true,
-			'mensaje' => "turno tomado"),
-			200
-		    );
+			//es un solo turno
+			$turno = Turno::findorFail($turno_id);
+			//chequea entreturno
+			if($tipo == 'E'){
+				$otros_entreturnos = Turno::where('padre','=',$turno->id)->get();
+				$new_turno = new Turno();			
+				$new_turno->fill($turno->toArray());
+				$new_turno->id = null;
+				$new_turno->padre = $turno->id;
+				$turno = $new_turno;
+				$turno->tipo_turno = 'E';
+				$desde = strtotime(substr($turno->hora_desde,0,2).":".substr($turno->hora_desde,-2));
+				$hasta = strtotime(substr($turno->hora_hasta,0,2).":".substr($turno->hora_hasta,-2));
+				if (count($otros_entreturnos)==0){
+					$n_desde = $desde + (($hasta - $desde)/2);
+					$turno->hora_desde = date('Hi',$n_desde);
+				} else {
+					$intervalo = ($hasta -$desde) / (2 + count($otros_entreturnos));
+					$n_desde = $desde + $intervalo;
+					foreach ($otros_entreturnos as $entreturno){
+						$entreturno->hora_desde = date('Hi',$n_desde);
+						$entreturno->save();
+						$n_desde += $intervalo; 
+					}
+					$turno->hora_desde =date('Hi',$n_desde);
+				}
+				$turno->estado = 'L';
+	
+			}
+	
+			//falta verificar turno bloqueado x mismo usuario
+			if($turno->estado == 'L'){
+				$turno->estado = 'A';
+				$turno->paciente_prepaga_id = $paciente_prepaga->id;
+				$turno->user_id = $user_id;
+				if ($turno->save()){
+				   $this->eventoAuditar($turno);
+					return Response::json(array(
+					'error'=>false,
+					'listado'=>array($turno->find($turno->id)->toArray())),
+					200);
+				} else {
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => HerramientasController::getErrores($turno->validator),
+					'envio'=>$params,
+					),200);
+	
+				}
+			} else {
+			    return Response::json(array(
+				'error' => true,
+				'mensaje' => "turno tomado"),
+				200
+			    );
+			}
+			
 		}
 	}
 }
