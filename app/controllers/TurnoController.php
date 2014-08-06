@@ -80,34 +80,60 @@ class TurnoController extends MaestroController {
 	}
 	public function liberar($id){
 		try{
-			$modelo = $this->modelo->find($id);
-			//elimina si es entreturno
-			if($modelo->tipo_turno == 'E'){
-				return $this->destroy($id);
-			}
-			$data = array(
-			"estado" => 'L',
-			"paciente_prepaga_id" => null,
-			"motivo_turno_id" => null,
-			"piezas" => null,
-			"derivado_por" => null,
-			"observaciones" => null,
-			"user_id" => Auth::user()->id,
-			);
-			$modelo->fill($data);
-			if ($modelo->save() !== false){
-				$this->eventoAuditar($modelo);
-				return Response::json(array(
-				'error'=>false,
-				'listado'=>array($modelo->toArray()),),
-				200);
-			}else {
+			$turnos = explode(",",$id);
+			
+			//si son muchos turnos
+			if (count($turnos) > 1){
+				$affectedRows = Turno::whereIn('id',$turnos)->where('estado','A')->update(array('estado' => 'L','paciente_prepaga_id'=>NULL, 'user_id'=>Auth::user()->id,"motivo_turno_id"=>NULL,'piezas'=>NULL,'derivado_por'=>NULL,'observaciones'=>NULL));
+				if ($affectedRows == count($turnos)){
+					$objTurnos = Turno::whereIn('id',$turnos)->where('estado','L')->get();	
+					foreach($objTurnos as $cadaTurno)	{
+						$this->eventoAuditar($cadaTurno);
+					}
+					   
+						return Response::json(array(
+						'error'=>false,
+						'listado'=>array(Turno::whereIn('id',array_slice($turnos,0,1))->where('estado','L')->get())),
+						200);
+				} else {
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => 'No se pudieron desasignar los turnos',
+					'envio'=>$params,
+					),200);
+	
+				}
 				
-				 return Response::json(array(
-				'error'=>true,
-				'mensaje' => HerramientasController::getErrores($modelo->validator),
-				'listado'=>array($modelo->toArray()),
-				),200);
+			} else {
+				$modelo = $this->modelo->find($id);
+				//elimina si es entreturno
+				if($modelo->tipo_turno == 'E'){
+					return $this->destroy($id);
+				}
+				$data = array(
+				"estado" => 'L',
+				"paciente_prepaga_id" => null,
+				"motivo_turno_id" => null,
+				"piezas" => null,
+				"derivado_por" => null,
+				"observaciones" => null,
+				"user_id" => Auth::user()->id,
+				);
+				$modelo->fill($data);
+				if ($modelo->save() !== false){
+					$this->eventoAuditar($modelo);
+					return Response::json(array(
+					'error'=>false,
+					'listado'=>array($modelo->toArray()),),
+					200);
+				}else {
+					
+					 return Response::json(array(
+					'error'=>true,
+					'mensaje' => HerramientasController::getErrores($modelo->validator),
+					'listado'=>array($modelo->toArray()),
+					),200);
+				}
 			}
 		} catch(Exception $e){
 			return Response::json(array(
