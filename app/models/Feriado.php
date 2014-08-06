@@ -17,6 +17,6 @@ class Feriado extends Maestro {
 
 	public function esFeriado($fecha){
 		$f = $this->where('fecha','=',$fecha)->get();
-		return ($f);
+		return (count($f)> 0);
 	}
 }
