@@ -107,6 +107,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('iva/buscar','IvaController@postBuscar');
 	Route::resource('iva', 'IvaController');
 
+	Route::post('tabla/buscar','TablaController@postBuscar');
+	Route::resource('tabla', 'TablaController');
+
 	Route::resource('motivo-turno', 'MotivoTurnoController');
 
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
