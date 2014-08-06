@@ -90,10 +90,10 @@ class TurnoController extends MaestroController {
 					foreach($objTurnos as $cadaTurno)	{
 						$this->eventoAuditar($cadaTurno);
 					}
-					   
+					  $turno = Turno::findOrFail($turnos[0]); 
 						return Response::json(array(
 						'error'=>false,
-						'listado'=>array(Turno::whereIn('id',array_slice($turnos,0,1))->get())),
+						'listado'=>array($turno->find($turno->id)->toArray())),
 						200);
 				} else {
 					return Response::json(array(
