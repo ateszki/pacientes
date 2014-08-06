@@ -93,13 +93,13 @@ class TurnoController extends MaestroController {
 					   
 						return Response::json(array(
 						'error'=>false,
-						'listado'=>array(Turno::whereIn('id',array_slice($turnos,0,1))->where('estado','L')->get())),
+						'listado'=>array(Turno::whereIn('id',array_slice($turnos,0,1))->get())),
 						200);
 				} else {
 					return Response::json(array(
 					'error'=>true,
 					'mensaje' => 'No se pudieron desasignar los turnos',
-					'envio'=>$params,
+					'envio'=>$turnos,
 					),200);
 	
 				}
