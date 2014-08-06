@@ -55,10 +55,12 @@ class Prepaga extends Maestro {
 	public function pacientes(){
 		return $this->belongsToMany('Paciente');
 	}	
+/*
 	public function getFechaAltaAttribute($value){
 		return (!empty($value))?date("d/m/Y",strtotime($value)):'0000-00-00';
 	}
 	public function getFechaBajaAttribute($value){
 		return (!empty($value))?date("d/m/Y",strtotime($value)):'0000-00-00';
 	}
+*/
 }
