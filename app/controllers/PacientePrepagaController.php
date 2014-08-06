@@ -110,7 +110,7 @@ class PacientePrepagaController extends MaestroController {
 				   
 					return Response::json(array(
 					'error'=>false,
-					'listado'=>array(Turno::whereIn('id',$turnos)->where('estado','A')->get()->toArray())),
+					'listado'=>array(Turno::whereIn('id',$turnos[0])->where('estado','A')->get()->toArray())),
 					200);
 				} else {
 					return Response::json(array(
