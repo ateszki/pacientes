@@ -342,9 +342,77 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		}
 	}
 
-	public function generarTurnos(){
+	public function generarAgenda($id,$fecha){
+		$errores = false;
+		$agendas_general = 0;
+		$dow = array('Domingo'=>0,'Lunes'=>1,'Martes'=>2,'Miercoles'=>3,'Jueves'=>4,'Viernes'=>5,'Sabado'=>6);
+	    		$coe = $this->modelo->find($id);
+			
+			$fecha_ini = $fecha;	
+			$especialidad = $coe->especialidad;
+			$odontologo = $coe->odontologo;
+			$centro = $coe->centro;
+			$lapso = 1;
+			$fecha_fin = date("Y-m-d",strtotime("+".$lapso." days", strtotime($fecha_ini)));
+			$agendas = array();
+			while (strtotime($fecha_ini) <= strtotime($fecha_fin)) {
+				$f = new Feriado;
+				
+				if($f->esFeriado($fecha_ini)){
+				//	echo "Feriado".$fecha_ini;
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				} elseif ($dow[$coe->dia_semana] != date('w',strtotime($fecha_ini))){
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				} elseif ($coe->existeAgenda($fecha_ini)){
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				//} elseif ($coe->odontologo()->existeAusencia($fecha_ini) > 0){
+				} elseif ($odontologo->existeAusencia($fecha_ini) > 0){
+					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+					continue;
+				} else {	
+					$agenda = new Agenda;
+					$agenda->centro_odontologo_especialidad_id = $coe->id;
+					$agenda->fecha = $fecha_ini;
+					$agenda->odontologo_efector_id = $odontologo->id;
+					$agenda->habilitado_turnos = 1;
+					$agenda->created_at = date("Y-m-d H:i:s");
+					$agenda->updated_at = date("Y-m-d H:i:s");
+					$agendas[] = $agenda; 
+				}
+				$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
+			}
+			$err_agenda = true;
+			$agendas_general += count($agendas);
+			if(count($agendas)){$err_agenda = $agenda->save();}
+			if(!$err_agenda){$errores = true;}	
+		if($agendas_general == 0){
+			return json_encode(array(
+			'error' => true,
+			'mensaje' => "No hay agendas para generar"));
+		}
+		$t = $this->generarTurnos($agenda->id);
+		if(!$t){$errores = true;}
+		if($errores){
+			return json_encode(array(
+			'error' => true,
+			'mensaje' => "Se produjeron errores al generar las agendas",
+			));
+		} else {
+			return json_encode(array(
+			'error' => false,
+			'mensaje' => "Se generaron las agendas"));
+		}
+	}
+	public function generarTurnos($agenda_id = NULL){
 		$errores = true;
-		$agendas = Agenda::whereNotIn('id',function($query){$query->select('agenda_id')->from('turnos');})->where('habilitado_turnos','=',1)->get();	
+		if (empty($agenda_id)){
+			$agendas = Agenda::whereNotIn('id',function($query){$query->select('agenda_id')->from('turnos');})->where('habilitado_turnos','=',1)->get();
+		} else {
+			$agendas = Agenda::where('id',$agenda_id)->get();
+		}	
 		foreach ($agendas as $agenda){
 			$coe = $agenda->centroOdontologoEspecialidad;
 			$horario_desde = date('H:i',strtotime(substr_replace($coe->horario_desde,':',2,0)));

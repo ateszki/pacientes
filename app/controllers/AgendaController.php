@@ -76,7 +76,30 @@ class AgendaController extends MaestroController {
 	 */
 	public function destroy($id)
 	{
-		return parent::destroy($id);
+	    try{	//
+			$modelo = $this->modelo->find($id);
+			//turnos asignados
+			$ta = $modelo->turnos()->where('estado','A')->get();
+			if (count($ta)>0){
+			    return Response::json(array(
+                            'error'=>true,
+                            'mensaje' => 'No se puede eliminar la agenda porque tiene turnos asignados',
+                            'listado'=>$modelo->toArray(),
+                          ),200);
+			} else {
+			  $affected_rows = Turno::where('agenda_id',$modelo->id)->delete();
+			  $this->eventoAuditar($modelo);
+			  $eliminado = $modelo->delete();
+			  $this->eventoAuditar($modelo);
+			  return Response::json(array('error'=>false,'listado'=>$modelo->toArray()),200);
+			}
+		}catch(Exception $e){
+			 return Response::json(array(
+                        'error'=>true,
+                        'mensaje' => $e->getMessage(),
+                        'listado'=>$modelo->toArray(),
+                        ),200);
+		}
 	}
 	
 	public function vistaTurnos($id){
