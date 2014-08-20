@@ -93,9 +93,7 @@ class CtacteController extends MaestroController {
 		unset($new["items"]);
 		$pagos = $new["pago"]; 
 		unset($new["pago"]);
-		$new["user_id"] = Auth::user()->user_id;
-		var_dump($new);
-		die();
+		$new["user_id"] = Auth::user()->id;
 		$modelo_ctacte = new Ctacte();
 		$ctacte = $modelo_ctacte->create($new);
 		if ($ctacte->save()){
@@ -132,7 +130,7 @@ class CtacteController extends MaestroController {
 				DB::commit();
 				return Response::json(array(
 				'error'=>false,
-				'listado'=>array($catcte->toArray())),
+				'listado'=>array($ctacte->toArray())),
 				200);
 			} else {
 				DB::rollback();
