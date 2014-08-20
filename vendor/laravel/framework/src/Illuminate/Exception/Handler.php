@@ -57,6 +57,7 @@ class Handler {
 	 * @param  \Illuminate\Support\Contracts\ResponsePreparerInterface  $responsePreparer
 	 * @param  \Illuminate\Exception\ExceptionDisplayerInterface  $plainDisplayer
 	 * @param  \Illuminate\Exception\ExceptionDisplayerInterface  $debugDisplayer
+	 * @param  bool  $debug
 	 * @return void
 	 */
 	public function __construct(ResponsePreparerInterface $responsePreparer,
@@ -102,7 +103,7 @@ class Handler {
 	 */
 	protected function registerExceptionHandler()
 	{
-		set_exception_handler(array($this, 'handleException'));
+		set_exception_handler(array($this, 'handleUncaughtException'));
 	}
 
 	/**
@@ -123,14 +124,14 @@ class Handler {
 	 * @param  string  $file
 	 * @param  int     $line
 	 * @param  array   $context
+	 *
+	 * @throws \ErrorException
 	 */
-	public function handleError($level, $message, $file, $line, $context)
+	public function handleError($level, $message, $file = '', $line = 0, $context = array())
 	{
 		if (error_reporting() & $level)
 		{
-			$e = new ErrorException($message, $level, 0, $file, $line);
-
-			throw $e;
+			throw new ErrorException($message, 0, $level, $file, $line);
 		}
 	}
 
@@ -138,7 +139,7 @@ class Handler {
 	 * Handle an exception for the application.
 	 *
 	 * @param  \Exception  $exception
-	 * @return void
+	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
 	public function handleException($exception)
 	{
@@ -149,20 +150,24 @@ class Handler {
 		// type of exceptions to handled by a Closure giving great flexibility.
 		if ( ! is_null($response))
 		{
-			$response = $this->prepareResponse($response);
-
-			$response->send();
+			return $this->prepareResponse($response);
 		}
 
 		// If no response was sent by this custom exception handler, we will call the
 		// default exception displayer for the current application context and let
 		// it show the exception to the user / developer based on the situation.
-		else
-		{
-			$this->displayException($exception);
-		}
+		return $this->displayException($exception);
+	}
 
-		$this->bail();
+	/**
+	 * Handle an uncaught exception.
+	 *
+	 * @param  \Exception  $exception
+	 * @return void
+	 */
+	public function handleUncaughtException($exception)
+	{
+		$this->handleException($exception)->send();
 	}
 
 	/**
@@ -183,7 +188,7 @@ class Handler {
 
 			if ( ! $this->isFatal($type)) return;
 
-			$this->handleException(new FatalError($message, $type, 0, $file, $line));
+			$this->handleException(new FatalError($message, $type, 0, $file, $line))->send();
 		}
 	}
 
@@ -195,13 +200,13 @@ class Handler {
 	 */
 	protected function isFatal($type)
 	{
-        return in_array($type, array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE));
+		return in_array($type, array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE));
 	}
 
 	/**
 	 * Handle a console exception.
 	 *
-	 * @param  Exception  $exception
+	 * @param  \Exception  $exception
 	 * @return void
 	 */
 	public function handleConsole($exception)
@@ -212,7 +217,7 @@ class Handler {
 	/**
 	 * Handle the given exception.
 	 *
-	 * @param  Exception  $exception
+	 * @param  \Exception  $exception
 	 * @param  bool  $fromConsole
 	 * @return void
 	 */
@@ -255,7 +260,7 @@ class Handler {
 			// If this handler returns a "non-null" response, we will return it so it will
 			// get sent back to the browsers. Once the handler returns a valid response
 			// we will cease iterating through them and calling these other handlers.
-			if (isset($response) and ! is_null($response))
+			if (isset($response) && ! is_null($response))
 			{
 				return $response;
 			}
@@ -272,28 +277,28 @@ class Handler {
 	{
 		$displayer = $this->debug ? $this->debugDisplayer : $this->plainDisplayer;
 
-		$displayer->display($exception);
+		return $displayer->display($exception);
 	}
 
 	/**
 	 * Determine if the given handler handles this exception.
 	 *
-	 * @param  Closure    $handler
-	 * @param  Exception  $exception
+	 * @param  \Closure    $handler
+	 * @param  \Exception  $exception
 	 * @return bool
 	 */
 	protected function handlesException(Closure $handler, $exception)
 	{
 		$reflection = new ReflectionFunction($handler);
 
-		return $reflection->getNumberOfParameters() == 0 or $this->hints($reflection, $exception);
+		return $reflection->getNumberOfParameters() == 0 || $this->hints($reflection, $exception);
 	}
 
 	/**
 	 * Determine if the given handler type hints the exception.
 	 *
 	 * @param  ReflectionFunction  $reflection
-	 * @param  Exception  $exception
+	 * @param  \Exception  $exception
 	 * @return bool
 	 */
 	protected function hints(ReflectionFunction $reflection, $exception)
@@ -302,13 +307,13 @@ class Handler {
 
 		$expected = $parameters[0];
 
-		return ! $expected->getClass() or $expected->getClass()->isInstance($exception);
+		return ! $expected->getClass() || $expected->getClass()->isInstance($exception);
 	}
 
 	/**
 	 * Format an exception thrown by a handler.
 	 *
-	 * @param  Exception  $e
+	 * @param  \Exception  $e
 	 * @return string
 	 */
 	protected function formatException(\Exception $e)
@@ -326,7 +331,7 @@ class Handler {
 	/**
 	 * Register an application error handler.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return void
 	 */
 	public function error(Closure $callback)
@@ -337,7 +342,7 @@ class Handler {
 	/**
 	 * Register an application error handler at the bottom of the stack.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return void
 	 */
 	public function pushError(Closure $callback)
@@ -357,13 +362,13 @@ class Handler {
 	}
 
 	/**
-	 * Exit the application.
+	 * Determine if we are running in the console.
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	protected function bail()
+	public function runningInConsole()
 	{
-		exit(1);
+		return php_sapi_name() == 'cli';
 	}
 
 	/**

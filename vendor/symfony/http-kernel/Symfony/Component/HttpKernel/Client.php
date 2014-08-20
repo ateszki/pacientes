@@ -42,11 +42,11 @@ class Client extends BaseClient
      */
     public function __construct(HttpKernelInterface $kernel, array $server = array(), History $history = null, CookieJar $cookieJar = null)
     {
+        // These class properties must be set before calling the parent constructor, as it may depend on it.
         $this->kernel = $kernel;
+        $this->followRedirects = false;
 
         parent::__construct($server, $history, $cookieJar);
-
-        $this->followRedirects = false;
     }
 
     /**
@@ -143,7 +143,9 @@ EOF;
     {
         $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $request->getFiles(), $request->getServer(), $request->getContent());
 
-        $httpRequest->files->replace($this->filterFiles($httpRequest->files->all()));
+        foreach ($this->filterFiles($httpRequest->files->all()) as $key => $value) {
+            $httpRequest->files->set($key, $value);
+        }
 
         return $httpRequest;
     }
@@ -189,8 +191,6 @@ EOF;
                         true
                     );
                 }
-            } else {
-                $filtered[$key] = $value;
             }
         }
 

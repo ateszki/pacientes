@@ -21,7 +21,7 @@ class CacheBasedSessionHandler implements \SessionHandlerInterface {
 	/**
 	 * Create a new cache driven handler instance.
 	 *
-	 * @param  Illuminate\Cache\Repository  $cache
+	 * @param  \Illuminate\Cache\Repository  $cache
 	 * @param  int  $minutes
 	 * @return void
 	 */
@@ -52,7 +52,7 @@ class CacheBasedSessionHandler implements \SessionHandlerInterface {
 	 */
 	public function read($sessionId)
 	{
-		return $this->cache->get($sessionId) ?: '';
+		return $this->cache->get($sessionId, '');
 	}
 
 	/**

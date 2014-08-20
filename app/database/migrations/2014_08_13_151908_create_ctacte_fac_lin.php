@@ -12,7 +12,7 @@ class CreateCtacteFacLin extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ctactes', function(Blueprint $table)
+		Schema::create('ctactes_fac_lin', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->integer('ctacte_id')->unsigned();

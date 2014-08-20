@@ -6,6 +6,7 @@
 
 namespace Whoops\Handler;
 use Whoops\Handler\Handler;
+use Whoops\Exception\Formatter;
 
 /**
  * Catches an exception and converts it to a JSON
@@ -26,7 +27,7 @@ class JsonResponseHandler extends Handler
 
     /**
      * @param  bool|null $returnFrames
-     * @return null|bool
+     * @return bool|$this
      */
     public function addTraceToOutput($returnFrames = null)
     {
@@ -35,6 +36,7 @@ class JsonResponseHandler extends Handler
         }
 
         $this->returnFrames = (bool) $returnFrames;
+        return $this;
     }
 
     /**
@@ -52,7 +54,8 @@ class JsonResponseHandler extends Handler
 
     /**
      * Check, if possible, that this execution was triggered by an AJAX request.
-     * @param bool
+     *
+     * @return bool
      */
     private function isAjaxRequest()
     {
@@ -71,33 +74,15 @@ class JsonResponseHandler extends Handler
             return Handler::DONE;
         }
 
-        $exception = $this->getException();
-
         $response = array(
-            'error' => array(
-                'type'    => get_class($exception),
-                'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine()
-            )
+            'error' => Formatter::formatExceptionAsDataArray(
+                $this->getInspector(),
+                $this->addTraceToOutput()
+            ),
         );
 
-        if($this->addTraceToOutput()) {
-            $inspector = $this->getInspector();
-            $frames    = $inspector->getFrames();
-            $frameData = array();
-
-            foreach($frames as $frame) {
-                $frameData[] = array(
-                    'file'     => $frame->getFile(),
-                    'line'     => $frame->getLine(),
-                    'function' => $frame->getFunction(),
-                    'class'    => $frame->getClass(),
-                    'args'     => $frame->getArgs()
-                );
-            }
-
-            $response['error']['trace'] = $frameData;
+        if (\Whoops\Util\Misc::canSendHeaders()) {
+            header('Content-Type: application/json');
         }
 
         echo json_encode($response);

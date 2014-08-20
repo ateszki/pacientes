@@ -23,7 +23,9 @@ abstract class Grammar extends BaseGrammar {
 	{
 		$schema = $connection->getDoctrineSchemaManager();
 
-		$column = $connection->getDoctrineColumn($blueprint->getTable(), $command->from);
+		$table = $this->getTablePrefix().$blueprint->getTable();
+
+		$column = $connection->getDoctrineColumn($table, $command->from);
 
 		$tableDiff = $this->getRenamedDiff($blueprint, $command, $column, $schema);
 
@@ -151,6 +153,7 @@ abstract class Grammar extends BaseGrammar {
 	 * Get the primary key command if it exists on the blueprint.
 	 *
 	 * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+	 * @param  string  $name
 	 * @return \Illuminate\Support\Fluent|null
 	 */
 	protected function getCommandByName(Blueprint $blueprint, $name)
@@ -255,9 +258,11 @@ abstract class Grammar extends BaseGrammar {
 	 */
 	protected function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
 	{
-		$tableDiff = new TableDiff($blueprint->getTable());
+		$table = $this->getTablePrefix().$blueprint->getTable();
 
-		$tableDiff->fromTable = $schema->listTableDetails($blueprint->getTable());
+		$tableDiff = new TableDiff($table);
+
+		$tableDiff->fromTable = $schema->listTableDetails($table);
 
 		return $tableDiff;
 	}

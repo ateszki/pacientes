@@ -49,7 +49,7 @@ class Pivot extends Model {
 		// The pivot model is a "dynamic" model since we will set the tables dynamically
 		// for the instance. This allows it work for any intermediate tables for the
 		// many to many relationship that are defined by this developer's classes.
-		$this->setRawAttributes($attributes);
+		$this->setRawAttributes($attributes, true);
 
 		$this->setTable($table);
 
@@ -85,11 +85,21 @@ class Pivot extends Model {
 	 */
 	public function delete()
 	{
+		return $this->getDeleteQuery()->delete();
+	}
+
+	/**
+	 * Get the query builder for a delete operation on the pivot.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	protected function getDeleteQuery()
+	{
 		$foreign = $this->getAttribute($this->foreignKey);
 
 		$query = $this->newQuery()->where($this->foreignKey, $foreign);
 
-		return $query->where($this->otherKey, $this->getAttribute($this->otherKey))->delete();
+		return $query->where($this->otherKey, $this->getAttribute($this->otherKey));
 	}
 
 	/**
@@ -117,7 +127,7 @@ class Pivot extends Model {
 	 *
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
-	 * @return \Illuminate\Database\Eloquent\Relations\Pivot
+	 * @return $this
 	 */
 	public function setPivotKeys($foreignKey, $otherKey)
 	{

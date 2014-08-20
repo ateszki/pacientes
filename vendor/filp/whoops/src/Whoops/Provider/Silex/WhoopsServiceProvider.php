@@ -9,13 +9,14 @@ use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 use Silex\ServiceProviderInterface;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use RuntimeException;
 
 class WhoopsServiceProvider implements ServiceProviderInterface
 {
     /**
-     * @see Silex\ServiceProviderInterface::register
-     * @param  Silex\Application $app
+     * @param Application $app
      */
     public function register(Application $app)
     {
@@ -31,6 +32,7 @@ class WhoopsServiceProvider implements ServiceProviderInterface
         // instance, and working with it to add new data tables
         $app['whoops.silex_info_handler'] = $app->protect(function() use($app) {
             try {
+                /** @var Request $request */
                 $request = $app['request'];
             } catch (RuntimeException $e) {
                 // This error occurred too early in the application's life
@@ -38,8 +40,11 @@ class WhoopsServiceProvider implements ServiceProviderInterface
                 return;
             }
 
+            /** @var PrettyPageHandler $errorPageHandler */
+            $errorPageHandler = $app["whoops.error_page_handler"];
+
             // General application info:
-            $app['whoops.error_page_handler']->addDataTable('Silex Application', array(
+            $errorPageHandler->addDataTable('Silex Application', array(
                 'Charset'          => $app['charset'],
                 'Locale'           => $app['locale'],
                 'Route Class'      => $app['route_class'],
@@ -48,7 +53,7 @@ class WhoopsServiceProvider implements ServiceProviderInterface
             ));
 
             // Request info:
-            $app['whoops.error_page_handler']->addDataTable('Silex Application (Request)', array(
+            $errorPageHandler->addDataTable('Silex Application (Request)', array(
                 'URI'         => $request->getUri(),
                 'Request URI' => $request->getRequestUri(),
                 'Path Info'   => $request->getPathInfo(),
@@ -65,12 +70,22 @@ class WhoopsServiceProvider implements ServiceProviderInterface
 
         $app['whoops'] = $app->share(function() use($app) {
             $run = new Run;
+            $run->allowQuit(false);
             $run->pushHandler($app['whoops.error_page_handler']);
             $run->pushHandler($app['whoops.silex_info_handler']);
             return $run;
         });
 
-        $app->error(array($app['whoops'], Run::EXCEPTION_HANDLER));
+        $app->error(function($e) use ($app){
+            $method = Run::EXCEPTION_HANDLER;
+
+            ob_start();
+            $app['whoops']->$method($e);
+            $response = ob_get_clean();
+
+            return new Response($response, 500);
+        });
+
         $app['whoops']->register();
     }
 

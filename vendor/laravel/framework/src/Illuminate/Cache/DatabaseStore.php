@@ -71,7 +71,9 @@ class DatabaseStore implements StoreInterface {
 
 			if (time() >= $cache->expiration)
 			{
-				return $this->forget($key);
+				$this->forget($key);
+
+				return null;
 			}
 
 			return $this->encrypter->decrypt($cache->value);
@@ -113,6 +115,8 @@ class DatabaseStore implements StoreInterface {
 	 * @param  string  $key
 	 * @param  mixed   $value
 	 * @return void
+	 *
+	 * @throws \LogicException
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -125,10 +129,12 @@ class DatabaseStore implements StoreInterface {
 	 * @param  string  $key
 	 * @param  mixed   $value
 	 * @return void
+	 *
+	 * @throws \LogicException
 	 */
 	public function decrement($key, $value = 1)
 	{
-		throw new \LogicException("Increment operations not supported by this driver.");
+		throw new \LogicException("Decrement operations not supported by this driver.");
 	}
 
 	/**

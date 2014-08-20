@@ -48,7 +48,7 @@ class ApcWrapper {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return array|bool
+	 * @return int|bool
 	 */
 	public function increment($key, $value)
 	{
@@ -56,11 +56,11 @@ class ApcWrapper {
 	}
 
 	/**
-	 * Decremenet the value of an item in the cache.
+	 * Decrement the value of an item in the cache.
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return array|bool
+	 * @return int|bool
 	 */
 	public function decrement($key, $value)
 	{

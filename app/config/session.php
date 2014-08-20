@@ -122,4 +122,5 @@ return array(
 
 	'domain' => 'pacientes.consulmed.com.ar',
 
+	'expire_on_close' => false,
 );

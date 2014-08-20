@@ -2,7 +2,6 @@
 
 use Closure;
 use Illuminate\Database\Connection;
-use Illuminate\Database\Schema\Grammars\Grammar;
 
 class Builder {
 
@@ -19,6 +18,13 @@ class Builder {
 	 * @var \Illuminate\Database\Schema\Grammars\Grammar
 	 */
 	protected $grammar;
+
+	/**
+	 * The Blueprint resolver callback.
+	 *
+	 * @var \Closure
+	 */
+	protected $resolver;
 
 	/**
 	 * Create a new database Schema manager.
@@ -56,18 +62,31 @@ class Builder {
 	 */
 	public function hasColumn($table, $column)
 	{
-		$schema = $this->connection->getDoctrineSchemaManager();
+		$column = strtolower($column);
 
-		$columns = array_keys(array_change_key_case($schema->listTableColumns($table)));
+		return in_array($column, array_map('strtolower', $this->getColumnListing($table)));
+	}
 
-		return in_array(strtolower($column), $columns);
+	/**
+	 * Get the column listing for a given table.
+	 *
+	 * @param  string  $table
+	 * @return array
+	 */
+	public function getColumnListing($table)
+	{
+		$table = $this->connection->getTablePrefix().$table;
+
+		$results = $this->connection->select($this->grammar->compileColumnExists($table));
+
+		return $this->connection->getPostProcessor()->processColumnListing($results);
 	}
 
 	/**
 	 * Modify a table on the schema.
 	 *
-	 * @param  string   $table
-	 * @param  Closure  $callback
+	 * @param  string    $table
+	 * @param  \Closure  $callback
 	 * @return \Illuminate\Database\Schema\Blueprint
 	 */
 	public function table($table, Closure $callback)
@@ -78,8 +97,8 @@ class Builder {
 	/**
 	 * Create a new table on the schema.
 	 *
-	 * @param  string   $table
-	 * @param  Closure  $callback
+	 * @param  string    $table
+	 * @param  \Closure  $callback
 	 * @return \Illuminate\Database\Schema\Blueprint
 	 */
 	public function create($table, Closure $callback)
@@ -153,13 +172,20 @@ class Builder {
 	/**
 	 * Create a new command set with a Closure.
 	 *
-	 * @param  string   $table
-	 * @param  Closure  $callback
+	 * @param  string    $table
+	 * @param  \Closure  $callback
 	 * @return \Illuminate\Database\Schema\Blueprint
 	 */
 	protected function createBlueprint($table, Closure $callback = null)
 	{
-		return new Blueprint($table, $callback);
+		if (isset($this->resolver))
+		{
+			return call_user_func($this->resolver, $table, $callback);
+		}
+		else
+		{
+			return new Blueprint($table, $callback);
+		}
 	}
 
 	/**
@@ -176,13 +202,24 @@ class Builder {
 	 * Set the database connection instance.
 	 *
 	 * @param  \Illuminate\Database\Connection
-	 * @return \Illuminate\Database\Schema\Builder
+	 * @return $this
 	 */
 	public function setConnection(Connection $connection)
 	{
 		$this->connection = $connection;
 
 		return $this;
+	}
+
+	/**
+	 * Set the Schema Blueprint resolver callback.
+	 *
+	 * @param  \Closure  $resolver
+	 * @return void
+	 */
+	public function blueprintResolver(Closure $resolver)
+	{
+		$this->resolver = $resolver;
 	}
 
 }

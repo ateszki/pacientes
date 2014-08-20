@@ -1,8 +1,8 @@
 <?php
 
-class Group extends Maestro {
+class Role extends Maestro {
 
-	protected $table = 'groups'; 	
+	protected $table = 'roless'; 	
 
 	protected $fillable = array(
 		'role',

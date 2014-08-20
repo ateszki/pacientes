@@ -27,7 +27,7 @@ class FrameTest extends TestCase
 
     /**
      * @param  array $data
-     * @return Whoops\Exception\Frame
+     * @return Frame
      */
     private function getFrameInstance($data = null)
     {
@@ -205,5 +205,14 @@ class FrameTest extends TestCase
         $this->assertCount(1, $comments);
         $this->assertEquals($comments[0]["comment"], $commentText);
         $this->assertEquals($comments[0]["context"], $commentContext);
+    }
+
+    /**
+     * @covers Whoops\Exception\Frame::equals
+     */
+    public function testEquals(){
+        $frame1 = $this->getFrameInstance(array('line' => 1, 'file' => 'test-file.php'));
+        $frame2 = $this->getFrameInstance(array('line' => 1, 'file' => 'test-file.php'));
+        $this->assertTrue ($frame1->equals($frame2));
     }
 }

@@ -16,13 +16,6 @@ use Symfony\Component\Config\Resource\FileResource;
 
 class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    protected function setUp()
-    {
-        if (!class_exists('Symfony\Component\Config\Loader\Loader')) {
-            $this->markTestSkipped('The "Config" component is not available');
-        }
-    }
-
     public function testLoad()
     {
         $loader = new XliffFileLoader();
@@ -109,5 +102,13 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new XliffFileLoader();
         $loader->load(__DIR__.'/../fixtures/withdoctype.xlf', 'en', 'domain1');
+    }
+
+    public function testParseEmptyFile()
+    {
+        $loader = new XliffFileLoader();
+        $resource = __DIR__.'/../fixtures/empty.xlf';
+        $this->setExpectedException('Symfony\Component\Translation\Exception\InvalidResourceException', sprintf('Unable to load "%s":', $resource));
+        $loader->load($resource, 'en', 'domain1');
     }
 }

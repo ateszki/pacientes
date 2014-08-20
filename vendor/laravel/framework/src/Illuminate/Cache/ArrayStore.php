@@ -1,6 +1,6 @@
 <?php namespace Illuminate\Cache;
 
-class ArrayStore implements StoreInterface {
+class ArrayStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The array of stored values.
@@ -41,7 +41,7 @@ class ArrayStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -55,7 +55,7 @@ class ArrayStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -95,17 +95,6 @@ class ArrayStore implements StoreInterface {
 	public function flush()
 	{
 		$this->storage = array();
-	}
-
-	/**
-	 * Begin executing a new section operation.
-	 *
-	 * @param  string  $name
-	 * @return \Illuminate\Cache\Section
-	 */
-	public function section($name)
-	{
-		return new Section($this, $name);
 	}
 
 	/**

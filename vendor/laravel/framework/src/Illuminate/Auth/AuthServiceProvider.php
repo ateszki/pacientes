@@ -18,7 +18,7 @@ class AuthServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['auth'] = $this->app->share(function($app)
+		$this->app->bindShared('auth', function($app)
 		{
 			// Once the authentication service has actually been requested by the developer
 			// we will set a variable in the application indicating such. This helps us
@@ -28,7 +28,6 @@ class AuthServiceProvider extends ServiceProvider {
 			return new AuthManager($app);
 		});
 	}
-
 
 	/**
 	 * Get the services provided by the provider.

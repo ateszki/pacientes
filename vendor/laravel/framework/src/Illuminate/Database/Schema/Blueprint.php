@@ -39,7 +39,7 @@ class Blueprint {
 	 * Create a new schema blueprint.
 	 *
 	 * @param  string   $table
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return void
 	 */
 	public function __construct($table, Closure $callback = null)
@@ -103,7 +103,7 @@ class Blueprint {
 	 */
 	protected function addImpliedCommands()
 	{
-		if (count($this->columns) > 0 and ! $this->creating())
+		if (count($this->columns) > 0 && ! $this->creating())
 		{
 			array_unshift($this->commands, $this->createCommand('add'));
 		}
@@ -361,6 +361,18 @@ class Blueprint {
 	}
 
 	/**
+	 * Create a new char column on the table.
+	 *
+	 * @param  string  $column
+	 * @param  int  $length
+	 * @return \Illuminate\Support\Fluent
+	 */
+	public function char($column, $length = 255)
+	{
+		return $this->addColumn('char', $column, compact('length'));
+	}
+
+	/**
 	 * Create a new string column on the table.
 	 *
 	 * @param  string  $column
@@ -435,33 +447,39 @@ class Blueprint {
 	 * Create a new medium integer column on the table.
 	 *
 	 * @param  string  $column
+	 * @param  bool  $autoIncrement
+	 * @param  bool  $unsigned
 	 * @return \Illuminate\Support\Fluent
 	 */
-	public function mediumInteger($column)
+	public function mediumInteger($column, $autoIncrement = false, $unsigned = false)
 	{
-		return $this->addColumn('mediumInteger', $column);
+		return $this->addColumn('mediumInteger', $column, compact('autoIncrement', 'unsigned'));
 	}
 
 	/**
 	 * Create a new tiny integer column on the table.
 	 *
 	 * @param  string  $column
+	 * @param  bool  $autoIncrement
+	 * @param  bool  $unsigned
 	 * @return \Illuminate\Support\Fluent
 	 */
-	public function tinyInteger($column)
+	public function tinyInteger($column, $autoIncrement = false, $unsigned = false)
 	{
-		return $this->addColumn('tinyInteger', $column);
+		return $this->addColumn('tinyInteger', $column, compact('autoIncrement', 'unsigned'));
 	}
 
 	/**
 	 * Create a new small integer column on the table.
 	 *
 	 * @param  string  $column
+	 * @param  bool  $autoIncrement
+	 * @param  bool  $unsigned
 	 * @return \Illuminate\Support\Fluent
 	 */
-	public function smallInteger($column)
+	public function smallInteger($column, $autoIncrement = false, $unsigned = false)
 	{
-		return $this->addColumn('smallInteger', $column);
+		return $this->addColumn('smallInteger', $column, compact('autoIncrement', 'unsigned'));
 	}
 
 	/**
@@ -469,7 +487,6 @@ class Blueprint {
 	 *
 	 * @param  string  $column
 	 * @param  bool  $autoIncrement
-	 * @param  bool  $unsigned
 	 * @return \Illuminate\Support\Fluent
 	 */
 	public function unsignedInteger($column, $autoIncrement = false)
@@ -482,7 +499,6 @@ class Blueprint {
 	 *
 	 * @param  string  $column
 	 * @param  bool  $autoIncrement
-	 * @param  bool  $unsigned
 	 * @return \Illuminate\Support\Fluent
 	 */
 	public function unsignedBigInteger($column, $autoIncrement = false)
@@ -510,7 +526,6 @@ class Blueprint {
 	 * @param  int|null	$total
 	 * @param  int|null $places
 	 * @return \Illuminate\Support\Fluent
-	 *
 	 */
 	public function double($column, $total = null, $places = null)
 	{
@@ -624,11 +639,11 @@ class Blueprint {
 	/**
 	 * Add a "deleted at" timestamp for the table.
 	 *
-	 * @return void
+	 * @return \Illuminate\Support\Fluent
 	 */
 	public function softDeletes()
 	{
-		$this->timestamp('deleted_at')->nullable();
+		return $this->timestamp('deleted_at')->nullable();
 	}
 
 	/**
@@ -650,9 +665,21 @@ class Blueprint {
 	 */
 	public function morphs($name)
 	{
-		$this->integer("{$name}_id");
+		$this->unsignedInteger("{$name}_id");
 
 		$this->string("{$name}_type");
+
+		$this->index(array("{$name}_id", "{$name}_type"));
+	}
+
+	/**
+	 * Adds the `remember_token` column to the table.
+	 *
+	 * @return \Illuminate\Support\Fluent
+	 */
+	public function rememberToken()
+	{
+		return $this->string('remember_token', 100)->nullable();
 	}
 
 	/**
@@ -732,6 +759,22 @@ class Blueprint {
 		$this->columns[] = $column = new Fluent($attributes);
 
 		return $column;
+	}
+
+	/**
+	 * Remove a column from the schema blueprint.
+	 *
+	 * @param  string  $name
+	 * @return $this
+	 */
+	public function removeColumn($name)
+	{
+		$this->columns = array_values(array_filter($this->columns, function($c) use ($name)
+		{
+			return $c['attributes']['name'] != $name;
+		}));
+
+		return $this;
 	}
 
 	/**

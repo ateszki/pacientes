@@ -88,12 +88,19 @@ class WorkbenchMakeCommand extends Command {
 	 * Build the package details from user input.
 	 *
 	 * @return \Illuminate\Workbench\Package
+	 *
+	 * @throws \UnexpectedValueException
 	 */
 	protected function buildPackage()
 	{
 		list($vendor, $name) = $this->getPackageSegments();
 
 		$config = $this->laravel['config']['workbench'];
+
+		if (is_null($config['email']))
+		{
+			throw new \UnexpectedValueException("Please set the author's email in the workbench configuration file.");
+		}
 
 		return new Package($vendor, $name, $config['name'], $config['email']);
 	}
@@ -107,7 +114,7 @@ class WorkbenchMakeCommand extends Command {
 	{
 		$package = $this->argument('package');
 
-		return array_map('studly_case', explode('/', $package, 2));		
+		return array_map('studly_case', explode('/', $package, 2));
 	}
 
 	/**

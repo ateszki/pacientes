@@ -20,7 +20,7 @@ class ClassLoader {
 	 * Load the given class file.
 	 *
 	 * @param  string  $class
-	 * @return void
+	 * @return bool
 	 */
 	public static function load($class)
 	{
@@ -35,6 +35,8 @@ class ClassLoader {
 				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -59,9 +61,7 @@ class ClassLoader {
 	{
 		if ( ! static::$registered)
 		{
-			spl_autoload_register(array('\Illuminate\Support\ClassLoader', 'load'));
-
-			static::$registered = true;
+			static::$registered = spl_autoload_register(array('\Illuminate\Support\ClassLoader', 'load'));
 		}
 	}
 
@@ -73,9 +73,7 @@ class ClassLoader {
 	 */
 	public static function addDirectories($directories)
 	{
-		static::$directories = array_merge(static::$directories, (array) $directories);
-
-		static::$directories = array_unique(static::$directories);
+		static::$directories = array_unique(array_merge(static::$directories, (array) $directories));
 	}
 
 	/**
@@ -92,12 +90,7 @@ class ClassLoader {
 		}
 		else
 		{
-			$directories = (array) $directories;
-
-			static::$directories = array_filter(static::$directories, function($directory) use ($directories)
-			{
-				return ( ! in_array($directory, $directories));
-			});
+			static::$directories = array_diff(static::$directories, (array) $directories);
 		}
 	}
 

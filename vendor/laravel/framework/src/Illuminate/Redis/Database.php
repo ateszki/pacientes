@@ -19,7 +19,7 @@ class Database {
 	 */
 	public function __construct(array $servers = array())
 	{
-		if (isset($servers['cluster']) and $servers['cluster'])
+		if (isset($servers['cluster']) && $servers['cluster'])
 		{
 			$this->clients = $this->createAggregateClient($servers);
 		}
@@ -64,7 +64,7 @@ class Database {
 	 * Get a specific Redis connection instance.
 	 *
 	 * @param  string  $name
-	 * @return \Predis\Connection\SingleConnectionInterface
+	 * @return \Predis\ClientInterface
 	 */
 	public function connection($name = 'default')
 	{

@@ -275,6 +275,8 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'TTL'                   => 'keys-first',
             'PTTL'                  => 'keys-first',
             'SORT'                  => 'keys-first', // TODO
+            'DUMP'                  => 'keys-first',
+            'RESTORE'               => 'keys-first',
 
             /* commands operating on string values */
             'APPEND'                => 'keys-first',
@@ -288,6 +290,7 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'GETSET'                => 'keys-first',
             'INCR'                  => 'keys-first',
             'INCRBY'                => 'keys-first',
+            'INCRBYFLOAT'           => 'keys-first',
             'SETBIT'                => 'keys-first',
             'SETEX'                 => 'keys-first',
             'MSET'                  => 'keys-interleaved',
@@ -296,6 +299,7 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'SETRANGE'              => 'keys-first',
             'STRLEN'                => 'keys-first',
             'SUBSTR'                => 'keys-first',
+            'BITOP'                 => 'keys-bitop',
             'BITCOUNT'              => 'keys-first',
 
             /* commands operating on lists */
@@ -304,8 +308,10 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'LLEN'                  => 'keys-first',
             'LPOP'                  => 'keys-first',
             'RPOP'                  => 'keys-first',
+            'RPOPLPUSH'             => 'keys-all',
             'BLPOP'                 => 'keys-blockinglist',
             'BRPOP'                 => 'keys-blockinglist',
+            'BRPOPLPUSH'            => 'keys-blockinglist',
             'LPUSH'                 => 'keys-first',
             'LPUSHX'                => 'keys-first',
             'RPUSH'                 => 'keys-first',
@@ -318,6 +324,12 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             /* commands operating on sets */
             'SADD'                  => 'keys-first',
             'SCARD'                 => 'keys-first',
+            'SDIFF'                 => 'keys-all',
+            'SDIFFSTORE'            => 'keys-all',
+            'SINTER'                => 'keys-all',
+            'SINTERSTORE'           => 'keys-all',
+            'SUNION'                => 'keys-all',
+            'SUNIONSTORE'           => 'keys-all',
             'SISMEMBER'             => 'keys-first',
             'SMEMBERS'              => 'keys-first',
             'SSCAN'                 => 'keys-first',
@@ -330,6 +342,7 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'ZCARD'                 => 'keys-first',
             'ZCOUNT'                => 'keys-first',
             'ZINCRBY'               => 'keys-first',
+            'ZINTERSTORE'           => 'keys-zaggregated',
             'ZRANGE'                => 'keys-first',
             'ZRANGEBYSCORE'         => 'keys-first',
             'ZRANK'                 => 'keys-first',
@@ -340,7 +353,11 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'ZREVRANGEBYSCORE'      => 'keys-first',
             'ZREVRANK'              => 'keys-first',
             'ZSCORE'                => 'keys-first',
+            'ZUNIONSTORE'           => 'keys-zaggregated',
             'ZSCAN'                 => 'keys-first',
+            'ZLEXCOUNT'             => 'keys-first',
+            'ZRANGEBYLEX'           => 'keys-first',
+            'ZREMRANGEBYLEX'        => 'keys-first',
 
             /* commands operating on hashes */
             'HDEL'                  => 'keys-first',
@@ -357,6 +374,11 @@ class RedisClusterHashStrategyTest extends PredisTestCase
             'HSETNX'                => 'keys-first',
             'HVALS'                 => 'keys-first',
             'HSCAN'                 => 'keys-first',
+
+            /* commands operating on HyperLogLog */
+            'PFADD'                 => 'keys-first',
+            'PFCOUNT'               => 'keys-all',
+            'PFMERGE'               => 'keys-all',
 
             /* scripting */
             'EVAL'                  => 'keys-script',

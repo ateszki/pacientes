@@ -2,7 +2,7 @@
 
 use Illuminate\Redis\Database as Redis;
 
-class RedisStore implements StoreInterface {
+class RedisStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The Redis database connection.
@@ -36,8 +36,8 @@ class RedisStore implements StoreInterface {
 	public function __construct(Redis $redis, $prefix = '', $connection = 'default')
 	{
 		$this->redis = $redis;
-		$this->prefix = $prefix.':';
 		$this->connection = $connection;
+		$this->prefix = strlen($prefix) > 0 ? $prefix.':' : '';
 	}
 
 	/**
@@ -66,9 +66,7 @@ class RedisStore implements StoreInterface {
 	{
 		$value = is_numeric($value) ? $value : serialize($value);
 
-		$this->connection()->set($this->prefix.$key, $value);
-
-		$this->connection()->expire($this->prefix.$key, $minutes * 60);
+		$this->connection()->setex($this->prefix.$key, $minutes * 60, $value);
 	}
 
 	/**
@@ -76,7 +74,7 @@ class RedisStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -88,7 +86,7 @@ class RedisStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -131,20 +129,20 @@ class RedisStore implements StoreInterface {
 	}
 
 	/**
-	 * Begin executing a new section operation.
+	 * Begin executing a new tags operation.
 	 *
-	 * @param  string  $name
-	 * @return \Illuminate\Cache\RedisSection
+	 * @param  array|dynamic  $names
+	 * @return \Illuminate\Cache\RedisTaggedCache
 	 */
-	public function section($name)
+	public function tags($names)
 	{
-		return new RedisSection($this, $name);
+		return new RedisTaggedCache($this, new TagSet($this, is_array($names) ? $names : func_get_args()));
 	}
 
 	/**
 	 * Get the Redis connection instance.
 	 *
-	 * @return \Predis\Connection\SingleConnectionInterface
+	 * @return \Predis\ClientInterface
 	 */
 	public function connection()
 	{

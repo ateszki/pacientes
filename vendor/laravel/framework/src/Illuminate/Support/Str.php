@@ -1,13 +1,10 @@
 <?php namespace Illuminate\Support;
 
+use Illuminate\Support\Traits\MacroableTrait;
+
 class Str {
 
-	/**
-	 * The registered string macros.
-	 *
-	 * @var array
-	 */
-	protected static $macros = array();
+	use MacroableTrait;
 
 	/**
 	 * Transliterate a UTF-8 value to ASCII.
@@ -34,7 +31,7 @@ class Str {
 	/**
 	 * Determine if a given string contains a given substring.
 	 *
-	 * @param  string        $haystack
+	 * @param  string  $haystack
 	 * @param  string|array  $needles
 	 * @return bool
 	 */
@@ -51,15 +48,15 @@ class Str {
 	/**
 	 * Determine if a given string ends with a given substring.
 	 *
-	 * @param string $haystack
-	 * @param string|array $needles
+	 * @param  string  $haystack
+	 * @param  string|array  $needles
 	 * @return bool
 	 */
 	public static function endsWith($haystack, $needles)
 	{
 		foreach ((array) $needles as $needle)
 		{
-			if ($needle == substr($haystack, -strlen($needle))) return true;
+			if ((string) $needle === substr($haystack, -strlen($needle))) return true;
 		}
 
 		return false;
@@ -123,7 +120,7 @@ class Str {
 	{
 		if (mb_strlen($value) <= $limit) return $value;
 
-		return mb_substr($value, 0, $limit, 'UTF-8').$end;
+		return rtrim(mb_substr($value, 0, $limit, 'UTF-8')).$end;
 	}
 
 	/**
@@ -172,7 +169,7 @@ class Str {
 	 * Get the plural form of an English word.
 	 *
 	 * @param  string  $value
-	 * @param  int  $count
+	 * @param  int     $count
 	 * @return string
 	 */
 	public static function plural($value, $count = 2)
@@ -183,8 +180,10 @@ class Str {
 	/**
 	 * Generate a more truly "random" alpha-numeric string.
 	 *
-	 * @param  int     $length
+	 * @param  int  $length
 	 * @return string
+	 *
+	 * @throws \RuntimeException
 	 */
 	public static function random($length = 16)
 	{
@@ -208,7 +207,7 @@ class Str {
 	 *
 	 * Should not be considered sufficient for cryptography, etc.
 	 *
-	 * @param  int     $length
+	 * @param  int  $length
 	 * @return string
 	 */
 	public static function quickRandom($length = 16)
@@ -262,13 +261,13 @@ class Str {
 	{
 		$title = static::ascii($title);
 
-		// Remove all characters that are not the separator, letters, numbers, or whitespace.
-		$title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', mb_strtolower($title));
-
-		// Convert all dashes/undescores into separator
+		// Convert all dashes/underscores into separator
 		$flip = $separator == '-' ? '_' : '-';
 
 		$title = preg_replace('!['.preg_quote($flip).']+!u', $separator, $title);
+
+		// Remove all characters that are not the separator, letters, numbers, or whitespace.
+		$title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', mb_strtolower($title));
 
 		// Replace all separator characters and whitespace by a single separator
 		$title = preg_replace('!['.preg_quote($separator).'\s]+!u', $separator, $title);
@@ -318,35 +317,6 @@ class Str {
 		$value = ucwords(str_replace(array('-', '_'), ' ', $value));
 
 		return str_replace(' ', '', $value);
-	}
-
-	/**
-	 * Register a custom string macro.
-	 *
-	 * @param  string    $name
-	 * @param  callable  $macro
-	 * @return void
-	 */
-	public static function macro($name, $macro)
-	{
-		static::$macros[$name] = $macro;
-	}
-
-	/**
-	 * Dynamically handle calls to the string class.
-	 *
-	 * @param  string  $method
-	 * @param  array   $parameters
-	 * @return mixed
-	 */
-	public static function __callStatic($method, $parameters)
-	{
-		if (isset(static::$macros[$method]))
-		{
-			return call_user_func_array(static::$macros[$method], $parameters);
-		}
-
-		throw new \BadMethodCallException("Method {$method} does not exist.");
 	}
 
 }

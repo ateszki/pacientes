@@ -1,12 +1,9 @@
 <?php namespace Illuminate\Exception;
 
-use Closure;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\JsonResponseHandler;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Debug\ExceptionHandler as KernelHandler;
 
 class ExceptionServiceProvider extends ServiceProvider {
 
@@ -65,9 +62,7 @@ class ExceptionServiceProvider extends ServiceProvider {
 			}
 			else
 			{
-				$handler = new KernelHandler($app['config']['app.debug']);
-
-				return new SymfonyDisplayer($handler);
+				return new PlainDisplayer;
 			}
 		});
 	}
@@ -103,6 +98,8 @@ class ExceptionServiceProvider extends ServiceProvider {
 			// let the framework go ahead and finish a request on this end instead.
 			with($whoops = new Run)->allowQuit(false);
 
+			$whoops->writeToOutput(false);
+
 			return $whoops->pushHandler($app['whoops.handler']);
 		});
 	}
@@ -118,7 +115,7 @@ class ExceptionServiceProvider extends ServiceProvider {
 		{
 			$this->app['whoops.handler'] = $this->app->share(function()
 			{
-					return new JsonResponseHandler;
+				return new JsonResponseHandler;
 			});
 		}
 		else
@@ -134,9 +131,17 @@ class ExceptionServiceProvider extends ServiceProvider {
 	 */
 	protected function shouldReturnJson()
 	{
-		$definitely = ($this->app['request']->ajax() or $this->app->runningInConsole());
+		return $this->app->runningInConsole() || $this->requestWantsJson();
+	}
 
-		return $definitely or $this->app['request']->wantsJson();
+	/**
+	 * Determine if the request warrants a JSON response.
+	 *
+	 * @return bool
+	 */
+	protected function requestWantsJson()
+	{
+		return $this->app['request']->ajax() || $this->app['request']->wantsJson();
 	}
 
 	/**
@@ -146,44 +151,12 @@ class ExceptionServiceProvider extends ServiceProvider {
 	 */
 	protected function registerPrettyWhoopsHandler()
 	{
-		$me = $this;
-
-		$this->app['whoops.handler'] = $this->app->share(function() use ($me)
+		$this->app['whoops.handler'] = $this->app->share(function()
 		{
 			with($handler = new PrettyPageHandler)->setEditor('sublime');
 
-			// If the resource path exists, we will register the resource path with Whoops
-			// so our custom Laravel branded exception pages will be used when they are
-			// displayed back to the developer. Otherwise, the default pages are run.
-			if ( ! is_null($path = $me->resourcePath()))
-			{
-				$handler->setResourcesPath($path);
-			}
-
 			return $handler;
 		});
-	}
-
-	/**
-	 * Get the resource path for Whoops.
-	 *
-	 * @return string
-	 */
-	public function resourcePath()
-	{
-		if (is_dir($path = $this->getResourcePath())) return $path;
-	}
-
-	/**
-	 * Get the Whoops custom resource path.
-	 *
-	 * @return string
-	 */
-	protected function getResourcePath()
-	{
-		$base = $this->app['path.base'];
-
-		return $base.'/vendor/laravel/framework/src/Illuminate/Exception/resources';
 	}
 
 }

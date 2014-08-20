@@ -3,7 +3,6 @@
 use PDO;
 use Closure;
 use DateTime;
-use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Query\Processors\Processor;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 
@@ -15,6 +14,20 @@ class Connection implements ConnectionInterface {
 	 * @var PDO
 	 */
 	protected $pdo;
+
+	/**
+	 * The active PDO connection used for reads.
+	 *
+	 * @var PDO
+	 */
+	protected $readPdo;
+
+	/**
+	 * The reconnector instance for the connection.
+	 *
+	 * @var callable
+	 */
+	protected $reconnector;
 
 	/**
 	 * The query grammar implementation.
@@ -54,7 +67,7 @@ class Connection implements ConnectionInterface {
 	/**
 	 * The cache manager instance.
 	 *
-	 * @var \Illuminate\Cache\CacheManger
+	 * @var \Illuminate\Cache\CacheManager
 	 */
 	protected $cache;
 
@@ -66,7 +79,7 @@ class Connection implements ConnectionInterface {
 	protected $fetchMode = PDO::FETCH_ASSOC;
 
 	/**
-	 * The number of active transasctions.
+	 * The number of active transactions.
 	 *
 	 * @var int
 	 */
@@ -117,10 +130,10 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Create a new database connection instance.
 	 *
-	 * @param  PDO     $pdo
-	 * @param  string  $database
-	 * @param  string  $tablePrefix
-	 * @param  array   $config
+	 * @param  \PDO     $pdo
+	 * @param  string   $database
+	 * @param  string   $tablePrefix
+	 * @param  array    $config
 	 * @return void
 	 */
 	public function __construct(PDO $pdo, $database = '', $tablePrefix = '', array $config = array())
@@ -269,7 +282,7 @@ class Connection implements ConnectionInterface {
 			// For select statements, we'll simply execute the query and return an array
 			// of the database result set. Each element in the array will be a single
 			// row from the database table, and will either be an array or objects.
-			$statement = $me->getPdo()->prepare($query);
+			$statement = $me->getReadPdo()->prepare($query);
 
 			$statement->execute($me->prepareBindings($bindings));
 
@@ -364,7 +377,7 @@ class Connection implements ConnectionInterface {
 	 */
 	public function unprepared($query)
 	{
-		return $this->run($query, array(), function($me, $query, $bindings)
+		return $this->run($query, array(), function($me, $query)
 		{
 			if ($me->pretending()) return true;
 
@@ -403,8 +416,10 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Execute a Closure within a transaction.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return mixed
+	 *
+	 * @throws \Exception
 	 */
 	public function transaction(Closure $callback)
 	{
@@ -446,6 +461,8 @@ class Connection implements ConnectionInterface {
 		{
 			$this->pdo->beginTransaction();
 		}
+
+		$this->fireConnectionEvent('beganTransaction');
 	}
 
 	/**
@@ -458,6 +475,8 @@ class Connection implements ConnectionInterface {
 		if ($this->transactions == 1) $this->pdo->commit();
 
 		--$this->transactions;
+
+		$this->fireConnectionEvent('committed');
 	}
 
 	/**
@@ -477,12 +496,24 @@ class Connection implements ConnectionInterface {
 		{
 			--$this->transactions;
 		}
+
+		$this->fireConnectionEvent('rollingBack');
+	}
+
+	/**
+	 * Get the number of active transactions.
+	 *
+	 * @return int
+	 */
+	public function transactionLevel()
+	{
+		return $this->transactions;
 	}
 
 	/**
 	 * Execute the given callback in "dry run" mode.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return array
 	 */
 	public function pretend(Closure $callback)
@@ -504,29 +535,31 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Run a SQL statement and log its execution context.
 	 *
-	 * @param  string   $query
-	 * @param  array    $bindings
-	 * @param  Closure  $callback
+	 * @param  string    $query
+	 * @param  array     $bindings
+	 * @param  \Closure  $callback
 	 * @return mixed
+	 *
+	 * @throws QueryException
 	 */
 	protected function run($query, $bindings, Closure $callback)
 	{
+		$this->reconnectIfMissingConnection();
+
 		$start = microtime(true);
 
-		// To execute the statement, we'll simply call the callback, which will actually
-		// run the SQL against the PDO connection. Then we can calculate the time it
-		// took to execute and log the query SQL, bindings and time in our memory.
+		// Here we will run this query. If an exception occurs we'll determine if it was
+		// caused by a connection that has been lost. If that is the cause, we'll try
+		// to re-establish connection and re-run the query with a fresh connection.
 		try
 		{
-			$result = $callback($this, $query, $bindings);
+			$result = $this->runQueryCallback($query, $bindings, $callback);
 		}
-
-		// If an exception occurs when attempting to run a query, we'll format the error
-		// message to include the bindings with SQL, which will make this exception a
-		// lot more helpful to the developer instead of just the database's errors.
-		catch (\Exception $e)
+		catch (QueryException $e)
 		{
-			$this->handleQueryException($e, $query, $bindings);
+			$result = $this->tryAgainIfCausedByLostConnection(
+				$e, $query, $bindings, $callback
+			);
 		}
 
 		// Once we have run the query we will calculate the time that it took to run and
@@ -540,20 +573,106 @@ class Connection implements ConnectionInterface {
 	}
 
 	/**
-	 * Handle an exception that occurred during a query.
+	 * Run a SQL statement.
 	 *
-	 * @param  Exception  $e
-	 * @param  string     $query
-	 * @param  array      $bindings
+	 * @param  string    $query
+	 * @param  array     $bindings
+	 * @param  \Closure  $callback
+	 * @return mixed
+	 *
+	 * @throws QueryException
+	 */
+	protected function runQueryCallback($query, $bindings, Closure $callback)
+	{
+		// To execute the statement, we'll simply call the callback, which will actually
+		// run the SQL against the PDO connection. Then we can calculate the time it
+		// took to execute and log the query SQL, bindings and time in our memory.
+		try
+		{
+			$result = $callback($this, $query, $bindings);
+		}
+
+		// If an exception occurs when attempting to run a query, we'll format the error
+		// message to include the bindings with SQL, which will make this exception a
+		// lot more helpful to the developer instead of just the database's errors.
+		catch (\Exception $e)
+		{
+			throw new QueryException(
+				$query, $this->prepareBindings($bindings), $e
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Handle a query exception that occurred during query execution.
+	 *
+	 * @param  \Illuminate\Database\QueryException  $e
+	 * @param  string    $query
+	 * @param  array     $bindings
+	 * @param  \Closure  $callback
+	 * @return mixed
+	 */
+	protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, $callback)
+	{
+		if ($this->causedByLostConnection($e))
+		{
+			$this->reconnect();
+
+			return $this->runQueryCallback($query, $bindings, $callback);
+		}
+
+		throw $e;
+	}
+
+	/**
+	 * Determine if the given exception was caused by a lost connection.
+	 *
+	 * @param  \Illuminate\Database\QueryException
+	 * @return bool
+	 */
+	protected function causedByLostConnection(QueryException $e)
+	{
+		return str_contains($e->getPrevious()->getMessage(), 'server has gone away');
+	}
+
+	/**
+	 * Disconnect from the underlying PDO connection.
+	 *
 	 * @return void
 	 */
-	protected function handleQueryException(\Exception $e, $query, $bindings)
+	public function disconnect()
 	{
-		$bindings = var_export($bindings, true);
+		$this->setPdo(null)->setReadPdo(null);
+	}
 
-		$message = $e->getMessage()." (SQL: {$query}) (Bindings: {$bindings})";
+	/**
+	 * Reconnect to the database.
+	 *
+	 * @return void
+	 */
+	public function reconnect()
+	{
+		if (is_callable($this->reconnector))
+		{
+			return call_user_func($this->reconnector, $this);
+		}
 
-		throw new \Exception($message, 0, $e);
+		throw new \LogicException("Lost connection and no reconnector available.");
+	}
+
+	/**
+	 * Reconnect to the database if a PDO connection is missing.
+	 *
+	 * @return void
+	 */
+	protected function reconnectIfMissingConnection()
+	{
+		if (is_null($this->getPdo()) || is_null($this->getReadPdo()))
+		{
+			$this->reconnect();
+		}
 	}
 
 	/**
@@ -579,7 +698,7 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Register a database query listener with the connection.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return void
 	 */
 	public function listen(Closure $callback)
@@ -587,6 +706,20 @@ class Connection implements ConnectionInterface {
 		if (isset($this->events))
 		{
 			$this->events->listen('illuminate.query', $callback);
+		}
+	}
+
+	/**
+	 * Fire an event for this connection.
+	 *
+	 * @param  string  $event
+	 * @return void
+	 */
+	protected function fireConnectionEvent($event)
+	{
+		if (isset($this->events))
+		{
+			$this->events->fire('connection.'.$this->getName().'.'.$event, $this);
 		}
 	}
 
@@ -650,14 +783,54 @@ class Connection implements ConnectionInterface {
 	}
 
 	/**
+	 * Get the current PDO connection used for reading.
+	 *
+	 * @return PDO
+	 */
+	public function getReadPdo()
+	{
+		if ($this->transactions >= 1) return $this->getPdo();
+
+		return $this->readPdo ?: $this->pdo;
+	}
+
+	/**
 	 * Set the PDO connection.
 	 *
-	 * @param  PDO  $pdo
-	 * @return void
+	 * @param  \PDO|null  $pdo
+	 * @return $this
 	 */
-	public function setPdo(PDO $pdo)
+	public function setPdo($pdo)
 	{
 		$this->pdo = $pdo;
+
+		return $this;
+	}
+
+	/**
+	 * Set the PDO connection used for reading.
+	 *
+	 * @param  \PDO|null  $pdo
+	 * @return $this
+	 */
+	public function setReadPdo($pdo)
+	{
+		$this->readPdo = $pdo;
+
+		return $this;
+	}
+
+	/**
+	 * Set the reconnect instance on the connection.
+	 *
+	 * @param  callable  $reconnector
+	 * @return $this
+	 */
+	public function setReconnector(callable $reconnector)
+	{
+		$this->reconnector = $reconnector;
+
+		return $this;
 	}
 
 	/**
@@ -778,7 +951,7 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Get the paginator environment instance.
 	 *
-	 * @return \Illuminate\Pagination\Environment
+	 * @return \Illuminate\Pagination\Factory
 	 */
 	public function getPaginator()
 	{
@@ -793,7 +966,7 @@ class Connection implements ConnectionInterface {
 	/**
 	 * Set the pagination environment instance.
 	 *
-	 * @param  \Illuminate\Pagination\Environment|\Closure  $paginator
+	 * @param  \Illuminate\Pagination\Factory|\Closure  $paginator
 	 * @return void
 	 */
 	public function setPaginator($paginator)
@@ -896,6 +1069,16 @@ class Connection implements ConnectionInterface {
 	public function disableQueryLog()
 	{
 		$this->loggingQueries = false;
+	}
+
+	/**
+	 * Determine whether we're logging queries.
+	 *
+	 * @return bool
+	 */
+	public function logging()
+	{
+		return $this->loggingQueries;
 	}
 
 	/**

@@ -11,8 +11,10 @@ class SqlServerConnection extends Connection {
 	/**
 	 * Execute a Closure within a transaction.
 	 *
-	 * @param  Closure  $callback
+	 * @param  \Closure  $callback
 	 * @return mixed
+	 *
+	 * @throws \Exception
 	 */
 	public function transaction(Closure $callback)
 	{
@@ -69,7 +71,7 @@ class SqlServerConnection extends Connection {
 	/**
 	 * Get the default post processor instance.
 	 *
-	 * @return \Illuminate\Database\Query\Processors\SqlServerProcessor
+	 * @return \Illuminate\Database\Query\Processors\Processor
 	 */
 	protected function getDefaultPostProcessor()
 	{

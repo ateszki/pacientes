@@ -1,6 +1,6 @@
 <?php namespace Illuminate\Cache;
 
-class XCacheStore implements StoreInterface {
+class XCacheStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * A string that should be prepended to keys.
@@ -12,7 +12,7 @@ class XCacheStore implements StoreInterface {
 	/**
 	 * Create a new WinCache store.
 	 *
-	 * @param  string     $prefix
+	 * @param  string  $prefix
 	 * @return void
 	 */
 	public function __construct($prefix = '')
@@ -54,7 +54,7 @@ class XCacheStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -66,7 +66,7 @@ class XCacheStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -104,17 +104,6 @@ class XCacheStore implements StoreInterface {
 	public function flush()
 	{
 		xcache_clear_cache(XC_TYPE_VAR);
-	}
-
-	/**
-	 * Begin executing a new section operation.
-	 *
-	 * @param  string  $name
-	 * @return \Illuminate\Cache\Section
-	 */
-	public function section($name)
-	{
-		return new Section($this, $name);
 	}
 
 	/**

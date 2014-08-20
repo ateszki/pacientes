@@ -1,8 +1,6 @@
 <?php namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class ClearCompiledCommand extends Command {
 
@@ -32,7 +30,7 @@ class ClearCompiledCommand extends Command {
 			@unlink($path);
 		}
 
-		if (file_exists($path = $this->laravel['path.storage'].'/meta/services.json'))
+		if (file_exists($path = $this->laravel['config']['app.manifest'].'/services.json'))
 		{
 			@unlink($path);
 		}

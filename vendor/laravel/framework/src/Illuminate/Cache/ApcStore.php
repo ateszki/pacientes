@@ -1,6 +1,6 @@
 <?php namespace Illuminate\Cache;
 
-class ApcStore implements StoreInterface {
+class ApcStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The APC wrapper instance.
@@ -51,7 +51,7 @@ class ApcStore implements StoreInterface {
 	 * @param  string  $key
 	 * @param  mixed   $value
 	 * @param  int     $minutes
-	 * @return array|bool
+	 * @return void
 	 */
 	public function put($key, $value, $minutes)
 	{
@@ -63,7 +63,7 @@ class ApcStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return array|bool
+	 * @return int|bool
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -71,11 +71,11 @@ class ApcStore implements StoreInterface {
 	}
 
 	/**
-	 * Increment the value of an item in the cache.
+	 * Decrement the value of an item in the cache.
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return array|bool
+	 * @return int|bool
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -98,7 +98,7 @@ class ApcStore implements StoreInterface {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return array|bool
+	 * @return void
 	 */
 	public function forget($key)
 	{
@@ -113,17 +113,6 @@ class ApcStore implements StoreInterface {
 	public function flush()
 	{
 		$this->apc->flush();
-	}
-
-	/**
-	 * Begin executing a new section operation.
-	 *
-	 * @param  string  $name
-	 * @return \Illuminate\Cache\Section
-	 */
-	public function section($name)
-	{
-		return new Section($this, $name);
 	}
 
 	/**

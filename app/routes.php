@@ -116,6 +116,10 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
 	Route::resource('turno', 'TurnoController');
 	
+// cuentas corrientes
+	Route::post('factura','CtacteController@crear');	
+
+// generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });
 

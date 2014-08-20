@@ -13,6 +13,11 @@ class Collection extends BaseCollection {
 	 */
 	public function find($key, $default = null)
 	{
+		if ($key instanceof Model)
+		{
+			$key = $key->getKey();
+		}
+
 		return array_first($this->items, function($itemKey, $model) use ($key)
 		{
 			return $model->getKey() == $key;
@@ -23,8 +28,8 @@ class Collection extends BaseCollection {
 	/**
 	 * Load a set of relationships onto the collection.
 	 *
-	 * @param  dynamic  $relations
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @param  mixed  $relations
+	 * @return $this
 	 */
 	public function load($relations)
 	{
@@ -44,7 +49,7 @@ class Collection extends BaseCollection {
 	 * Add an item to the collection.
 	 *
 	 * @param  mixed  $item
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @return $this
 	 */
 	public function add($item)
 	{
@@ -68,7 +73,7 @@ class Collection extends BaseCollection {
 	 * Fetch a nested element of the collection.
 	 *
 	 * @param  string  $key
-	 * @return \Illuminate\Support\Collection
+	 * @return static
 	 */
 	public function fetch($key)
 	{
@@ -85,7 +90,7 @@ class Collection extends BaseCollection {
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
-			return (is_null($result) or $item->{$key} > $result) ? $item->{$key} : $result;
+			return (is_null($result) || $item->{$key} > $result) ? $item->{$key} : $result;
 		});
 	}
 
@@ -99,7 +104,7 @@ class Collection extends BaseCollection {
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
-			return (is_null($result) or $item->{$key} < $result) ? $item->{$key} : $result;
+			return (is_null($result) || $item->{$key} < $result) ? $item->{$key} : $result;
 		});
 	}
 
@@ -111,6 +116,138 @@ class Collection extends BaseCollection {
 	public function modelKeys()
 	{
 		return array_map(function($m) { return $m->getKey(); }, $this->items);
+	}
+
+	/**
+	 * Merge the collection with the given items.
+	 *
+	 * @param  \ArrayAccess|array  $items
+	 * @return static
+	 */
+	public function merge($items)
+	{
+		$dictionary = $this->getDictionary();
+
+		foreach ($items as $item)
+		{
+			$dictionary[$item->getKey()] = $item;
+		}
+
+		return new static(array_values($dictionary));
+	}
+
+	/**
+	 * Diff the collection with the given items.
+	 *
+	 * @param  \ArrayAccess|array  $items
+	 * @return static
+	 */
+	public function diff($items)
+	{
+		$diff = new static;
+
+		$dictionary = $this->getDictionary($items);
+
+		foreach ($this->items as $item)
+		{
+			if ( ! isset($dictionary[$item->getKey()]))
+			{
+				$diff->add($item);
+			}
+		}
+
+		return $diff;
+	}
+
+	/**
+	 * Intersect the collection with the given items.
+	 *
+ 	 * @param  \ArrayAccess|array  $items
+	 * @return static
+	 */
+	public function intersect($items)
+	{
+		$intersect = new static;
+
+		$dictionary = $this->getDictionary($items);
+
+		foreach ($this->items as $item)
+		{
+			if (isset($dictionary[$item->getKey()]))
+			{
+				$intersect->add($item);
+			}
+		}
+
+		return $intersect;
+	}
+
+	/**
+	 * Return only unique items from the collection.
+	 *
+	 * @return static
+	 */
+	public function unique()
+	{
+		$dictionary = $this->getDictionary();
+
+		return new static(array_values($dictionary));
+	}
+
+	/**
+	 * Returns only the models from the collection with the specified keys.
+	 *
+	 * @param  mixed  $keys
+	 * @return static
+	 */
+	public function only($keys)
+	{
+		$dictionary = array_only($this->getDictionary(), $keys);
+
+		return new static(array_values($dictionary));
+	}
+
+	/**
+	 * Returns all models in the collection except the models with specified keys.
+	 *
+	 * @param  mixed  $keys
+	 * @return static
+	 */
+	public function except($keys)
+	{
+	    $dictionary = array_except($this->getDictionary(), $keys);
+
+	    return new static(array_values($dictionary));
+	}
+
+	/**
+	 * Get a dictionary keyed by primary keys.
+	 *
+	 * @param  \ArrayAccess|array  $items
+	 * @return array
+	 */
+	public function getDictionary($items = null)
+	{
+		$items = is_null($items) ? $this->items : $items;
+
+		$dictionary = array();
+
+		foreach ($items as $value)
+		{
+			$dictionary[$value->getKey()] = $value;
+		}
+
+		return $dictionary;
+	}
+
+	/**
+	 * Get a base Support collection instance from this collection.
+	 *
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function toBase()
+	{
+		return new BaseCollection($this->items);
 	}
 
 }

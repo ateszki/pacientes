@@ -22,7 +22,7 @@ class SyncJob extends Job {
 	/**
 	 * Create a new job instance.
 	 *
-	 * @param  \Illuminate\Container  $container
+	 * @param  \Illuminate\Container\Container  $container
 	 * @param  string  $job
 	 * @param  string  $data
 	 * @return void
@@ -41,22 +41,24 @@ class SyncJob extends Job {
 	 */
 	public function fire()
 	{
+		$data = json_decode($this->data, true);
+
 		if ($this->job instanceof Closure)
 		{
-			call_user_func($this->job, $this, $this->data);
+			call_user_func($this->job, $this, $data);
 		}
 		else
 		{
-			$this->resolveAndFire(array('job' => $this->job, 'data' => $this->data));
+			$this->resolveAndFire(array('job' => $this->job, 'data' => $data));
 		}
 	}
 
 	/**
-	 * Delete the job from the queue.
+	 * Get the raw body string for the job.
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public function delete()
+	public function getRawBody()
 	{
 		//
 	}

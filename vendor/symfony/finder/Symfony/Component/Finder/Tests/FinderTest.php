@@ -16,7 +16,6 @@ use Symfony\Component\Finder\Adapter;
 
 class FinderTest extends Iterator\RealIteratorTestCase
 {
-
     public function testCreate()
     {
         $this->assertInstanceOf('Symfony\Component\Finder\Finder', Finder::create());
@@ -336,6 +335,17 @@ class FinderTest extends Iterator\RealIteratorTestCase
     /**
      * @dataProvider getAdaptersTestData
      */
+    public function testInWithGlobBrace($adapter)
+    {
+        $finder = $this->buildFinder($adapter);
+        $finder->in(array(__DIR__.'/Fixtures/{A,copy/A}/B/C'))->getIterator();
+
+        $this->assertIterator($this->toAbsoluteFixtures(array('A/B/C/abc.dat', 'copy/A/B/C/abc.dat.copy')), $finder);
+    }
+
+    /**
+     * @dataProvider getAdaptersTestData
+     */
     public function testGetIterator($adapter)
     {
         $finder = $this->buildFinder($adapter);
@@ -554,7 +564,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $finder = $this->buildFinder($adapter);
         $finder->in($locations)->depth('< 1')->name('test.php');
 
-        $this->assertEquals(1, count($finder));
+        $this->assertCount(1, $finder);
     }
 
     /**
@@ -735,7 +745,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
             $this->assertIterator($this->toAbsolute(array('foo bar', 'test.php', 'test.py')), $finder->getIterator());
             $this->fail('Finder should throw an exception when opening a non-readable directory.');
         } catch (\Exception $e) {
-            $this->assertEquals('Symfony\\Component\\Finder\\Exception\\AccessDeniedException', get_class($e));
+            $this->assertInstanceOf('Symfony\\Component\\Finder\\Exception\\AccessDeniedException', $e);
         }
 
         // restore original permissions
@@ -796,7 +806,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         );
     }
 
-   /**
+    /**
      * Searching in multiple locations with sub directories involves
      * AppendIterator which does an unnecessary rewind which leaves
      * FilterIterator with inner FilesystemIterator in an invalid state.
@@ -824,6 +834,10 @@ class FinderTest extends Iterator\RealIteratorTestCase
 
     public function testNonSeekableStream()
     {
+        if (!in_array('ftp', stream_get_wrappers())) {
+            $this->markTestSkipped(sprintf('Unavailable stream "%s".', 'ftp'));
+        }
+
         try {
             $i = Finder::create()->in('ftp://ftp.mozilla.org/')->depth(0)->getIterator();
         } catch (\UnexpectedValueException $e) {

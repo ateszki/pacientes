@@ -355,10 +355,16 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 			$lapso = 1;
 			$fecha_fin = date("Y-m-d",strtotime("+".$lapso." days", strtotime($fecha_ini)));
 			$agendas = array();
+
+		if ($coe->habilitado != 1){
+			return json_encode(array(
+			'error' => true,
+			'listado' => "El centro-odontologo-especialidad no está habilitado"));
+
+		}
 			while (strtotime($fecha_ini) <= strtotime($fecha_fin)) {
 				$f = new Feriado;
-				
-				if($f->esFeriado($fecha_ini)){
+				if ($f->esFeriado($fecha_ini)){
 				//	echo "Feriado".$fecha_ini;
 					$fecha_ini =  date ("Y-m-d", strtotime("+1 day", strtotime($fecha_ini)));
 					continue;
@@ -391,19 +397,19 @@ class CentroOdontologoEspecialidadController extends MaestroController {
 		if($agendas_general == 0){
 			return json_encode(array(
 			'error' => true,
-			'mensaje' => "No hay agendas para generar"));
+			'listado' => "No hay agendas para generar"));
 		}
 		$t = $this->generarTurnos($agenda->id);
 		if(!$t){$errores = true;}
 		if($errores){
 			return json_encode(array(
 			'error' => true,
-			'mensaje' => "Se produjeron errores al generar las agendas",
+			'listado' => "Se produjeron errores al generar las agendas",
 			));
 		} else {
 			return json_encode(array(
 			'error' => false,
-			'mensaje' => "Se generaron las agendas"));
+			'listado' => "Se generaron las agendas"));
 		}
 	}
 	public function generarTurnos($agenda_id = NULL){

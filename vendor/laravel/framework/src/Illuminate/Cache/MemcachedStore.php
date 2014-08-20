@@ -2,7 +2,7 @@
 
 use Memcached;
 
-class MemcachedStore implements StoreInterface {
+class MemcachedStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The Memcached instance.
@@ -22,7 +22,7 @@ class MemcachedStore implements StoreInterface {
 	 * Create a new Memcached store.
 	 *
 	 * @param  \Memcached  $memcached
-	 * @param  string     $prefix
+	 * @param  string      $prefix
 	 * @return void
 	 */
 	public function __construct(Memcached $memcached, $prefix = '')
@@ -65,7 +65,7 @@ class MemcachedStore implements StoreInterface {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int|bool
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -73,11 +73,11 @@ class MemcachedStore implements StoreInterface {
 	}
 
 	/**
-	 * Increment the value of an item in the cache.
+	 * Decrement the value of an item in the cache.
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return void
+	 * @return int|bool
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -115,17 +115,6 @@ class MemcachedStore implements StoreInterface {
 	public function flush()
 	{
 		$this->memcached->flush();
-	}
-
-	/**
-	 * Begin executing a new section operation.
-	 *
-	 * @param  string  $name
-	 * @return \Illuminate\Cache\Section
-	 */
-	public function section($name)
-	{
-		return new Section($this, $name);
 	}
 
 	/**

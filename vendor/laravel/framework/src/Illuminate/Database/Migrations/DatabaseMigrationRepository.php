@@ -1,7 +1,5 @@
 <?php namespace Illuminate\Database\Migrations;
 
-use Closure;
-use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 
 class DatabaseMigrationRepository implements MigrationRepositoryInterface {
@@ -84,7 +82,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface {
 	 */
 	public function delete($migration)
 	{
-		$query = $this->table()->where('migration', $migration->migration)->delete();
+		$this->table()->where('migration', $migration->migration)->delete();
 	}
 
 	/**

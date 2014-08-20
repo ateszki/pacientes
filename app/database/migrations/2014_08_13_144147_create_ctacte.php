@@ -32,7 +32,7 @@ class CreateCtacte extends Migration {
 			$table->date('fecha_transferencia_bas')->nullable();
 			$table->char('ticket',13)->nullable();
 			$table->date('fecha_ticket')->nullable();
-			$table->boolean('print_ok')->default('false');
+			$table->boolean('print_ok')->default(false);
 			$table->string('impresora_fiscal',15)->nullable();
 			$table->timestamps();
 			$table->foreign('user_id')->references('id')->on('users');

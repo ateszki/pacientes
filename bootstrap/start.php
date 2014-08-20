@@ -13,7 +13,7 @@
 
 $app = new Illuminate\Foundation\Application;
 
-$app->redirectIfTrailingSlash();
+//$app->redirectIfTrailingSlash();
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ $app->redirectIfTrailingSlash();
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
-	'webfaction'=>array('pacientes.consulmed.com.ar')
+	'webfaction'=>array('web351.webfaction.com')
 
 ));
 

@@ -16,11 +16,10 @@ class PostgresConnector extends Connector implements ConnectorInterface {
 			PDO::ATTR_STRINGIFY_FETCHES => false,
 	);
 
-
 	/**
 	 * Establish a database connection.
 	 *
-	 * @param  array  $options
+	 * @param  array  $config
 	 * @return PDO
 	 */
 	public function connect(array $config)
