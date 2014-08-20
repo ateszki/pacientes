@@ -148,4 +148,5 @@ class CtacteController extends MaestroController {
 			    DB::rollback();
 			    throw $e;
 			}
+	} 
 }
