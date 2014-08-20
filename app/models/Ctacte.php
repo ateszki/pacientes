@@ -24,6 +24,7 @@ class Ctacte extends Maestro {
 			'fecha_ticket',
 			'print_ok',
 			'impresora_fiscal',
+			'cancelado',
 		);
 
 
@@ -40,6 +41,7 @@ class Ctacte extends Maestro {
 			'importe_neto'=>'required|numeric',
 			'importe_iva'=>'required|numeric',
 			'print_ok'=>'Required|boolean',				
+			'cancelado'=>'boolean',				
 
                 );
 

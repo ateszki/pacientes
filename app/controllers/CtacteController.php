@@ -130,7 +130,7 @@ class CtacteController extends MaestroController {
 				DB::commit();
 				return Response::json(array(
 				'error'=>false,
-				'listado'=>array($ctacte->toArray())),
+				'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
 				200);
 			} else {
 				DB::rollback();
@@ -146,7 +146,11 @@ class CtacteController extends MaestroController {
 	} catch(\Exception $e)
 			{
 			    DB::rollback();
-			    throw $e;
+				return Response::json(array(
+					'error' => true,
+					'mensaje' => $e->getMessage()),
+					200
+				    );
 			}
 	} 
 }

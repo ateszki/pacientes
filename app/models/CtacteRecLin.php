@@ -6,7 +6,7 @@ class CtacteRecLin extends Maestro {
 
 	protected $fillable = array(
 			'ctacte_id',
-			'numero', 
+			'numero_cheque', 
 			'codigo_banco', 
 			'fecha_acreditacion', 
 			'codigo_tarjeta', 
@@ -14,13 +14,14 @@ class CtacteRecLin extends Maestro {
 			'numero_cupon', 
 			'codigo_aprobacion', 
 			'tipo_cambio',
-			'importe'
+			'importe',
+			'tipo',
 		);
 
 
 	public $rules = array(
                         'ctacte_id' => 'Required|integer|exists:ctactes,id',
-			'numero'=>'max:20', 
+			'numero_cheque'=>'max:20', 
 			'codigo_banco'=>'max:3|min:3', 
 			'fecha_acreditacion'=>'date', 
 			'codigo_tarjeta'=>'max:2', 
@@ -29,6 +30,7 @@ class CtacteRecLin extends Maestro {
 			'codigo_aprobacion'=>'max:25', 
 			'tipo_cambio'=>'numeric',
 			'importe'=>'numeric',
+			'tipo' => 'Required|in:T,C,E,D',
                 );
 
 	public function ctacte(){

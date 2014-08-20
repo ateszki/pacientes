@@ -6,19 +6,23 @@ class CtacteFacLin extends Maestro {
 
 	protected $fillable = array(
 			'ctacte_id',
-			'item_id',
+			'codigo',
+			'descripcion',
 			'cantidad',
 			'precio',
 			'importe',
+			'tipo'
 		);
 
 
 	public $rules = array(
                         'ctacte_id' => 'Required|integer|exists:ctactes,id',
-                        'item_id' => 'Required|integer',
+                        'codigo' => 'Required|max:20',
+                        'descripcion' => 'Required|max:100',
 			'cantidad' =>'Required|integer',
 			'precio'=>'required|numeric',
 			'importe'=>'required|numeric',
+                        'tipo' => 'Required|in:P,I,N',
 
                 );
 
