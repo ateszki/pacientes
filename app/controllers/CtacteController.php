@@ -80,8 +80,8 @@ class CtacteController extends MaestroController {
 	}
 
 	public function crear(){
-		$nThis = $this;
-		DB::transaction(function() use($nThis)
+		DB::beginTransaction();
+		try
 		{
 		$data = Input::all();
 		$new = $data;
@@ -91,21 +91,20 @@ class CtacteController extends MaestroController {
 		$new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
 		$items = $new["items"];
 		unset($new["items"]);
-		$pagos = $new["pagos"]; 
-		unset($new["pagos"]);
+		$pagos = $new["pago"]; 
+		unset($new["pago"]);
 		$new["user_id"] = Auth::user()->user_id;
 		$modelo_ctacte = new Ctacte();
 		$ctacte = $modelo_ctacte->create($new);
 		if ($ctacte->save()){
-		var_dump('q');	
 				$this->eventoAuditar($ctacte);
 
 				foreach($items as $item){
 					$ctacte_fac_lin = new CtacteFacLin();
 					$item['ctacte_id']=$ctacte->id;
 					$fac_lin = $ctacte_fac_lin->create($item);
-					var_dump($fac_lin->cantidad);
 					if(!$fac_lin->save()){
+						DB::rollback();
 						return Response::json(array(
 						'error'=>true,
 						'mensaje' => HerramientasController::getErrores($fac_lin->validator),
@@ -119,6 +118,7 @@ class CtacteController extends MaestroController {
 					$pago['ctacte_id']=$ctacte->id;
 					$rec_lin = $ctacte_rec_lin->create($pago);
 					if(!$rec_lin->save()){
+						DB::rollback();
 						return Response::json(array(
 						'error'=>true,
 						'mensaje' => HerramientasController::getErrores($rec_lin->validator),
@@ -127,13 +127,13 @@ class CtacteController extends MaestroController {
 					
 					}
 				}
-
+				DB::commit();
 				return Response::json(array(
 				'error'=>false,
 				'listado'=>array($catcte->toArray())),
 				200);
 			} else {
-				var_dump(Response);
+				DB::rollback();
 				return Response::json(array(
 				'error'=>true,
 				'mensaje' => HerramientasController::getErrores($ctacte->validator),
@@ -143,5 +143,9 @@ class CtacteController extends MaestroController {
 
 		});
 
-	}
+	} catch(\Exception $e)
+			{
+			    DB::rollback();
+			    throw $e;
+			}
 }
