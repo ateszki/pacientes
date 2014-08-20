@@ -141,7 +141,7 @@ class CtacteController extends MaestroController {
 				),200);
 			}
 
-		});
+		
 
 	} catch(\Exception $e)
 			{
