@@ -94,6 +94,8 @@ class CtacteController extends MaestroController {
 		$pagos = $new["pago"]; 
 		unset($new["pago"]);
 		$new["user_id"] = Auth::user()->user_id;
+		var_dump($new);
+		die();
 		$modelo_ctacte = new Ctacte();
 		$ctacte = $modelo_ctacte->create($new);
 		if ($ctacte->save()){
