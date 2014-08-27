@@ -54,6 +54,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
+	Route::get('paciente/{paciente_id}/ctacte','CtacteController@movimientosPaciente');
 	Route::get('paciente/{paciente_id}/observaciones','PacienteController@observaciones_detalladas');
 	Route::get('paciente/{paciente_id}/prepaga','PacientePrepagaController@vista_detallada');
 	Route::post('paciente/buscar','PacienteController@postBuscar');
@@ -118,6 +119,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	
 // cuentas corrientes
 	Route::post('factura','CtacteController@crear');	
+	Route::get('factura/{id}','CtacteController@traerMovimiento');	
+	Route::get('factura/{id}/items','CtacteController@traerItems');	
+	Route::get('factura/{id}/pagos','CtacteController@traerPagos');	
 	Route::resource('ctacte', 'CtacteController');
 
 // generales

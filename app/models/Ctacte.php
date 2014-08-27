@@ -12,7 +12,6 @@ class Ctacte extends Maestro {
 			'nro_cbte',
 			'fecha',
 			'referencia',
-			'presupuesto_id',
 			'importe_bruto',
 			'porc_bonificacion',
 			'importe_neto',
@@ -25,6 +24,7 @@ class Ctacte extends Maestro {
 			'print_ok',
 			'impresora_fiscal',
 			'cancelado',
+			'tipo_prev',
 		);
 
 
@@ -33,7 +33,8 @@ class Ctacte extends Maestro {
                         'centro_odontologo_especialidad_id' => 'Required|integer|exists:centros_odontologos_especialidades,id',
 			'user_id' =>'Required|integer|exists:users,id',
 			'tipo_movimiento'=>'Required|min:2|max:2',
-			'tipo_cbte' => 'Required|min:2|max:2',
+			'tipo_prev' => 'Required|min:2|max:2',
+			'tipo_cbte' => 'min:2|max:2',
 			'prefijo_cbte' => 'max:4',
 			'nro_cbte' => 'max:8',
 			'fecha'=>'Required|date',
@@ -52,4 +53,7 @@ class Ctacte extends Maestro {
 		return $this->hasMany('CtacteRecLin');
 	}
 
+	public function paciente_prepaga(){
+		return $this->belongsTo('PacientePrepaga');
+	}
 }

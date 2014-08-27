@@ -107,6 +107,20 @@ class CtacteController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+	public function movimientosPaciente($paciente_id){
+
+		$pacientes_prepagas = PacientePrepaga::where('paciente_id','=',$paciente_id)->with('ctactes')->get()->toArray();
+		$movimientos = array();	
+		foreach ($pacientes_prepagas as $pp){
+				$movimientos = array_merge($movimientos,$pp["ctactes"]);
+		}
+		return Response::json(array(
+		'error'=>false,
+		'listado'=>$movimientos),
+		200);
+
+}
+
 	public function crear(){
 		DB::beginTransaction();
 		try
@@ -117,10 +131,17 @@ class CtacteController extends MaestroController {
 		unset($new['session_key']);
 
 		$new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
-		$items = $new["items"];
+		
+		foreach ($new["items"] as $i => $item){
+			$items[$i] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$item); 
+		}
 		unset($new["items"]);
-		$pagos = $new["pago"]; 
+		
+		foreach ($new["pago"] as $p => $pago){
+			$pagos[$p] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$pago); 
+		}
 		unset($new["pago"]);
+		
 		$new["user_id"] = Auth::user()->id;
 		$modelo_ctacte = new Ctacte();
 		$ctacte = $modelo_ctacte->create($new);
@@ -158,7 +179,8 @@ class CtacteController extends MaestroController {
 				DB::commit();
 				return Response::json(array(
 				'error'=>false,
-				'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
+				//'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
+				'listado'=>$ctacte->where('id','=',$ctacte->id)->get()->toArray()),
 				200);
 			} else {
 				DB::rollback();
@@ -181,4 +203,59 @@ class CtacteController extends MaestroController {
 				    );
 			}
 	} 
+	
+	public function traerMovimiento($id){
+		try {
+			$mov = Ctacte::findOrFail($id);
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>$mov->toArray()),
+				200);
+
+		}catch (Exception $e){
+	
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+
+	}
+	public function traerItems($id){
+		try {
+			$items = Ctacte::findOrFail($id)->lineas_factura()->get();
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>$items->toArray()),
+				200);
+
+		}catch (Exception $e){
+	
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+
+	}
+	public function traerPagos($id){
+		try {
+			$pagos = Ctacte::findOrFail($id)->lineas_recibo()->get();
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>$pagos->toArray()),
+				200);
+
+		}catch (Exception $e){
+	
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+
+	}
 }

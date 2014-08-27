@@ -30,6 +30,9 @@ class PacientePrepaga extends Maestro {
 		return $this->hasMany('Prepagas');
 	}
 
+	public function ctactes(){
+		return $this->hasMany('Ctacte');
+	}
 	public function vistaDetallada($paciente_id){
 		return DB::table('paciente_prepaga')
                      ->join('pacientes','paciente_prepaga.paciente_id','=','pacientes.id')

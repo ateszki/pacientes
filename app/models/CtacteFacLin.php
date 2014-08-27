@@ -11,7 +11,10 @@ class CtacteFacLin extends Maestro {
 			'cantidad',
 			'precio',
 			'importe',
-			'tipo'
+			'tipo',
+			'presupuesto_id',
+			'tasa_iva',
+			'importe_iva',
 		);
 
 
@@ -23,7 +26,9 @@ class CtacteFacLin extends Maestro {
 			'precio'=>'required|numeric',
 			'importe'=>'required|numeric',
                         'tipo' => 'Required|in:P,I,N',
-
+			'tasa_iva' => 'numeric',
+			'importe_iva' => 'numeric',
+			'presupuesto_id' => 'integer'
                 );
 
 	public function ctacte(){

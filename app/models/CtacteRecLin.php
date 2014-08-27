@@ -16,6 +16,7 @@ class CtacteRecLin extends Maestro {
 			'tipo_cambio',
 			'importe',
 			'tipo',
+			'descripcion',
 		);
 
 
@@ -30,7 +31,8 @@ class CtacteRecLin extends Maestro {
 			'codigo_aprobacion'=>'max:25', 
 			'tipo_cambio'=>'numeric',
 			'importe'=>'numeric',
-			'tipo' => 'Required|in:T,C,E,D',
+			'tipo' => 'Required|in:T,C,D,E',
+			'descripcion' => 'max:50',
                 );
 
 	public function ctacte(){
