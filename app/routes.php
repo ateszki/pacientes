@@ -118,6 +118,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	
 // cuentas corrientes
 	Route::post('factura','CtacteController@crear');	
+	Route::resource('ctacte', 'CtacteController');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

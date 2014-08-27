@@ -65,7 +65,35 @@ class CtacteController extends MaestroController {
 	 */
 	public function update($id)
 	{
+		if (Input::has(array('importe_bruto','importe_neto','importe_iva'))){
+			$importe_neto = Input::get('importe_neto'); 
+			$importe_bruto = Input::get('importe_bruto'); 
+			$importe_iva = Input::get('importe_iva');
+			
+			if (!$this->checkImportes($id,$importe_neto,$importe_bruto,$importe_iva)){
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => 'No coinciden los importes',
+					'listado'=>Input::all(),
+					),200);
+			}
+ 
+		}
 		return parent::update($id);
+	}
+
+	private function checkImportes($id,$neto,$bruto,$iva){
+		if ($bruto != $neto+$iva){
+			return false;
+		} else {
+			$ctacte = Ctacte::where('id','=',$id)->get();
+			$lineas = $ctacte->lineas_factura();
+			$total_lineas = 0;
+			foreach ($lineas as $lin){
+				$total_lineas += $lin->importe;
+			}
+			return ($neto == $total_lineas);
+		}	
 	}
 
 	/**
