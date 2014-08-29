@@ -130,5 +130,9 @@ class Maestro extends Eloquent {
     public  function getEsquema(){
 	return DB::select('SHOW COLUMNS from `'.$this->table.'`');
 	}
-	
+
+   public function getFechaArgAttribute($value){
+		return (isset($this->fecha) && !empty($this->fecha) )?implode("/",array_reverse(explode("-",$this->fecha))):false;
+   }
+	protected $appends = array('fecha_arg');	
 }

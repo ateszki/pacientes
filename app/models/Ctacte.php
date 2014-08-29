@@ -56,4 +56,17 @@ class Ctacte extends Maestro {
 	public function paciente_prepaga(){
 		return $this->belongsTo('PacientePrepaga');
 	}
+	
+	public function getImporteAttribute($value){
+		return $this->importe_neto+$this->importe_iva;
+	}
+	public function getDebeAttribute($value){
+		$t = Tabla::where('codigo_tabla','=','COMPROBANTES_CTACTE')->where('valor','=',$this->tipo_prev)->first();
+		return (is_object($t))?($t->debehaber == 'D')?$this->importe:0:0;
+	}
+	public function getHaberAttribute($value){
+		$t = Tabla::where('codigo_tabla','=','COMPROBANTES_CTACTE')->where('valor','=',$this->tipo_prev)->first();
+		return (is_object($t))?($t->debehaber == 'H')?$this->importe:0:0;
+	}
+	protected $appends = array("fecha_arg","importe","debe","haber");
 }

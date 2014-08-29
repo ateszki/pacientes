@@ -112,7 +112,19 @@ class CtacteController extends MaestroController {
 		$pacientes_prepagas = PacientePrepaga::where('paciente_id','=',$paciente_id)->with('ctactes')->get()->toArray();
 		$movimientos = array();	
 		foreach ($pacientes_prepagas as $pp){
-				$movimientos = array_merge($movimientos,$pp["ctactes"]);
+			//var_dump($pp);die();	
+				$mov = $pp["ctactes"];
+				$prepaga = Prepaga::find($pp["prepaga_id"]);
+				foreach($mov as $m){
+					$coe = CentroOdontologoEspecialidad::find($m["centro_odontologo_especialidad_id"]);
+					$m["odontologo"] = $coe->odontologo->nombre_completo;
+					$m["especialidad"] = $coe->especialidad->especialidad;
+					$m["prepaga"] = $prepaga->razon_social;
+					$m["prepaga_codigo"] = $prepaga->codigo;
+					//$m["fecha"] = substr($m["fecha"],-2)."-".substr($m["fecha"],5,2)."-".substr($m["fecha"],0,4);
+					$movimientos[] = $m;
+					//$movimientos = array_merge($movimientos,$mov);
+				}
 		}
 		return Response::json(array(
 		'error'=>false,
@@ -125,29 +137,35 @@ class CtacteController extends MaestroController {
 		DB::beginTransaction();
 		try
 		{
+
+
 		$data = Input::all();
 		$new = $data;
 		unset($new['apikey']);
 		unset($new['session_key']);
 
+		$items = array();
+		$pagos = array();
+
 		$new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
-		
-		foreach ($new["items"] as $i => $item){
-			$items[$i] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$item); 
+		if(isset($new["items"])){	
+			foreach ($new["items"] as $i => $item){
+				$items[$i] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$item); 
+			}
+			unset($new["items"]);
 		}
-		unset($new["items"]);
-		
-		foreach ($new["pago"] as $p => $pago){
-			$pagos[$p] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$pago); 
+		if(isset($new["pago"])){
+			foreach ($new["pago"] as $p => $pago){
+				$pagos[$p] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$pago); 
+			}
+			unset($new["pago"]);
 		}
-		unset($new["pago"]);
-		
 		$new["user_id"] = Auth::user()->id;
 		$modelo_ctacte = new Ctacte();
 		$ctacte = $modelo_ctacte->create($new);
 		if ($ctacte->save()){
 				$this->eventoAuditar($ctacte);
-
+				if (count($items)){
 				foreach($items as $item){
 					$ctacte_fac_lin = new CtacteFacLin();
 					$item['ctacte_id']=$ctacte->id;
@@ -162,9 +180,38 @@ class CtacteController extends MaestroController {
 					
 					}
 				}
+				}
+				if(count($pagos)){
+				$referencia = $ctacte->id;
+				if(substr($ctacte->tipo_prev,0,1) =='F'){
+				$new["tipo_cbte"] = (!empty($new["tipo_cbte"]))?'RE':NULL;
+				$new["tipo_prev"] = 'RE';
+				$new["referencia"] = $ctacte->id;
+				$new["importe_iva"] = 0;
+				$importe = 0;	
+				foreach ($pagos as $p){
+					$importe += $p["importe"];
+				}
+				$new["importe_neto"] = $importe;
+				$new["importe_bruto"] = $importe;
+				$modelo_ctacte1 = new Ctacte();
+				$ctacte1 = $modelo_ctacte1->create($new);
+					if ($ctacte1->save()){
+						$this->eventoAuditar($ctacte1);
+						$referencia = $ctacte1->id;
+					} else {
+							DB::rollback();
+							return Response::json(array(
+							'error'=>true,
+							'mensaje' => HerramientasController::getErrores($ctacte1->validator),
+							'listado'=>$data,
+							),200);
+					
+					}					
+				}
 				foreach($pagos as $pago){
 					$ctacte_rec_lin = new CtacteRecLin();
-					$pago['ctacte_id']=$ctacte->id;
+					$pago['ctacte_id']=$referencia;
 					$rec_lin = $ctacte_rec_lin->create($pago);
 					if(!$rec_lin->save()){
 						DB::rollback();
@@ -182,6 +229,8 @@ class CtacteController extends MaestroController {
 				//'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
 				'listado'=>$ctacte->where('id','=',$ctacte->id)->get()->toArray()),
 				200);
+				} else {
+				}
 			} else {
 				DB::rollback();
 				return Response::json(array(

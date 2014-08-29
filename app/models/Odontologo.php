@@ -38,6 +38,10 @@ class Odontologo extends Maestro {
 			'iva_id' => 'required|integer|exists:iva,id',
                 );
 
+	public function getNombreCompletoAttribute($value){
+		return $this->apellido.", ".$this->nombres;
+	}
+
 	public function centrosEspecialidades(){
 		return $this->hasMany('CentroOdontologoEspecialidad');
 	}
