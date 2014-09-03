@@ -121,6 +121,7 @@ class CtacteController extends MaestroController {
 					$m["especialidad"] = $coe->especialidad->especialidad;
 					$m["prepaga"] = $prepaga->razon_social;
 					$m["prepaga_codigo"] = $prepaga->codigo;
+					$m["saldo"] = 0;
 					//$m["fecha"] = substr($m["fecha"],-2)."-".substr($m["fecha"],5,2)."-".substr($m["fecha"],0,4);
 					$movimientos[] = $m;
 					//$movimientos = array_merge($movimientos,$mov);
