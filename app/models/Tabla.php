@@ -9,6 +9,8 @@ class Tabla extends Maestro {
 		'valor',
 		'descripcion',
 		'debehaber',
+		'cuotas',
+		'coeficiente',
 		);
 
 
@@ -17,6 +19,8 @@ class Tabla extends Maestro {
 			'valor' =>'Required|max:100',
 			'descripcion'=>'max:50',
 			'debehaber'=>'min:1|max:1',
+			'cuotas'=>'integer',
+			'coeficiente' => 'numeric',
                 );
 
 	

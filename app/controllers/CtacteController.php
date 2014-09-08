@@ -32,7 +32,7 @@ class CtacteController extends MaestroController {
 	 */
 	public function store()
 	{
-		return parent::store();
+		return $this->crear();
 	}
 
 	/**
@@ -82,7 +82,7 @@ class CtacteController extends MaestroController {
 		return parent::update($id);
 	}
 
-	private function checkImportes($id,$neto,$bruto,$iva){
+	private function checkImportes($id,$neto,$bruto,$iva,$total,$bonificacion){
 		if ($bruto != $neto+$iva){
 			return false;
 		} else {
@@ -104,7 +104,53 @@ class CtacteController extends MaestroController {
 	 */
 	public function destroy($id)
 	{
-		return parent::destroy($id);
+		DB::beginTransaction();
+		try
+		{
+			$modelo = $this->modelo->find($id);
+
+			//check de eliminacion
+			$salir = false;
+			$errorMsg = '';
+			if ($modelo->print_ok ){
+				$salir = true;
+				$error = 'El comprobante ya fue impreso en el controlador fiscal';
+			}
+			if(!empty($modelo->fecha_transferencia_bas)){
+				$salir = true;
+				$error = 'El comprobante ya fue transferido al sistema contable';
+			}
+			if($salir){
+			    DB::rollback();
+				return Response::json(array(
+					'error' => true,
+					'listado'=>$modelo->toArray(),
+					'mensaje' => $error),
+					200
+				    );
+			}
+
+			$eliminado = $modelo->delete();
+			if ($eliminado === true){
+				DB::commit();
+				$this->eventoAuditar($modelo);
+				return Response::json(array('error'=>false,'listado'=>$modelo->toArray()),200);
+			} else {
+			    DB::rollback();
+				return Response::json(array(
+					'error' => true,
+					'mensaje' => 'Se produjo un error. No se pudo eliminar el objeto'),
+					200
+				    );
+			}
+		} catch(\Exception $e){
+			    DB::rollback();
+				return Response::json(array(
+					'error' => true,
+					'mensaje' => $e->getMessage()),
+					200
+				    );
+		}
 	}
 
 	public function movimientosPaciente($paciente_id){
@@ -121,7 +167,7 @@ class CtacteController extends MaestroController {
 					$m["especialidad"] = $coe->especialidad->especialidad;
 					$m["prepaga"] = $prepaga->razon_social;
 					$m["prepaga_codigo"] = $prepaga->codigo;
-					$m["saldo"] = 0;
+				//	$m["saldo"] = 0;
 					//$m["fecha"] = substr($m["fecha"],-2)."-".substr($m["fecha"],5,2)."-".substr($m["fecha"],0,4);
 					$movimientos[] = $m;
 					//$movimientos = array_merge($movimientos,$mov);
@@ -224,14 +270,13 @@ class CtacteController extends MaestroController {
 					
 					}
 				}
+				}
 				DB::commit();
 				return Response::json(array(
 				'error'=>false,
 				//'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
 				'listado'=>$ctacte->where('id','=',$ctacte->id)->get()->toArray()),
 				200);
-				} else {
-				}
 			} else {
 				DB::rollback();
 				return Response::json(array(

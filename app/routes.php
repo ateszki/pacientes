@@ -118,11 +118,11 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('turno', 'TurnoController');
 	
 // cuentas corrientes
-	Route::post('factura','CtacteController@crear');	
+	Route::post('factura/crear','CtacteController@crear');	
 	Route::get('factura/{id}','CtacteController@traerMovimiento');	
 	Route::get('factura/{id}/items','CtacteController@traerItems');	
 	Route::get('factura/{id}/pagos','CtacteController@traerPagos');	
-	Route::resource('ctacte', 'CtacteController');
+	Route::resource('factura', 'CtacteController');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

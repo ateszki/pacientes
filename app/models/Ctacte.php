@@ -16,6 +16,7 @@ class Ctacte extends Maestro {
 			'porc_bonificacion',
 			'importe_neto',
 			'importe_iva',
+			'importe_total',
 			'user_id',
 			'centro_odontologo_especialidad_id',
 			'fecha_transferencia_bas',
@@ -41,10 +42,29 @@ class Ctacte extends Maestro {
 			'importe_bruto'=>'required|numeric',
 			'importe_neto'=>'required|numeric',
 			'importe_iva'=>'required|numeric',
+			'importe_total'=>'required|numeric',
 			'print_ok'=>'Required|boolean',				
 			'cancelado'=>'boolean',				
 
                 );
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($ctacte)
+        {   
+            // Delete all tricks that belong to this user
+            foreach ($ctacte->lineas_factura()->get() as $lf) {
+                $lf->delete();
+            }
+            foreach ($ctacte->lineas_recibo()->get() as $lr) {
+                $lr->delete();
+            }
+        });
+
+        // Setup event bindings...
+    }
 
 	public function lineas_factura(){
 		return $this->hasMany('CtacteFacLin');
@@ -56,17 +76,28 @@ class Ctacte extends Maestro {
 	public function paciente_prepaga(){
 		return $this->belongsTo('PacientePrepaga');
 	}
-	
+	public function aplicado_a(){
+		return $this->belongsTo('Ctacte','referencia');
+	}
+	public function comprobantes_aplicados(){
+		return $this->hasMany('Ctacte','referencia');
+	}
+/*	
 	public function getImporteAttribute($value){
 		return $this->importe_neto+$this->importe_iva;
 	}
+*/
 	public function getDebeAttribute($value){
 		$t = Tabla::where('codigo_tabla','=','COMPROBANTES_CTACTE')->where('valor','=',$this->tipo_prev)->first();
-		return (is_object($t))?($t->debehaber == 'D')?$this->importe:0:0;
+		return (is_object($t))?($t->debehaber == 'D')?$this->importe_total:0:0;
 	}
 	public function getHaberAttribute($value){
 		$t = Tabla::where('codigo_tabla','=','COMPROBANTES_CTACTE')->where('valor','=',$this->tipo_prev)->first();
-		return (is_object($t))?($t->debehaber == 'H')?$this->importe:0:0;
+		return (is_object($t))?($t->debehaber == 'H')?$this->importe_total:0:0;
 	}
-	protected $appends = array("fecha_arg","importe","debe","haber");
+	public function getSaldoAttribute($value){
+		$importe_aplicado = DB::table('ctactes')->where('referencia','=',$this->id)->where('cancelado','=',0)->sum('importe_bruto');
+		return $this->importe_bruto - $importe_aplicado;
+	}
+	protected $appends = array("fecha_arg","debe","haber","saldo");
 }
