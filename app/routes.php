@@ -124,6 +124,24 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('factura/{id}/pagos','CtacteController@traerPagos');	
 	Route::resource('factura', 'CtacteController');
 
+	Route::post('nomenclador/buscar','Nomenclador@postBuscar');
+	Route::resource('nomenclador', 'NomencladorController');
+
+	Route::post('planes-cobertura/buscar','PlanesCobertura@postBuscar');
+	Route::resource('planes-cobertura', 'PlanesCoberturaController');
+
+	Route::post('plan-cobertura-especialidad/buscar','PlanCoberturaEspecialidad@postBuscar');
+	Route::resource('plan-cobertura-especialidad', 'PlanCoberturaEspecialidadController');
+
+	Route::post('plan-prepaga/buscar','PlanPrepagaController@postBuscar');
+	Route::resource('plan-prepaga', 'PlanPrepagaController');
+
+	Route::post('listas-precios/buscar','ListaPreciosController@postBuscar');
+	Route::resource('listas-precios', 'ListaPreciosController');
+
+	Route::post('listas-precios-nomenclador/buscar','ListaPreciosNomencladorController@postBuscar');
+	Route::resource('listas-precios-nomenclador', 'ListaPreciosNomencladorController');
+
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 });

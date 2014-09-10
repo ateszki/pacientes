@@ -18,7 +18,7 @@ class PlanCoberturaEspecialidad extends Maestro {
 	public function planes_cobertura(){
 		return $this->hasMany('PlanesCobertura');
 	} 
-	public function prepagas(){
+	public function especialidades(){
 		return $this->hasMany('Especialidades');
 	}
 

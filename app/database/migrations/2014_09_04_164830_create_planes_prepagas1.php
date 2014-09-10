@@ -23,10 +23,10 @@ class CreatePlanesPrepagas1 extends Migration {
 			$table->boolean('requiere_bonos')->default(false);
 			$table->boolean('requiere_autorizacion')->default(false);
 			$table->boolean('requiere_odontograma')->default(false);
-			$table->boolean('requiere_planilla_aparate')->default(false);
+			$table->boolean('requiere_planilla_aparte')->default(false);
 			$table->boolean('requiere_planilla_propia')->default(false);
 			$table->boolean('requiere_planilla_baja')->default(false);
-			$table->text('observaciones')->nullable;
+			$table->text('observaciones')->nullable();
 			$table->boolean('habilitado')->default(true);
 			$table->timestamps();
 			$table->foreign('prepaga_id')->references('id')->on('prepagas');

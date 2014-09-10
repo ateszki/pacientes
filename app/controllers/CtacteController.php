@@ -65,12 +65,18 @@ class CtacteController extends MaestroController {
 	 */
 	public function update($id)
 	{
-		if (Input::has(array('importe_bruto','importe_neto','importe_iva'))){
+			return Response::json(array(
+			'error'=>true,
+			'mensaje' => 'Accion no disponible',
+			),200);
+/*
+		if (Input::has(array('importe_bruto','importe_neto','importe_iva','bonificacion','total'))){
 			$importe_neto = Input::get('importe_neto'); 
 			$importe_bruto = Input::get('importe_bruto'); 
 			$importe_iva = Input::get('importe_iva');
-			
-			if (!$this->checkImportes($id,$importe_neto,$importe_bruto,$importe_iva)){
+			$bonificacion = Input::get('bonificacion');
+			$total = Input::get('total');
+			if (!$this->checkImportes($id,$importe_neto,$importe_bruto,$importe_iva,$bonificacion,$total)){
 					return Response::json(array(
 					'error'=>true,
 					'mensaje' => 'No coinciden los importes',
@@ -80,10 +86,10 @@ class CtacteController extends MaestroController {
  
 		}
 		return parent::update($id);
-	}
+*/	}
 
 	private function checkImportes($id,$neto,$bruto,$iva,$total,$bonificacion){
-		if ($bruto != $neto+$iva){
+		if (($bruto - ($bruto*($bonificacion/10)))!= ($neto+$iva)){
 			return false;
 		} else {
 			$ctacte = Ctacte::where('id','=',$id)->get();
