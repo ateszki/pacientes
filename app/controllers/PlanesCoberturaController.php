@@ -79,4 +79,15 @@ class PlanesCoberturaController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+	public function vista_especialidades($id){
+		$modelo = $this->modelo->find($id);
+		
+	    return Response::json(array(
+		'error' => false,
+		'listado' => $modelo->vista_especialidades()),
+		200
+	    );
+			
+	}
+
 }

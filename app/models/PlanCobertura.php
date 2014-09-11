@@ -19,6 +19,16 @@ class PlanCobertura extends Maestro {
 
                 );
 
-
+	public function especialidades(){
+		return $this->hasManyThrough('Especialidad','PlanCoberturaEspecialidad','planes_cobertura_id','id');
+	}
+	
+	public function vista_especialidades(){
+		$espe = $this->especialidades()->get();
+		foreach ($espe as $k => $e){
+			$espe[$k]['codigo'] = $this->codigo;
+		}
+		return $espe;
+	}
 	
 }

@@ -124,13 +124,14 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('factura/{id}/pagos','CtacteController@traerPagos');	
 	Route::resource('factura', 'CtacteController');
 
-	Route::post('nomenclador/buscar','Nomenclador@postBuscar');
+	Route::post('nomenclador/buscar','NomencladorController@postBuscar');
 	Route::resource('nomenclador', 'NomencladorController');
 
-	Route::post('planes-cobertura/buscar','PlanesCobertura@postBuscar');
+	Route::post('planes-cobertura/buscar','PlanesCoberturaController@postBuscar');
+	Route::get('planes-cobertura/{id}/especialidades','PlanesCoberturaController@vista_especialidades');
 	Route::resource('planes-cobertura', 'PlanesCoberturaController');
 
-	Route::post('plan-cobertura-especialidad/buscar','PlanCoberturaEspecialidad@postBuscar');
+	Route::post('plan-cobertura-especialidad/buscar','PlanCoberturaEspecialidadController@postBuscar');
 	Route::resource('plan-cobertura-especialidad', 'PlanCoberturaEspecialidadController');
 
 	Route::post('plan-prepaga/buscar','PlanPrepagaController@postBuscar');
