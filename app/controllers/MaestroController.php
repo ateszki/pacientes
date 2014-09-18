@@ -63,6 +63,44 @@ class MaestroController extends \BaseController {
 	}
 	}
 
+public function iniciarFormulario(){
+	$salida = array(
+		'error'=>false,
+	);
+	$new = Input::all();
+	unset($new['apikey']);
+	unset($new['session_key']);
+	$esquemas = array();
+	$datos = array();
+	$new = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $new);
+	if(isset($new["esquemas"])){	
+		/*foreach ($new["esquemas"] as $e => $esque){
+			$esquemas[$e] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$esque);
+		}*/
+		$esquemas = $new["esquemas"];
+		unset($new["esquemas"]);
+	}
+	if(isset($new["datos"])){	
+		/*foreach ($new["datos"] as $d => $dato){
+			$datos[$d] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$dato);
+		}*/
+		$datos = $new["datos"];
+		unset($new["datos"]);
+	}
+	$esque_index = 0;
+	foreach($esquemas as $esque){
+		$esque_index++;
+		$m = new $esque();
+		$salida["esquema".$esque_index]=$m->getEsquema();
+	}
+	$dato_index = 0;
+	foreach ($datos as $dato){
+		$dato_index++;
+		$m = new $dato();
+		$salida["listado".$dato_index] = $m->all()->toArray();
+	}
+	return Response::json($salida,200);
+}
 
 	/*public function getErrors($messages){
 
@@ -84,11 +122,13 @@ class MaestroController extends \BaseController {
 	try {
 	$cant = (Request::get('cant') == '') ? 0 : Request::get('cant');
 	$offset = (Request::get('offset') == '') ? 0 : Request::get('offset');
-
+	$orderby = (Request::get('orderby')=='')? 'id' : Request::get('orderby');
+	$direccion = (Request::get('direccion')=='')? 'ASC' : Request::get('direccion');
 	if($cant>0){  // 
-	 $listado = $this->modelo->take($cant)->skip($offset)->get();
+	 	$listado = $this->modelo->orderBy($orderby,$direccion)->take($cant)->skip($offset)->get();
 	} else {
-	$listado = $this->modelo->All();
+	//$listado = $this->modelo->All();
+		$listado = $this->modelo->orderBy($orderby,$direccion)->get();
 	}
 	    return Response::json(array(
 		'error' => false,

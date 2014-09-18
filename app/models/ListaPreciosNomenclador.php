@@ -24,11 +24,11 @@ class ListaPreciosNomenclador extends Maestro {
 			"requiere_planilla_aparte"=>'boolean',
 	);
 
-	public function lista_precios(){
+	public function listas_precios(){
 		return $this->belongsTo('ListaPrecios');
 	} 
 	public function nomenclador(){
-		return $this->hasMany('Nomenclador');
+		return $this->belongsTo('Nomenclador');
 	}
 
 }

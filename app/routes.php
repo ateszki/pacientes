@@ -142,9 +142,11 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('listas-precios-nomenclador/buscar','ListaPreciosNomencladorController@postBuscar');
 	Route::resource('listas-precios-nomenclador', 'ListaPreciosNomencladorController');
+	Route::get('listas-precios-nomenclador/lista/{lista_id}','ListaPreciosNomencladorController@nomencladorLista');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
+	Route::get('iniciar-formulario','MaestroController@iniciarFormulario');
 });
 
 

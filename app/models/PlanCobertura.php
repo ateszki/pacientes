@@ -20,7 +20,8 @@ class PlanCobertura extends Maestro {
                 );
 
 	public function especialidades(){
-		return $this->hasManyThrough('Especialidad','PlanCoberturaEspecialidad','planes_cobertura_id','id');
+		//return $this->hasManyThrough('Especialidad','PlanCoberturaEspecialidad','planes_cobertura_id','id');
+		return $this->belongsToMany('Especialidad','planes_cobertura_especialidad','planes_cobertura_id','especialidad_id');
 	}
 	
 	public function vista_especialidades(){

@@ -1,6 +1,6 @@
 <?php
 
-class LitaPreciosNomencladorController extends MaestroController {
+class ListaPreciosNomencladorController extends MaestroController {
 
 	function __construct(){
 		$this->classname= 'ListaPreciosNomenclador';
@@ -78,5 +78,25 @@ class LitaPreciosNomencladorController extends MaestroController {
 	{
 		return parent::destroy($id);
 	}
+public function nomencladorLista($lista_id){
+	$lpn = $this->modelo->where('listas_precios_id','=',$lista_id)->with('nomenclador','listas_precios')->get();
+$listado = array();
+foreach ($lpn as $l){
+	$obj = $l->toArray();
+	unset($obj["nomenclador"]);
+	unset($obj["listas_precios"]);
+	$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
+	$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+	$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
+	$listado[] = $obj; 
 
+}
+
+return Response::json(array(
+'error' => false,
+'listado' => $listado),
+200
+);
+
+}
 }
