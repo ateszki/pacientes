@@ -3,6 +3,7 @@
 class PlanCobertura extends Maestro {
 
 	protected $table = 'planes_cobertura'; 	
+	
 
 	protected $fillable = array(		
 			'codigo',
@@ -28,6 +29,7 @@ class PlanCobertura extends Maestro {
 		$espe = $this->especialidades()->get();
 		foreach ($espe as $k => $e){
 			$espe[$k]['codigo'] = $this->codigo;
+			unset($espe[$k]['pivot']);
 		}
 		return $espe;
 	}

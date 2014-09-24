@@ -57,6 +57,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('paciente/{paciente_id}/ctacte','CtacteController@movimientosPaciente');
 	Route::get('paciente/{paciente_id}/observaciones','PacienteController@observaciones_detalladas');
 	Route::get('paciente/{paciente_id}/prepaga','PacientePrepagaController@vista_detallada');
+	Route::get('paciente/{paciente_id}/datos-relacionados','PacienteController@datosRelacionados');
 	Route::post('paciente/buscar','PacienteController@postBuscar');
 	Route::resource('paciente', 'PacienteController');
 
@@ -138,11 +139,20 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('plan-prepaga', 'PlanPrepagaController');
 
 	Route::post('listas-precios/buscar','ListaPreciosController@postBuscar');
+	Route::get('listas-precios/{lista_id}/precios-nomenclador','ListaPreciosNomencladorController@nomencladorLista');
 	Route::resource('listas-precios', 'ListaPreciosController');
 
 	Route::post('listas-precios-nomenclador/buscar','ListaPreciosNomencladorController@postBuscar');
 	Route::resource('listas-precios-nomenclador', 'ListaPreciosNomencladorController');
-	Route::get('listas-precios-nomenclador/lista/{lista_id}','ListaPreciosNomencladorController@nomencladorLista');
+
+	Route::post('piezas-dentales/buscar','PiezaDentalController@postBuscar');
+	Route::resource('piezas-dentales', 'PiezaDentalController');
+
+	Route::post('grupos-dentales/buscar','GrupoDentalController@postBuscar');
+	Route::resource('grupos-dentales', 'GrupoDentalController');
+
+	Route::post('grupos-dentales-piezas-dentales/buscar','GruposDentalesPiezasDentalesController@postBuscar');
+	Route::resource('grupos-dentales-piezas-dentales', 'GruposDentalesPiezasDentalesController');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

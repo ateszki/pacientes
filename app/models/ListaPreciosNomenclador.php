@@ -5,23 +5,31 @@ class ListaPreciosNomenclador extends Maestro {
 	protected $table = 'listas_precios_nomenclador'; 	
 
 	protected $fillable = array(
-		'lista_precio_id',
+		'listas_precios_id',
 		'nomenclador_id',
-		"precio",
-		"requiere_autorizacion",
-		"requiere_odontograma",
-		"requiere_planilla_aparte",
-		"observaciones",
+		'precio',
+		'requiere_autorizacion',
+		'requiere_odontograma',
+		'requiere_planilla_aparte',
+		'observaciones',
+		'precio_fuera_rango',
+		'edad_coseguro_desde',
+		'edad_coseguro_hasta',
+		'grupos_dentales_id',
 		);
 
 
 	public $rules = array(
-                        'lista_precio_id' => 'Required|integer|exists:listas_precios,id',
+                        'listas_precios_id' => 'Required|integer|exists:listas_precios,id',
                         'nomenclador_id' => 'Required|integer|exists:nomencladores,id',
-			"precio"=>'numeric',
-			"requiere_autorizacion"=>'boolean',
-			"requiere_odontograma"=>'boolean',
-			"requiere_planilla_aparte"=>'boolean',
+			'precio'=>'required|numeric',
+			'requiere_autorizacion'=>'required|boolean',
+			'requiere_odontograma'=>'required|boolean',
+			'requiere_planilla_aparte'=>'required|boolean',
+			'precio_fuera_rango'=>'numeric',
+			'edad_coseguro_desde'=>'integer|min:0|max:110',
+			'edad_coseguro_hasta'=>'integer|min:0|max:110',
+			'grupos_dentales_id'=>'integer|exists:grupos_dentales,id',
 	);
 
 	public function listas_precios(){

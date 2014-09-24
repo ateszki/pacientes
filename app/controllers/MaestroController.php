@@ -64,6 +64,7 @@ class MaestroController extends \BaseController {
 	}
 
 public function iniciarFormulario(){
+	try {
 	$salida = array(
 		'error'=>false,
 	);
@@ -89,17 +90,63 @@ public function iniciarFormulario(){
 	}
 	$esque_index = 0;
 	foreach($esquemas as $esque){
-		$esque_index++;
-		$m = new $esque();
-		$salida["esquema".$esque_index]=$m->getEsquema();
+		if(class_exists($esque)){
+			$esque_index++;
+			$m = new $esque();
+			$salida["esquema".$esque_index]=$m->getEsquema();
+		}
 	}
 	$dato_index = 0;
 	foreach ($datos as $dato){
-		$dato_index++;
-		$m = new $dato();
-		$salida["listado".$dato_index] = $m->all()->toArray();
+		if(class_exists($dato)){
+			$dato_index++;
+			$m = new $dato();
+			$salida["listado".$dato_index] = $m->all()->toArray();
+		}
 	}
 	return Response::json($salida,200);
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
+}
+
+public function datosRelacionados($id){
+	try{
+		$salida = array(
+			'error'=>false,
+		);
+		$new = Input::all();
+		unset($new['apikey']);
+		unset($new['session_key']);
+		$datos = array();
+	if(isset($new["datos"])){	
+		/*foreach ($new["datos"] as $d => $dato){
+			$datos[$d] = array_map(function($n){return ($n == 'NULL')?NULL:$n;},$dato);
+		}*/
+		$datos = $new["datos"];
+		unset($new["datos"]);
+	}
+	    $modelo = $this->modelo->find($id);
+		$salida["listado1"]=array($modelo->toArray());
+	$dato_index = 1;
+	foreach ($datos as $dato){
+		$dato_index++;
+		$salida["listado".$dato_index] = $modelo->$dato()->get();
+	}
+	return Response::json($salida,200);
+		
+	} catch (Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+		    );
+	}
+
 }
 
 	/*public function getErrors($messages){
