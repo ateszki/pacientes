@@ -136,6 +136,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('plan-cobertura-especialidad', 'PlanCoberturaEspecialidadController');
 
 	Route::post('plan-prepaga/buscar','PlanPrepagaController@postBuscar');
+	Route::get('plan-prepaga/{id}/precios-nomenclador','PlanPrepagaController@nomencladorLista');
 	Route::resource('plan-prepaga', 'PlanPrepagaController');
 
 	Route::post('listas-precios/buscar','ListaPreciosController@postBuscar');

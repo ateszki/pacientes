@@ -78,5 +78,44 @@ class PlanPrepagaController extends MaestroController {
 	{
 		return parent::destroy($id);
 	}
+	
+	public function nomencladorLista($id){
+	$pp = $this->modelo->find($id);
+	$lpnmodelo = new ListaPreciosNomenclador();
+	$lpn = $lpnmodelo->where('listas_precios_id','=',$pp->lista_precios_id)->with('nomenclador','listas_precios','grupo_dental')->get();
+	$listado = array();
+	foreach ($lpn as $l){
+		$obj = $l->toArray();
+		unset($obj["nomenclador"]);
+		unset($obj["listas_precios"]);
+		$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
+		$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+		$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
+		$obj["grupo_dental"] = $l->grupo_dental->descripcion;
+		$listado[] = $obj; 
+
+	}
+	$lpn1 = $lpnmodelo->where('listas_precios_id','=',$pp->lista_basica_id)->whereNotIn('nomenclador_id',function($query) use ($pp){
+					$query->select('nomenclador_id')->from('listas_precios_nomenclador')->where('listas_precios_id','=',$pp->lista_precios_id);
+					})->with('nomenclador','listas_precios','grupo_dental')->get();
+	foreach ($lpn1 as $l){
+		$obj = $l->toArray();
+		unset($obj["nomenclador"]);
+		unset($obj["listas_precios"]);
+		$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
+		$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+		$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
+		$obj["grupo_dental"] = $l->grupo_dental->descripcion;
+		$listado[] = $obj; 
+
+	}
+
+	return Response::json(array(
+	'error' => false,
+	'listado' => $listado),
+	200
+	);
+
+	}
 
 }

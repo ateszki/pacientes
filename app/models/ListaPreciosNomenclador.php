@@ -38,5 +38,7 @@ class ListaPreciosNomenclador extends Maestro {
 	public function nomenclador(){
 		return $this->belongsTo('Nomenclador');
 	}
-
+	public function grupo_dental(){
+		return $this->belongsTo("GrupoDental",'grupos_dentales_id','id');
+	}
 }

@@ -78,25 +78,26 @@ class ListaPreciosNomencladorController extends MaestroController {
 	{
 		return parent::destroy($id);
 	}
-public function nomencladorLista($lista_id){
-	$lpn = $this->modelo->where('listas_precios_id','=',$lista_id)->with('nomenclador','listas_precios')->get();
-$listado = array();
-foreach ($lpn as $l){
-	$obj = $l->toArray();
-	unset($obj["nomenclador"]);
-	unset($obj["listas_precios"]);
-	$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
-	$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
-	$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
-	$listado[] = $obj; 
+	public function nomencladorLista($lista_id){
+		$lpn = $this->modelo->where('listas_precios_id','=',$lista_id)->with('nomenclador','listas_precios','grupo_dental')->get();
+	$listado = array();
+	foreach ($lpn as $l){
+		$obj = $l->toArray();
+		unset($obj["nomenclador"]);
+		unset($obj["listas_precios"]);
+		$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
+		$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+		$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
+		$obj["grupo_dental"] = $l->grupo_dental->descripcion;
+		$listado[] = $obj; 
 
-}
+	}
 
-return Response::json(array(
-'error' => false,
-'listado' => $listado),
-200
-);
+	return Response::json(array(
+	'error' => false,
+	'listado' => $listado),
+	200
+	);
 
-}
+	}
 }
