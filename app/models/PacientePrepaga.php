@@ -38,7 +38,7 @@ class PacientePrepaga extends Maestro {
                      ->join('pacientes','paciente_prepaga.paciente_id','=','pacientes.id')
 		     ->join('prepagas','paciente_prepaga.prepaga_id','=','prepagas.id')
 		->join('planes_prepaga','paciente_prepaga.planes_prepaga_id','=','planes_prepaga.id')
-			->select(DB::raw("paciente_prepaga.id,paciente_prepaga.prepaga_id,paciente_prepaga.paciente_id,paciente_prepaga.numero_credencial,planes_prepaga.codigo as plan_cobertura,DATE_FORMAT(paciente_prepaga.fecha_baja,'%d/%m/%Y') AS fecha_baja,DATE_FORMAT(paciente_prepaga.fecha_alta,'%d/%m/%Y') AS fecha_alta,concat(pacientes.nombres, ' ',pacientes.apellido) as pacientes,concat(pacientes.tipo_documento,' ',pacientes.nro_documento) as documento, prepagas.codigo,prepagas.razon_social,prepagas.denominacion_comercial"))
+			->select(DB::raw("paciente_prepaga.id,paciente_prepaga.planes_prepaga_id,paciente_prepaga.prepaga_id,paciente_prepaga.paciente_id,paciente_prepaga.numero_credencial,planes_prepaga.codigo as plan_cobertura,DATE_FORMAT(paciente_prepaga.fecha_baja,'%d/%m/%Y') AS fecha_baja,DATE_FORMAT(paciente_prepaga.fecha_alta,'%d/%m/%Y') AS fecha_alta,concat(pacientes.nombres, ' ',pacientes.apellido) as pacientes,concat(pacientes.tipo_documento,' ',pacientes.nro_documento) as documento, prepagas.codigo,prepagas.razon_social,prepagas.denominacion_comercial"))
                      ->where('pacientes.id','=',$paciente_id)
 			->get();
 	}

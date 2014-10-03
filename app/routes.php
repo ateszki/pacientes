@@ -125,6 +125,14 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('factura/{id}/pagos','CtacteController@traerPagos');	
 	Route::resource('factura', 'CtacteController');
 
+	Route::post('presupuesto/buscar','PresupuestoController@postBuscar');
+	Route::post('presupuesto/crear','PresupuestoController@crear');	
+	Route::put('presupuesto/{id}/actualizar','PresupuestoController@actualizar');	
+	Route::delete('presupuesto/{id}/eliminar','PresupuestoController@eliminar');	
+	Route::get('presupuesto/{id}/items','PresupuestoController@traerItems');	
+	Route::get('presupuesto/{id}','PresupuestoController@traerPresupuesto');	
+	Route::resource('presupuesto', 'PresupuestoController');
+
 	Route::post('nomenclador/buscar','NomencladorController@postBuscar');
 	Route::resource('nomenclador', 'NomencladorController');
 
@@ -152,8 +160,8 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('grupos-dentales/buscar','GrupoDentalController@postBuscar');
 	Route::resource('grupos-dentales', 'GrupoDentalController');
 
-	Route::post('grupos-dentales-piezas-dentales/buscar','GruposDentalesPiezasDentalesController@postBuscar');
-	Route::resource('grupos-dentales-piezas-dentales', 'GruposDentalesPiezasDentalesController');
+	Route::post('grupos-dentales-piezas-dentales/buscar','GrupsDentalPiezaDentalController@postBuscar');
+	Route::resource('grupos-dentales-piezas-dentales', 'GrupoDentalPiezaDentalController');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

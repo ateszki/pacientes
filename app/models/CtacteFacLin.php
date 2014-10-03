@@ -15,6 +15,8 @@ class CtacteFacLin extends Maestro {
 			'presupuesto_id',
 			'tasa_iva',
 			'importe_iva',
+			'piezas_dentales_id',
+			'caras',
 		);
 
 
@@ -28,11 +30,16 @@ class CtacteFacLin extends Maestro {
                         'tipo' => 'Required|in:P,I,N',
 			'tasa_iva' => 'numeric',
 			'importe_iva' => 'numeric',
-			'presupuesto_id' => 'integer'
+			'presupuesto_id' => 'integer',
+			'piezas_dentales_id' => 'integer',
+			'caras'=>'max:5',
                 );
 
 	public function ctacte(){
 		return $this->belongsTo('Ctacte');
+	}
+	public function pieza_dental(){
+		return $this->belongsTo('PiezaDental');
 	}
 
 }

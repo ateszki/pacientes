@@ -90,6 +90,8 @@ class PlanPrepagaController extends MaestroController {
 		unset($obj["listas_precios"]);
 		$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
 		$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+		$obj["item_bas"] = $l->nomenclador->item_bas;
+		$obj["tasa_iva"] = $l->nomenclador->tasa_iva();
 		$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
 		$obj["grupo_dental"] = $l->grupo_dental->descripcion;
 		$listado[] = $obj; 
@@ -99,11 +101,14 @@ class PlanPrepagaController extends MaestroController {
 					$query->select('nomenclador_id')->from('listas_precios_nomenclador')->where('listas_precios_id','=',$pp->lista_precios_id);
 					})->with('nomenclador','listas_precios','grupo_dental')->get();
 	foreach ($lpn1 as $l){
+		
 		$obj = $l->toArray();
 		unset($obj["nomenclador"]);
 		unset($obj["listas_precios"]);
 		$obj["codigo_nomenclador"] = $l->nomenclador->codigo;
 		$obj["descripcion_nomenclador"] = $l->nomenclador->descripcion;
+		$obj["item_bas"] = $l->nomenclador->item_bas;
+		$obj["tasa_iva"] = $l->nomenclador->tasa_iva();
 		$obj["codigo_lista_precios"] = $l->listas_precios->codigo;
 		$obj["grupo_dental"] = $l->grupo_dental->descripcion;
 		$listado[] = $obj; 

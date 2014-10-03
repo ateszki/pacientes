@@ -16,6 +16,7 @@ class ListaPreciosNomenclador extends Maestro {
 		'edad_coseguro_desde',
 		'edad_coseguro_hasta',
 		'grupos_dentales_id',
+		'precio_fuera_cobertura',
 		);
 
 
@@ -30,6 +31,7 @@ class ListaPreciosNomenclador extends Maestro {
 			'edad_coseguro_desde'=>'integer|min:0|max:110',
 			'edad_coseguro_hasta'=>'integer|min:0|max:110',
 			'grupos_dentales_id'=>'integer|exists:grupos_dentales,id',
+			'precio_fuera_cobertura'=>'numeric',
 	);
 
 	public function listas_precios(){

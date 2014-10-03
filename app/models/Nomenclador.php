@@ -47,6 +47,13 @@ class Nomenclador extends Maestro {
 			'habilitado'=>'boolean',  
                 );
 
-
+	public function tasa_iva(){
+		if(!empty($this->item_bas)){
+			$t = Tabla::where('codigo_tabla','=','ITEM_BAS')->where('valor','=',$this->item_bas)->firstOrFail();
+			return $t->coeficiente;
+		}else{
+			return null;
+		}
+	}
 	
 }
