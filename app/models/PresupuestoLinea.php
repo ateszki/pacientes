@@ -3,6 +3,7 @@
 class PresupuestoLinea extends Maestro {
 
 	protected $table = 'presupuestos_lineas'; 	
+	protected $appends = array('codigo_nomenclador','descripcion_nomenclador','numero_pieza_dental');
 
 	protected $fillable = array(
 			'presupuesto_id',
@@ -17,13 +18,15 @@ class PresupuestoLinea extends Maestro {
 
 	public $rules = array(
 			'presupuesto_id' => 'required|integer|exists:presupuestos,id',
-			'alternativa' => 'required|integer'
+			'alternativa' => 'required|integer',
 			'nomenclador_id' => 'required|integer|exists:nomencladores,id',
 			'pieza_dental_id' => 'integer|exists:piezas_dentales,id',
 			'caras'=>'max:5',
 			'aprobado'=>'boolean',
 			'importe'=>'required|numeric',
                 );
+
+	
 
 	public function presupuesto(){
 		return $this->belongsTo('Presupuesto');
@@ -35,4 +38,42 @@ class PresupuestoLinea extends Maestro {
 		return $this->belongsTo('PiezaDental');
 	}
 	
+	public function getCodigoNomencladorAttribute($value){
+		return $this->nomenclador()->first()->codigo;
+	}
+	public function getDescripcionNomencladorAttribute($value){
+		return $this->nomenclador()->first()->descripcion;
+	}
+	public function getNumeroPiezaDentalAttribute($value){
+		return $this->pieza_dental()->first()->diente;
+	}
+
+	public function getEsquema(){
+		$esquema = parent::getEsquema();
+		$esquema[] = array(
+			      "Field"=> "codigo_nomenclador",
+				"Type"=> "varchar(8)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "descripcion_nomenclador",
+				"Type"=> "varchar(100)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "numero_pieza_dental",
+				"Type"=> "varchar(2)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		return $esquema;
+	}
 }

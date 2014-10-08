@@ -70,10 +70,13 @@ class PresupuestoController extends MaestroController {
 	public function update($id)
 	{
 		//return parent::update($id);
+/*
 			return Response::json(array(
 			'error'=>true,
 			'mensaje' => 'Accion no disponible',
 			),200);
+*/
+		return $this->actualizar($id);
 	}
 
 	/**
@@ -85,11 +88,13 @@ class PresupuestoController extends MaestroController {
 	public function destroy($id)
 	{
 		//return parent::destroy($id);
-			return Response::json(array(
+	/*		return Response::json(array(
 			'error'=>true,
 			'mensaje' => 'Accion no disponible',
 			),200);
 		
+	*/
+			return $this->eliminar($id);
 	}
 
 	public function crear(){
@@ -187,7 +192,7 @@ class PresupuestoController extends MaestroController {
 				$this->eventoAuditar($presu);
 				if (count($items)){
 				foreach($items as $item){
-					$lineas = $presu->lineas();
+					$lineas = $presu->lineas()->get();
 					foreach($lineas as $l){
 						$l->delete();
 					}
@@ -274,14 +279,15 @@ class PresupuestoController extends MaestroController {
 		DB::beginTransaction();
 		try {
 			$presu = Presupuesto::findOrFail($id);
-			$lineas = $presu->lineas();
+			$lineas = $presu->lineas()->get();
 			foreach($lineas as $l){
-				$l->delete();
+				$a = $l->delete();
 			}
 			$presu->delete();
+				DB::commit();
 				return Response::json(array(
 				'error'=>false,
-				'mensaje'=>'Presupuesto '.$id.' eliminado correctamente'; 
+				'mensaje'=>'Presupuesto '.$id.' eliminado correctamente', 
 				'listado'=>$presu->toArray()),
 				200);
 
@@ -295,5 +301,127 @@ class PresupuestoController extends MaestroController {
 				    );
 		}
 
+	}
+
+	public function presupuestosPacienteVista($paciente_id){
+		try {
+			$p = Paciente::findOrFail($paciente_id);
+			$presupuestos1 = array();
+			$presupuestos = $p->presupuestos()->get();
+			foreach ($presupuestos as $presu){
+				$coe = $presu->centroOdontologoEspecialidad()->first();
+				$prepaga = $presu->pacientePrepaga()->first()->prepaga()->first();
+				$presupuestos1[] = array(
+					"id"=>$presu->id,
+					"fecha_emision"=>$presu->fecha_emision,
+					"estado"=>(empty($presu->fecha_aprobacion))?'PROVISORIO':'APROBADO',
+					"importe_bruto"=>$presu->importe_bruto,
+					"odontologo"=>$coe->odontologo()->first()->nombreCompleto,
+					"especialidad"=>$coe->especialidad()->first()->especialidad,
+					"prepaga_codigo"=>$prepaga->codigo,
+					"prepaga_razon"=>$prepaga->razon_social,
+				);
+			}
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$presupuestos1),
+			200);
+			
+		}catch (Exception $e){
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+		
+	}
+
+	public function presupuestosPaciente($paciente_id){
+		try {
+			$p = Paciente::findOrFail($paciente_id);
+			$presupuestos = $p->presupuestos()->get();
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$presupuestos),
+			200);
+			
+		}catch (Exception $e){
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+		
+	}
+
+	public function aprobar($id){
+		DB::beginTransaction();
+		try {
+			$data = Input::all();
+			unset($data['apikey']);
+			unset($data['session_key']);
+			$lineasids = $data["items"];
+			$presu = Presupuesto::findOrFail($id);
+			$lineas = PresupuestoLinea::where('presupuesto_id','=',$id)->whereIn('id',$lineasids)->get();
+			foreach($lineas as $l){
+				$l->aprobado=1;
+				$l->save();
+			}
+			$presu->fecha_aprobacion = date('Ymd');
+			$presu->user_id_aprobacion = $data["user_id"];
+			$presu->importe_bruto = $data["importe_bruto"];
+			$presu->importe_neto = $data["importe_neto"];
+			$presu->bonificacion = $data["bonificacion"];
+			$presu->save();
+				DB::commit();
+				return Response::json(array(
+				'error'=>false,
+				'mensaje'=>'Presupuesto '.$id.' aprobado correctamente', 
+				'listado'=>$presu->toArray()),
+				200);
+
+
+		}catch (Exception $e){
+			    DB::rollback();
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+	}
+	public function restaurar($id){
+		DB::beginTransaction();
+		try {
+			$data = Input::all();
+			$presu = Presupuesto::findOrFail($id);
+			$lineas = $presu->lineas()->get();
+			foreach($lineas as $l){
+				$l->aprobado=0;
+				$l->save();
+			}
+			$presu->fecha_aprobacion = null;
+			$presu->user_id_aprobacion = null;
+			$presu->importe_bruto = null;
+			$presu->importe_neto = null;
+			$presu->save();
+				DB::commit();
+				return Response::json(array(
+				'error'=>false,
+				'mensaje'=>'Presupuesto '.$id.' restaurado correctamente', 
+				'listado'=>$presu->toArray()),
+				200);
+
+
+		}catch (Exception $e){
+			    DB::rollback();
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
 	}
 }

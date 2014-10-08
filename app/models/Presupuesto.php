@@ -31,7 +31,7 @@ class Presupuesto extends Maestro {
 			'observaciones'=>'max:512',
                 );
 
-	public function paciente_prepaga(){
+	public function pacientePrepaga(){
 		return $this->belongsTo('PacientePrepaga');
 	}
 	public function centro_odontologo_especialidad(){
@@ -45,6 +45,10 @@ class Presupuesto extends Maestro {
 	}
 	public function lineas(){
 		return $this->hasMany('PresupuestoLinea');
+	}
+	
+	public function centroOdontologoEspecialidad(){
+		return $this->belongsTo('CentroOdontologoEspecialidad');
 	}
 	
 }

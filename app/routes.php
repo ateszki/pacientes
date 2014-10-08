@@ -54,6 +54,8 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
+	Route::get('paciente/{paciente_id}/presupuestos','PresupuestoController@presupuestosPaciente');
+	Route::get('paciente/{paciente_id}/presupuestos-vista','PresupuestoController@presupuestosPacienteVista');
 	Route::get('paciente/{paciente_id}/ctacte','CtacteController@movimientosPaciente');
 	Route::get('paciente/{paciente_id}/observaciones','PacienteController@observaciones_detalladas');
 	Route::get('paciente/{paciente_id}/prepaga','PacientePrepagaController@vista_detallada');
@@ -99,7 +101,13 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
 
+	Route::post('usuario/validar','UserController@validarSimple');	
+	Route::post('usuario/buscar','UserController@postBuscar');
 	Route::resource('usuario', 'UserController');
+	Route::post('grupo/buscar','GroupController@postBuscar');
+	Route::resource('grupo', 'GroupController');
+	Route::post('role/buscar','RoleController@postBuscar');
+	Route::resource('role', 'RoleController');
 	
 	Route::post('pais/buscar','PaisController@postBuscar');
 	Route::resource('pais', 'PaisController');
@@ -127,8 +135,10 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('presupuesto/buscar','PresupuestoController@postBuscar');
 	Route::post('presupuesto/crear','PresupuestoController@crear');	
-	Route::put('presupuesto/{id}/actualizar','PresupuestoController@actualizar');	
-	Route::delete('presupuesto/{id}/eliminar','PresupuestoController@eliminar');	
+	Route::post('presupuesto/{id}/restaurar','PresupuestoController@restaurar');	
+	Route::post('presupuesto/{id}/aprobar','PresupuestoController@aprobar');	
+	//Route::put('presupuesto/{id}/actualizar','PresupuestoController@actualizar');	
+	//Route::delete('presupuesto/{id}/eliminar','PresupuestoController@eliminar');	
 	Route::get('presupuesto/{id}/items','PresupuestoController@traerItems');	
 	Route::get('presupuesto/{id}','PresupuestoController@traerPresupuesto');	
 	Route::resource('presupuesto', 'PresupuestoController');

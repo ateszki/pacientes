@@ -23,11 +23,11 @@ class PacientePrepaga extends Maestro {
 			'fecha_baja' => 'date',
                 );
 
-	public function pacientes(){
-		return $this->hasMany('Pacientes');
+	public function paciente(){
+		return $this->belongsTo('Paciente');
 	} 
-	public function prepagas(){
-		return $this->hasMany('Prepagas');
+	public function prepaga(){
+		return $this->belongsTo('Prepaga');
 	}
 
 	public function ctactes(){

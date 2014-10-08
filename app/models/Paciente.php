@@ -48,4 +48,9 @@ class Paciente extends Maestro {
 	public function observaciones(){
 		return $this->hasMany('PacienteObservacion');
 	}	
+	
+	public function presupuestos(){
+		return $this->hasManyThrough('Presupuesto','PacientePrepaga');
+	}
+
 }

@@ -1,9 +1,9 @@
 <?php
 
-class UserController extends MaestroController {
+class RoleController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'User';
+		$this->classname= 'Role';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,24 +79,4 @@ class UserController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function validar(){
-		$data = Input::All();
-		unset($data["apikey"]);
-		if( Auth::attempt($data)){
-			$key = Auth::user()->createSessionKey();
-			return Response::json(array('error'=>false,"listado"=>array('id'=>Auth::user()->id,'nombre'=>Auth::user()->nombre,'session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
-		} else {
-			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
-		}
-	}
-	public function validarSimple(){
-		$data = Input::All();
-		unset($data["apikey"]);
-		unset($data["session_key"]);
-		if( Auth::attempt($data)){
-			return Response::json(array('error'=>false,"listado"=>array('id'=>Auth::user()->id,'nombre'=>Auth::user()->nombre)),200);
-		} else {
-			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
-		}
-	}
 }

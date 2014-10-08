@@ -2,7 +2,7 @@
 
 class Role extends Maestro {
 
-	protected $table = 'roless'; 	
+	protected $table = 'roles'; 	
 
 	protected $fillable = array(
 		'role',
