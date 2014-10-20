@@ -36,7 +36,7 @@ Route::filter('usuarioauth', function()
 
 Route::group(array('before' => 'apiauth'),function()
 {
-	Route::post('usuario/login','UserController@validar');	
+	Route::post('user/login','UserController@validar');	
 });
 Route::group(array('before' => 'apiauth|usuarioauth'), function()
 {
@@ -101,11 +101,16 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
 
-	Route::post('usuario/validar','UserController@validarSimple');	
-	Route::post('usuario/buscar','UserController@postBuscar');
-	Route::resource('usuario', 'UserController');
-	Route::post('grupo/buscar','GroupController@postBuscar');
-	Route::resource('grupo', 'GroupController');
+	Route::post('user/validar','UserController@validarSimple');	
+	Route::post('user/buscar','UserController@postBuscar');
+	Route::get('user/{id}/groups','UserController@grupos');
+	Route::get('user/{id}/roles','UserController@roles');
+	Route::post('user/{id}/set-password','UserController@setPassword');
+	Route::resource('user', 'UserController');
+	Route::post('group/buscar','GroupController@postBuscar');
+	Route::get('group/{id}/users', 'GroupController@users');
+	Route::get('group/{id}/roles', 'GroupController@roles');
+	Route::resource('group', 'GroupController');
 	Route::post('role/buscar','RoleController@postBuscar');
 	Route::resource('role', 'RoleController');
 	

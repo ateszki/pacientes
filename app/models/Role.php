@@ -6,11 +6,13 @@ class Role extends Maestro {
 
 	protected $fillable = array(
 		'role',
+		'observaciones',
 		);
 
 
 	public $rules = array(
                         'role' => 'Required|Min:3|Max:250',
+			'observaciones'=>'max:255',
                 );
 
 

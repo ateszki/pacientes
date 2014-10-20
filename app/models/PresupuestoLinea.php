@@ -45,7 +45,7 @@ class PresupuestoLinea extends Maestro {
 		return $this->nomenclador()->first()->descripcion;
 	}
 	public function getNumeroPiezaDentalAttribute($value){
-		return $this->pieza_dental()->first()->diente;
+		return (empty($this->pieza_dental_id))?NULL:$this->pieza_dental()->first()->diente;
 	}
 
 	public function getEsquema(){

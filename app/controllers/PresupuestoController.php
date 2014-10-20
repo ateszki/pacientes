@@ -117,7 +117,7 @@ class PresupuestoController extends MaestroController {
 			}
 			unset($new["items"]);
 		}
-		$new["user_id_emision"] = Auth::user()->id;
+		//$new["user_id_emision"] = Auth::user()->id;
 		$modelo_presu = new Presupuesto();
 		$presu = $modelo_presu->create($new);
 		if ($presu->save()){
@@ -191,11 +191,11 @@ class PresupuestoController extends MaestroController {
 		if ($presu->save()){
 				$this->eventoAuditar($presu);
 				if (count($items)){
+				$lineas = $presu->lineas()->get();
+				foreach($lineas as $l){
+					$l->delete();
+				}
 				foreach($items as $item){
-					$lineas = $presu->lineas()->get();
-					foreach($lineas as $l){
-						$l->delete();
-					}
 					$presu_lin = new PresupuestoLinea();
 					$item['presupuesto_id']=$presu->id;
 					$p_lin = $presu_lin->create($item);
@@ -236,6 +236,7 @@ class PresupuestoController extends MaestroController {
 					200
 				    );
 			}
+
 	} 
 	
 	

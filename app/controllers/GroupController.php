@@ -79,4 +79,30 @@ class GroupController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+	public function users($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			$roles = $u->users()->get();
+			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
+	public function roles($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			$roles = $u->roles()->get();
+			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
 }

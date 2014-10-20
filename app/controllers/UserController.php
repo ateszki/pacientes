@@ -99,4 +99,53 @@ class UserController extends MaestroController {
 			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
 		}
 	}
+
+	public function grupos($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			$grupos = $u->groups()->get();
+			return Response::json(array('error'=>false,"listado"=>$grupos->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
+	public function roles($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			$roles = $u->roles()->get();
+			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
+
+	public function setPassword($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			if(Auth::user()->es_admin == false){
+				return Response::json(array('error'=>true,'mensaje'=>'no tiene permisos suficientes'),200);
+			}
+			if ($u->setPassword(Input::get('password'))){
+				return Response::json(array('error'=>false,"listado"=>$u->toArray()),200);
+			} else {
+				return Response::json(array('error'=>true,'mensaje'=>'ocurrio un error.'),200);
+			}
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+
+	}
+
 }
