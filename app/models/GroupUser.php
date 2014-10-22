@@ -4,6 +4,8 @@ class GroupUser extends Maestro {
 
 	protected $table = 'group_user'; 	
 
+	protected $hidden = array('pivot');
+	
 	protected $fillable = array(
 		'group_id',
 		'user_id',

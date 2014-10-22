@@ -13,6 +13,7 @@ class Centro extends Maestro {
 		'localidad',
 		'pais_id',
 		'provincia_id',
+		'identificador'
 		);
 
 
@@ -20,6 +21,7 @@ class Centro extends Maestro {
                         'razonsocial' => 'Required|Min:3|Max:100',
 			'pais_id' => 'integer|exists:paises,id',
 			'provincia_id' => 'integer|exists:provincias,id',
+			'identificador' => 'required|max:1',
                 );
 
 

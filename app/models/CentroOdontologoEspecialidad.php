@@ -47,7 +47,7 @@ class CentroOdontologoEspecialidad extends Maestro {
                      ->join('centros','centros_odontologos_especialidades.centro_id','=','centros.id')
 		     ->join('especialidades','centros_odontologos_especialidades.especialidad_id','=','especialidades.id')
 		     ->join('odontologos','centros_odontologos_especialidades.odontologo_id','=','odontologos.id')
-			->select(DB::raw("centros_odontologos_especialidades.*,especialidades.especialidad, centros.razonsocial AS centro,concat(odontologos.apellido, ' ',odontologos.nombres) as odontologo,odontologos.matricula,
+			->select(DB::raw("centros_odontologos_especialidades.*,especialidades.especialidad, centros.razonsocial AS centro,centros.identificador,concat(odontologos.apellido, ' ',odontologos.nombres) as odontologo,odontologos.matricula,
 CASE centros_odontologos_especialidades.turno
 WHEN 'T'
 THEN 'Tarde'

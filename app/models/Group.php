@@ -7,7 +7,7 @@ class Group extends Maestro {
 	protected $fillable = array(
 		'grupo',
 		);
-
+	protected $hidden = array('pivot');
 
 	public $rules = array(
                         'grupo' => 'Required|Min:3|Max:250',

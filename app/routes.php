@@ -104,12 +104,15 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('user/validar','UserController@validarSimple');	
 	Route::post('user/buscar','UserController@postBuscar');
 	Route::get('user/{id}/groups','UserController@grupos');
+	Route::post('user/{id}/groups/modificar', 'UserController@setGroups');
 	Route::get('user/{id}/roles','UserController@roles');
 	Route::post('user/{id}/set-password','UserController@setPassword');
 	Route::resource('user', 'UserController');
 	Route::post('group/buscar','GroupController@postBuscar');
 	Route::get('group/{id}/users', 'GroupController@users');
+	Route::post('group/{id}/users/modificar', 'GroupController@setUsers');
 	Route::get('group/{id}/roles', 'GroupController@roles');
+	Route::post('group/{id}/roles/modificar', 'GroupController@setRoles');
 	Route::resource('group', 'GroupController');
 	Route::post('role/buscar','RoleController@postBuscar');
 	Route::resource('role', 'RoleController');
@@ -177,6 +180,16 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('grupos-dentales-piezas-dentales/buscar','GrupsDentalPiezaDentalController@postBuscar');
 	Route::resource('grupos-dentales-piezas-dentales', 'GrupoDentalPiezaDentalController');
+
+// ordenes de trabajo
+	Route::post('laboratorio/buscar','LaboratorioController@postBuscar');
+	Route::resource('laboratorio', 'LaboratorioController');
+
+	Route::post('nomenclador-paso/buscar','NomencladorPasoController@postBuscar');
+	Route::resource('nomenclador-paso', 'NomencladorPasoController');
+
+
+
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

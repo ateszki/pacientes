@@ -9,6 +9,7 @@ class GroupRole extends Maestro {
 		'role_id',
 		);
 
+	protected $hidden = array('pivot');
 
 	public $rules = array(
                         'group_id' => 'Required|integer|exists:groups,id',

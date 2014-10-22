@@ -81,9 +81,9 @@ class GroupController extends MaestroController {
 
 	public function users($id){
 		try {
-			$u = $this->modelo->findOrfail($id);
-			$roles = $u->users()->get();
-			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
+			$g = $this->modelo->findOrfail($id);
+			$users = $g->users()->get();
+			return Response::json(array('error'=>false,"listado"=>$users->toArray()),200);
 		} catch(\Exception $e){
 			return Response::json(array(
 			'error' => true,
@@ -94,8 +94,44 @@ class GroupController extends MaestroController {
 	}
 	public function roles($id){
 		try {
-			$u = $this->modelo->findOrfail($id);
-			$roles = $u->roles()->get();
+			$g = $this->modelo->findOrfail($id);
+			$roles = $g->roles()->get();
+			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
+
+	public function setUsers($id){
+		try {
+			$g = $this->modelo->findOrfail($id);
+			$g->users()->detach();
+			$data = Input::all();
+			$postUsers = $data["users"];
+			$g->users()->attach($postUsers);
+			$users = $g->users()->get();
+			return Response::json(array('error'=>false,"listado"=>$users->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
+	
+	public function setRoles($id){
+		try {
+			$g = $this->modelo->findOrfail($id);
+			$g->roles()->detach();
+			$data = Input::all();
+			$postRoles = $data["roles"];
+			$g->roles()->attach($postRoles);
+			$roles = $g->roles()->get();
 			return Response::json(array('error'=>false,"listado"=>$roles->toArray()),200);
 		} catch(\Exception $e){
 			return Response::json(array(

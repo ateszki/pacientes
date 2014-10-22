@@ -35,7 +35,7 @@ class User extends Maestro implements UserInterface, RemindableInterface {
          *
          * @var array
          */
-        protected $hidden = array('password');
+        protected $hidden = array('password','pivot');
 	protected $primaryKey = 'id';
         /**
          * Get the unique identifier for the user.

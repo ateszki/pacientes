@@ -113,6 +113,23 @@ class UserController extends MaestroController {
 			);
 		}
 	}
+	public function setGroups($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			$u->groups()->detach();
+			$data = Input::all();
+			$postGroups = $data["groups"];
+			$u->groups()->attach($postGroups);
+			$groups = $u->groups()->get();
+			return Response::json(array('error'=>false,"listado"=>$groups->toArray()),200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+	}
 	public function roles($id){
 		try {
 			$u = $this->modelo->findOrfail($id);

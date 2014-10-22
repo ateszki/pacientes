@@ -10,6 +10,8 @@ class Role extends Maestro {
 		);
 
 
+	protected $hidden = array('pivot');
+
 	public $rules = array(
                         'role' => 'Required|Min:3|Max:250',
 			'observaciones'=>'max:255',
