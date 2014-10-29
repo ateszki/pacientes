@@ -50,5 +50,8 @@ class Presupuesto extends Maestro {
 	public function centroOdontologoEspecialidad(){
 		return $this->belongsTo('CentroOdontologoEspecialidad');
 	}
-	
+
+	public function ordenes_trabajo(){
+		return $this->hasMany('OrdenTrabajo');
+	}	
 }

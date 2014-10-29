@@ -188,6 +188,8 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('nomenclador-paso/buscar','NomencladorPasoController@postBuscar');
 	Route::resource('nomenclador-paso', 'NomencladorPasoController');
 
+	Route::post('orden-trabajo/buscar','OrdenTrabajoController@postBuscar');
+	Route::resource('orden-trabajo', 'OrdenTrabajoController');
 
 
 
