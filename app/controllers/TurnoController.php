@@ -143,4 +143,21 @@ class TurnoController extends MaestroController {
 			    );
 		}
 	}
+
+	public function traza($id){
+		try {
+			$eventos = Evento::where('modelo_id','=',$id)->where('modelo','=',$this->classname)->orderBy('created_at')->get();
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$eventos),
+			200);
+		} catch(Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			    );
+		}
+	}
+
 }

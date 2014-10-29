@@ -132,6 +132,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('motivo-turno', 'MotivoTurnoController');
 
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
+	Route::get('turno/{id}/traza','TurnoController@traza');
 	Route::resource('turno', 'TurnoController');
 	
 // cuentas corrientes
@@ -188,10 +189,18 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('nomenclador-paso/buscar','NomencladorPasoController@postBuscar');
 	Route::resource('nomenclador-paso', 'NomencladorPasoController');
 
+	Route::get('orden-trabajo/{id}/items','OrdenTrabajoController@traerItems');	
+	Route::get('orden-trabajo/{id}','OrdenTrabajoController@traerOrdenTrabajo');	
 	Route::post('orden-trabajo/buscar','OrdenTrabajoController@postBuscar');
 	Route::resource('orden-trabajo', 'OrdenTrabajoController');
 
+	Route::post('referencia-fichado/buscar','ReferenciaFichadoController@postBuscar');
+	Route::resource('referencia-fichado', 'ReferenciaFichadoController');
 
+	Route::get('fichado/{id}/items','FichadoController@traerItems');	
+	Route::get('fichado/{id}','FichadoController@traerFichado');	
+	Route::post('fichado/buscar','FichadoController@postBuscar');
+	Route::resource('fichado', 'FichadoController');
 
 // generales
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');

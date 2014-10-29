@@ -1,9 +1,9 @@
 <?php
 
-class OrdenTrabajoController extends MaestroController {
+class FichadoController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'OrdenTrabajo';
+		$this->classname= 'Fichado';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -101,8 +101,6 @@ class OrdenTrabajoController extends MaestroController {
 		DB::beginTransaction();
 		try
 		{
-
-
 		$data = Input::all();
 		$new = $data;
 		unset($new['apikey']);
@@ -118,20 +116,20 @@ class OrdenTrabajoController extends MaestroController {
 			unset($new["items"]);
 		}
 		//$new["user_id_emision"] = Auth::user()->id;
-		$modelo_ot = new OrdenTrabajo();
-		$OT = $modelo_ot->create($new);
-		if ($OT->save()){
-				$this->eventoAuditar($OT);
+		$modelo_fichado = new Fichado();
+		$F = $modelo_fichado->create($new);
+		if ($F->save()){
+				$this->eventoAuditar($F);
 				if (count($items)){
 				foreach($items as $item){
-					$OT_lin = new OrdenTrabajoItem();
-					$item['orden_trabajo_id']=$OT->id;
-					$OT_lin = $OT_lin->create($item);
-					if(!$OT_lin->save()){
+					$F_lin = new FichadoItem();
+					$item['fichado_id']=$F->id;
+					$F_lin = $F_lin->create($item);
+					if(!$F_lin->save()){
 						DB::rollback();
 						return Response::json(array(
 						'error'=>true,
-						'mensaje' => HerramientasController::getErrores($OT_lin->validator),
+						'mensaje' => HerramientasController::getErrores($F_lin->validator),
 						'listado'=>$data,
 						),200);
 					
@@ -142,13 +140,13 @@ class OrdenTrabajoController extends MaestroController {
 				return Response::json(array(
 				'error'=>false,
 				//'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
-				'listado'=>$OT->where('id','=',$OT->id)->get()->toArray()),
+				'listado'=>$F->where('id','=',$F->id)->get()->toArray()),
 				200);
 			} else {
 				DB::rollback();
 				return Response::json(array(
 				'error'=>true,
-				'mensaje' => HerramientasController::getErrores($OT->validator),
+				'mensaje' => HerramientasController::getErrores($F->validator),
 				'listado'=>$data,
 				),200);
 			}
@@ -185,20 +183,20 @@ class OrdenTrabajoController extends MaestroController {
 			}
 			unset($new["items"]);
 		}
-		$modelo_ot = new OrdenTrabajo();
-		$OT = $modelo_ot->find($id);
-		$OT->fill($new);
-		if ($OT->save()){
-				$this->eventoAuditar($OT);
+		$modelo_fichado = new Fichado();
+		$F = $modelo_fichado->find($id);
+		$F->fill($new);
+		if ($F->save()){
+				$this->eventoAuditar($F);
 				if (count($items)){
-				$lineas = $OT->items()->get();
+				$lineas = $F->items()->get();
 				foreach($lineas as $l){
 					$l->delete();
 				}
 				foreach($items as $item){
-					$OT_lin = new OrdenTrabajoItem();
-					$item['orden_trabajo_id']=$OT->id;
-					$o_lin = $OT_lin->create($item);
+					$F_lin = new FichadoItem();
+					$item['fichado_id']=$F->id;
+					$o_lin = $F_lin->create($item);
 					if(!$o_lin->save()){
 						DB::rollback();
 						return Response::json(array(
@@ -214,13 +212,13 @@ class OrdenTrabajoController extends MaestroController {
 				return Response::json(array(
 				'error'=>false,
 				//'listado'=>array($ctacte->with('lineas_factura','lineas_recibo')->where('id','=',$ctacte->id)->get()->toArray())),
-				'listado'=>$OT->where('id','=',$OT->id)->get()->toArray()),
+				'listado'=>$F->where('id','=',$F->id)->get()->toArray()),
 				200);
 			} else {
 				DB::rollback();
 				return Response::json(array(
 				'error'=>true,
-				'mensaje' => HerramientasController::getErrores($OT->validator),
+				'mensaje' => HerramientasController::getErrores($F->validator),
 				'listado'=>$data,
 				),200);
 			}
@@ -240,9 +238,9 @@ class OrdenTrabajoController extends MaestroController {
 	} 
 	
 	
-	public function traerOrdenTrabajo($id){
+	public function traerFichado($id){
 		try {
-			$mov = OrdenTrabajo::findOrFail($id);
+			$mov = Fichado::findOrFail($id);
 				return Response::json(array(
 				'error'=>false,
 				'listado'=>$mov->toArray()),
@@ -260,7 +258,7 @@ class OrdenTrabajoController extends MaestroController {
 	}
 	public function traerItems($id){
 		try {
-			$items = OrdenTrabajo::findOrFail($id)->items()->get();
+			$items = Fichado::findOrFail($id)->items()->get();
 				return Response::json(array(
 				'error'=>false,
 				'listado'=>$items->toArray()),
@@ -279,17 +277,17 @@ class OrdenTrabajoController extends MaestroController {
 	public function eliminar($id){
 		DB::beginTransaction();
 		try {
-			$OT = OrdenTrabajo::findOrFail($id);
-			$items = $OT->items()->get();
+			$F = Fichado::findOrFail($id);
+			$items = $F->items()->get();
 			foreach($items as $i){
 				$a = $i->delete();
 			}
-			$OT->delete();
+			$F->delete();
 				DB::commit();
 				return Response::json(array(
 				'error'=>false,
-				'mensaje'=>'Orden de trabajo '.$id.' eliminada correctamente', 
-				'listado'=>$OT->toArray()),
+				'mensaje'=>'Fichado '.$id.' eliminado correctamente', 
+				'listado'=>$F->toArray()),
 				200);
 
 		}catch (Exception $e){
@@ -303,58 +301,4 @@ class OrdenTrabajoController extends MaestroController {
 		}
 
 	}
-	/* ver si hace falta una funcion similar
-	public function presupuestosPacienteVista($paciente_id){
-		try {
-			$p = Paciente::findOrFail($paciente_id);
-			$OTpuestos1 = array();
-			$OTpuestos = $p->presupuestos()->get();
-			foreach ($OTpuestos as $OT){
-				$coe = $OT->centroOdontologoEspecialidad()->first();
-				$prepaga = $OT->pacientePrepaga()->first()->prepaga()->first();
-				$OTpuestos1[] = array(
-					"id"=>$OT->id,
-					"fecha_emision"=>$OT->fecha_emision,
-					"estado"=>(empty($OT->fecha_aprobacion))?'PROVISORIO':'APROBADO',
-					"importe_bruto"=>$OT->importe_bruto,
-					"odontologo"=>$coe->odontologo()->first()->nombreCompleto,
-					"especialidad"=>$coe->especialidad()->first()->especialidad,
-					"prepaga_codigo"=>$prepaga->codigo,
-					"prepaga_razon"=>$prepaga->razon_social,
-				);
-			}
-			return Response::json(array(
-			'error'=>false,
-			'listado'=>$OTpuestos1),
-			200);
-			
-		}catch (Exception $e){
-			return Response::json(array(
-				'error' => true,
-				'mensaje' => $e->getMessage()),
-				200
-				    );
-		}
-		
-	}*/
-
-	public function ordenesTrabajoPresupuesto($presupuesto_id){
-		try {
-			$p = Presupuesto::findOrFail($presupuesto_id);
-			$OT = $p->ordenes_trabajo()->get();
-			return Response::json(array(
-			'error'=>false,
-			'listado'=>$OT),
-			200);
-			
-		}catch (Exception $e){
-			return Response::json(array(
-				'error' => true,
-				'mensaje' => $e->getMessage()),
-				200
-				    );
-		}
-		
-	}
-
 }
