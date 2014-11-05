@@ -26,13 +26,19 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
+/*
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
 	'webfaction'=>array('web351.webfaction.com')
 
 ));
-
+*/
+$env = $app->detectEnvironment( function () {
+ 
+    return include __DIR__ . '/environment.php';
+ 
+});
 /*
 |--------------------------------------------------------------------------
 | Bind Paths

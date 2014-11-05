@@ -2,6 +2,8 @@
 ## propios
 #################
 .gitaddcommitpush
+bootstrap/environment.php
+app/config/webfaction
 
 #################
 ## Database info
@@ -223,4 +225,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-app/config/webfaction

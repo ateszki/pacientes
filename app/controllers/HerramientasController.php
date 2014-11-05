@@ -21,4 +21,14 @@ class HerramientasController extends \BaseController {
 			if(strlen($errormessages["error"])){$errormessages["error"] = substr($errormessages["error"],3);}
                         return array($errormessages);
 	}
+	
+	public static function getFechaHora(){
+			$f = date("d/m/Y");
+			$h = date("H:i");
+			 return Response::json(array(
+                        'error'=>false,
+			'listado'=>array("fecha"=>$f,"hora"=>$h),
+                        ),200);
+		
+	} 
 }

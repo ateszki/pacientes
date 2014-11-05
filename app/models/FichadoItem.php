@@ -4,6 +4,8 @@ class FichadoItem extends Maestro {
 
 	protected $table = 'fichados_items'; 	
 
+	protected $appends = array('numero_pieza_dental','descripcion_referencia');
+	
 	protected $fillable = array(
 			'fichado_id',
 			'referencia_fichado_id',
@@ -31,6 +33,35 @@ class FichadoItem extends Maestro {
 	}
 	public function pieza_dental(){
 		return $this->belongsTo('PiezaDental');
+	}
+	
+	public function getNumeroPiezaDentalAttribute($value){
+		return (empty($this->pieza_dental_id))?NULL:$this->pieza_dental()->first()->diente;
+	}
+
+	public function getDescripcionReferenciaAttribute($value){
+		return (empty($this->referencia_fichado_id))?NULL:$this->referencia_fichado()->first()->descripcion;
+	}
+
+	public function getEsquema(){
+		$esquema = parent::getEsquema();
+		$esquema[] = array(
+			      "Field"=> "descripcion_referencia",
+				"Type"=> "varchar(100)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "numero_pieza_dental",
+				"Type"=> "varchar(2)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		return $esquema;
 	}
 	
 }

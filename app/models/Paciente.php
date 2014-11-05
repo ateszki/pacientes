@@ -53,4 +53,11 @@ class Paciente extends Maestro {
 		return $this->hasManyThrough('Presupuesto','PacientePrepaga');
 	}
 
+	public function fichados(){
+		return $this->hasMany('Fichado');
+	}
+
+	public function fichadosItems(){
+		return $this->hasManyThrough('FichadoItem','Fichado');
+	}
 }

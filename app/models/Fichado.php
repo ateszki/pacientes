@@ -4,6 +4,8 @@ class Fichado extends Maestro {
 
 	protected $table = 'fichados'; 	
 
+//	protected $appends = array('nombre_odontologo');
+
 	protected $fillable = array(
 			'fecha_emision',
 			'fecha_auditoria',
@@ -19,9 +21,11 @@ class Fichado extends Maestro {
                         'fecha_auditoria' => 'Required|date',
 			'tipo_fichado'=>'required|max:1',
 			'paciente_id' => 'required|integer|exists:pacientes,id',
-			'centro_odontologo_especialidad_id' => 'required|enteger|exists:centros_odontologos_especialidades,id',
+			'centro_odontologo_especialidad_id' => 'required|integer|exists:centros_odontologos_especialidades,id',
 			'user_id_emision' => 'required|integer|exists:users,id',
                 );
+
+
 
 	public function paciente(){
 		return $this->belongsTo('Paciente');

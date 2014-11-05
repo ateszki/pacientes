@@ -54,6 +54,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
+	Route::get('paciente/{paciente_id}/fichados-vista','PacienteController@fichadosVista');
+	Route::get('paciente/{paciente_id}/fichados-items/{pieza_dental_id}','PacienteController@fichadosItems');
+	Route::get('paciente/{paciente_id}/fichados','PacienteController@fichados');
 	Route::get('paciente/{paciente_id}/presupuestos','PresupuestoController@presupuestosPaciente');
 	Route::get('paciente/{paciente_id}/presupuestos-vista','PresupuestoController@presupuestosPacienteVista');
 	Route::get('paciente/{paciente_id}/ctacte','CtacteController@movimientosPaciente');
@@ -203,6 +206,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('fichado', 'FichadoController');
 
 // generales
+	Route::get('fecha-hora', 'HerramientasController@getFechaHora');
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 	Route::get('iniciar-formulario','MaestroController@iniciarFormulario');
 });
