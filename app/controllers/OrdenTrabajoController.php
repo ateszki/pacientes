@@ -357,4 +357,59 @@ class OrdenTrabajoController extends MaestroController {
 		
 	}
 
+	public function recibirRemito(){
+		DB::beginTransaction();
+		try
+		{
+
+
+		$data = Input::all();
+		$new = $data;
+		unset($new['apikey']);
+		unset($new['session_key']);
+
+		$items = array();
+
+		$fecha_devolucion = $new["fecha_devolucion"];
+		$user_id_recibido = $new["user_id_recibido"];
+		$remito_devolucion = $new["remito_devolucion"];
+		
+		if (count($items)){
+			foreach($items as $i => $item){
+				$OT_lin = OrdenTrabajoItem::findOrfail($item[$i]);
+				$OT_lin->fecha_devolucion = $fecha_devolucion;
+				$OT_lin->estado_devolucion = $estados[$i];
+				$OT_lin->remito_devolucion = $remito_devolucion;
+				$OT_lin->user_id_recibido = $user_id_recibido;
+
+				if(!$OT_lin->save()){
+					DB::rollback();
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => HerramientasController::getErrores($OT_lin->validator),
+					'listado'=>$data,
+					),200);
+				
+				}
+			}
+		}
+		DB::commit();
+		return Response::json(array(
+		'error'=>false,
+		'listado'=>OrdenTrabajoItem::where('fecha_devolucion','=',$fecha_devolucion)->where('remito_devolucion','=',$remito_devolucion)->get()->toArray()),
+		200);
+
+	} catch(\Exception $e)
+			{
+			    DB::rollback();
+				return Response::json(array(
+					'error' => true,
+					'mensaje' => $e->getMessage()),
+					200
+				    );
+			}
+
+	} 
+	
+
 }

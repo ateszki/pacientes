@@ -17,6 +17,7 @@ class Turno extends Maestro {
 		'observaciones',
 		'user_id',
 		'presente',
+		'fuera_de_agenda',
 		);
 
 
@@ -33,6 +34,7 @@ class Turno extends Maestro {
 			'observaciones' => 'max:250',
 			'user_id' => 'exists:users,id',
 			'presente' =>'integer|in:0,1'
+			'fuera_de_agenda'=>'boolean',
                 );
 
 	public function agenda(){

@@ -1,6 +1,6 @@
 <?php
 
-class Centro extends Maestro {
+class OrdenTrabajo extends Maestro {
 
 	protected $table = 'centros'; 	
 

@@ -24,7 +24,7 @@ class OrdenTrabajoItem extends Maestro {
 			'presupuesto_item_id'=>'required|exists:presupuestos,id',
 			'motivo'=>'max:25',
 			'nomenclador_paso_id'=>'required|exists:nomencladores_pasos,id',
-			'autorizado_por'=>'max:25',,
+			'autorizado_por'=>'max:25',
 			'tipo_cubeta'=>'max:1',
 			'fecha_devolucion'=>'date',
 			'user_id_recibido'=>'exists:users,id',

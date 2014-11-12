@@ -194,6 +194,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::get('orden-trabajo/{id}/items','OrdenTrabajoController@traerItems');	
 	Route::get('orden-trabajo/{id}','OrdenTrabajoController@traerOrdenTrabajo');	
+	Route::post('orden-trabajo/recibir-remito','OrdenTrabajoController@recibirRemito');
 	Route::post('orden-trabajo/buscar','OrdenTrabajoController@postBuscar');
 	Route::resource('orden-trabajo', 'OrdenTrabajoController');
 
