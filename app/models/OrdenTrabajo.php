@@ -2,7 +2,7 @@
 
 class OrdenTrabajo extends Maestro {
 
-	protected $table = 'centros'; 	
+	protected $table = 'ordenes_trabajo'; 	
 
 	protected $fillable = array(
 			'laboratorio_id',
@@ -24,8 +24,8 @@ class OrdenTrabajo extends Maestro {
 			'fecha_espera'=>'date',
 			'user_id_emision'=>'required|exists:users,id',
 			'centro_odontologo_especialidad_id'=>'required|exists:centros_odontologos_especialidades,id',
-			'ctactes_id_factura'=>'required|exists:ctactes,id',
-			'ctactes_id_recibo'=>'required|exists:ctactes,id',
+			'ctactes_id_factura'=>'exists:ctactes,id',
+			'ctactes_id_recibo'=>'exists:ctactes,id',
                 );
 
 	public function laboratorio(){

@@ -57,6 +57,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('paciente/{paciente_id}/fichados-vista','PacienteController@fichadosVista');
 	Route::get('paciente/{paciente_id}/fichados-items/{pieza_dental_id}','PacienteController@fichadosItems');
 	Route::get('paciente/{paciente_id}/fichados','PacienteController@fichados');
+	Route::get('paciente/{paciente_id}/ordenes-trabajo','OrdenTrabajoController@ordenesTrabajoPaciente');
 	Route::get('paciente/{paciente_id}/presupuestos','PresupuestoController@presupuestosPaciente');
 	Route::get('paciente/{paciente_id}/presupuestos-vista','PresupuestoController@presupuestosPacienteVista');
 	Route::get('paciente/{paciente_id}/ctacte','CtacteController@movimientosPaciente');

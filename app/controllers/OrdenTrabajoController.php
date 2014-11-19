@@ -412,4 +412,29 @@ class OrdenTrabajoController extends MaestroController {
 	} 
 	
 
+	public function ordenesTrabajoPaciente($paciente_id){
+		try {
+			$p = Paciente::findOrFail($paciente_id);
+			$OTs = array();
+			$presupuestos = $p->presupuestos()->get();
+			foreach ($presupuestos as $presu){
+				$presu_ots = $presu->ordenes_trabajo()->get()->toArray();
+				$OTs = array_merge($OTs,$presu_ots);
+			}
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$OTs),
+			200);
+			
+		}catch (Exception $e){
+			return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				    );
+		}
+		
+	}
+
+
 }
