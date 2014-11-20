@@ -28,23 +28,31 @@ class OrdenTrabajo extends Maestro {
 			'ctactes_id_recibo'=>'exists:ctactes,id',
                 );
 
+	protected $appends = array('nombre_laboratorio','codigo_laboratorio');
+	protected $hidden =array('laboratorio');
+
 	public function laboratorio(){
-		return $this->hasOne('Laboratorio');
+		return $this->belongsTo('Laboratorio');
 	}
 	public function presupuesto(){
-		return $this->hasOne('Presupuesto');
+		return $this->belongsTo('Presupuesto');
 	}
 	public function usuario_emision(){
-		return $this->hasOne('User','id','user_id_emision');
+		return $this->belongsTo('User','id','user_id_emision');
 	}
 	public function factura(){
-		return $this->hasOne('Ctactes','id','ctactes_id_factura');
+		return $this->belongsTo('Ctactes','id','ctactes_id_factura');
 	}
 	public function recibo(){
-		return $this->hasOne('Ctactes','id','ctactes_id_recibo');
+		return $this->belongsTo('Ctactes','id','ctactes_id_recibo');
 	}
 	public function items(){
 		return $this->hasMany('OrdenTrabajoItem');
 	}
-
+	public function getNombreLaboratorioAttribute($value){
+		return $this->laboratorio->razon_social;
+	}
+	public function getCodigoLaboratorioAttribute($value){
+		return $this->laboratorio->codigo;
+	}
 }

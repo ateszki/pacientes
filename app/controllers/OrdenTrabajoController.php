@@ -368,17 +368,19 @@ class OrdenTrabajoController extends MaestroController {
 		unset($new['apikey']);
 		unset($new['session_key']);
 
-		$items = array();
 
 		$fecha_devolucion = $new["fecha_devolucion"];
 		$user_id_recibido = $new["user_id_recibido"];
 		$remito_devolucion = $new["remito_devolucion"];
-		
+		$items = $new["items"];
+		$estados = $new["estados"];
+		$precios = $new["precios"];
 		if (count($items)){
 			foreach($items as $i => $item){
-				$OT_lin = OrdenTrabajoItem::findOrfail($item[$i]);
+				$OT_lin = OrdenTrabajoItem::findOrfail($item);
 				$OT_lin->fecha_devolucion = $fecha_devolucion;
-				$OT_lin->estado_devolucion = $estados[$i];
+				$OT_lin->estado_devolucion = (isset($estados[$i]))?$estados[$i]:NULL;
+				$OT_lin->precio = (isset($precios[$i]))?$precios[$i]:NULL;
 				$OT_lin->remito_devolucion = $remito_devolucion;
 				$OT_lin->user_id_recibido = $user_id_recibido;
 
@@ -402,6 +404,47 @@ class OrdenTrabajoController extends MaestroController {
 	} catch(\Exception $e)
 			{
 			    DB::rollback();
+				return Response::json(array(
+					'error' => true,
+					'mensaje' => $e->getMessage()),
+					200
+				    );
+			}
+
+	} 
+	
+	public function cancelarRecepcion(){
+		try
+		{
+
+
+		$data = Input::all();
+		$new = $data;
+		unset($new['apikey']);
+		unset($new['session_key']);
+
+		$OT_lin = OrdenTrabajoItem::findOrfail($new["item"]);
+		$OT_lin->fecha_devolucion = NULL;
+		$OT_lin->estado_devolucion = NULL;
+		$OT_lin->remito_devolucion = NULL;
+		$OT_lin->user_id_recibido = NULL;
+		$OT_lin->precio = NULL;
+
+		if(!$OT_lin->save()){
+			return Response::json(array(
+			'error'=>true,
+			'mensaje' => HerramientasController::getErrores($OT_lin->validator),
+			'listado'=>$data,
+			),200);
+		
+		}
+		return Response::json(array(
+		'error'=>false,
+		'listado'=>$OT_lin->toArray()),
+		200);
+
+		} catch(\Exception $e)
+			{
 				return Response::json(array(
 					'error' => true,
 					'mensaje' => $e->getMessage()),
@@ -435,6 +478,7 @@ class OrdenTrabajoController extends MaestroController {
 		}
 		
 	}
+
 
 
 }

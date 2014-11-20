@@ -177,6 +177,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('listas-precios-nomenclador/buscar','ListaPreciosNomencladorController@postBuscar');
 	Route::resource('listas-precios-nomenclador', 'ListaPreciosNomencladorController');
 
+	Route::post('listas-precios-laboratorio/buscar','ListaPreciosLaboratorioController@postBuscar');
+	Route::resource('listas-precios-laboratorio', 'ListaPreciosLaboratorioController');
+
 	Route::post('piezas-dentales/buscar','PiezaDentalController@postBuscar');
 	Route::resource('piezas-dentales', 'PiezaDentalController');
 
@@ -196,6 +199,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('orden-trabajo/{id}/items','OrdenTrabajoController@traerItems');	
 	Route::get('orden-trabajo/{id}','OrdenTrabajoController@traerOrdenTrabajo');	
 	Route::post('orden-trabajo/recibir-remito','OrdenTrabajoController@recibirRemito');
+	Route::post('orden-trabajo/cancelar-recepcion','OrdenTrabajoController@cancelarRecepcion');
 	Route::post('orden-trabajo/buscar','OrdenTrabajoController@postBuscar');
 	Route::resource('orden-trabajo', 'OrdenTrabajoController');
 

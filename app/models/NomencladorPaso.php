@@ -18,10 +18,10 @@ class NomencladorPaso extends Maestro {
                 );
 
 	public function nomenclador(){
-		return $this->hasOne('Nomenclador','id','nomenclador_id');
+		return $this->belongsTo('Nomenclador');
 	}
 	public function nomenclador_paso(){
-		return $this->hasOne('Nomenclador','id','nomenclador_paso_id');
+		return $this->belongsTo('Nomenclador','nomenclador_paso_id');
 	}
 	
 }
