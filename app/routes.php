@@ -211,6 +211,16 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('fichado/buscar','FichadoController@postBuscar');
 	Route::resource('fichado', 'FichadoController');
 
+// caja
+	Route::post('caja/buscar','CajaController@postBuscar');
+	Route::resource('caja', 'CajaController');
+
+	Route::post('tipo-mov-caja/buscar','TipoMovCajaController@postBuscar');
+	Route::resource('tipo-mov-caja', 'TipoMovCajaController');
+
+	Route::post('movimiento-caja/buscar','MovimientoCajaController@postBuscar');
+	Route::resource('movimiento-caja', 'MovimientoCajaController');
+
 // generales
 	Route::get('fecha-hora', 'HerramientasController@getFechaHora');
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
