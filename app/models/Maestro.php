@@ -132,7 +132,7 @@ class Maestro extends Eloquent {
 	}
 
    public function getFechaArgAttribute($value){
-		return (isset($this->fecha) && !empty($this->fecha) )?implode("/",array_reverse(explode("-",$this->fecha))):false;
+		return (isset($this->fecha) && !empty($this->fecha) )?implode("/",array_reverse(explode("-",substr($this->fecha,0,10)))):false;
    }
 	protected $appends = array('fecha_arg');	
 }

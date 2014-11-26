@@ -8,6 +8,8 @@ class Caja extends Maestro {
 			'caja',
 			'descripcion',
 			'controlador_fiscal',	
+			'centro_id',
+			'punto_de_venta',
 		);
 
 
@@ -15,8 +17,12 @@ class Caja extends Maestro {
                         'caja' => 'Required|Max:100',
 			'descripcion' => 'max:255',
 			'controlador_fiscal' => 'max:25',
+			'punto_de_venta'=>'max:4'
+			'centro_id' => 'exists:centros,id',
                 );
 
-
+	public function centro(){
+		return $this->belongsTo('Centro');
+	}
 	
 }

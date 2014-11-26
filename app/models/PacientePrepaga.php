@@ -42,4 +42,7 @@ class PacientePrepaga extends Maestro {
                      ->where('pacientes.id','=',$paciente_id)
 			->get();
 	}
+	public function turnos(){
+		return $this->hasMany('Turno');
+	}
 }

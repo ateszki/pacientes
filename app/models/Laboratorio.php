@@ -37,6 +37,8 @@ class Laboratorio extends Maestro {
 			'pais_id' => 'integer|exists:paises,id',
 			'provincia_id' => 'integer|exists:provincias,id',
                 );
-
+	public function precios(){
+		return $this->hasMany('ListaPreciosLaboratorio');
+	}
 	
 }

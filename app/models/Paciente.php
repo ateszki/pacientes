@@ -60,4 +60,7 @@ class Paciente extends Maestro {
 	public function fichadosItems(){
 		return $this->hasManyThrough('FichadoItem','Fichado');
 	}
+	public function turnos(){
+		return $this->hasManyThrough('Turno','PacientePrepaga');
+	}
 }

@@ -78,5 +78,32 @@ class MovimientoCajaController extends MaestroController {
 	{
 		return parent::destroy($id);
 	}
+        public function transferencia(){
+                try {
+                        $data = Input::all();
+			$MC = new MovimientoCaja();
+			$MC->fill($data);
+			if ($MC->save()){
+				$this->eventoAuditar($MC);
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>array($this->modelo->find($MC->id)->toArray())),
+				200);
+			} else {
+				return Response::json(array(
+				'error'=>true,
+				'mensaje' => HerramientasController::getErrores($MC->validator),
+				'listado'=>$new,
+				),200);
+			}
+                } catch (Exception $e){
+                        return Response::json(array(
+                        'error' => true,
+                        'mensaje' => $e->getMessage()),
+                        200
+                        );
+                }
+        }
+
 
 }

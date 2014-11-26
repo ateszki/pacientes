@@ -79,4 +79,20 @@ class LaboratorioController extends MaestroController {
 		return parent::destroy($id);
 	}
 
+	public function precios($id){
+try {
+	$lpl = $this->modelo->findOrFail($id);
+	$precios = $lpl->precios()->get();
+	return Response::json(array(
+		'error'=>false,
+		'listado'=>$precios),
+		200);
+} catch (Exception $e){
+	return Response::json(array(
+	'error' => true,
+	'mensaje' => $e->getMessage()),
+	200
+	);
+}
+	}
 }

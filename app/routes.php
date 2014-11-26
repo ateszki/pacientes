@@ -54,6 +54,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
+	Route::get('paciente/{paciente_id}/turnos','PacienteController@turnos');
 	Route::get('paciente/{paciente_id}/fichados-vista','PacienteController@fichadosVista');
 	Route::get('paciente/{paciente_id}/fichados-items/{pieza_dental_id}','PacienteController@fichadosItems');
 	Route::get('paciente/{paciente_id}/fichados','PacienteController@fichados');
@@ -135,6 +136,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::resource('motivo-turno', 'MotivoTurnoController');
 
+	Route::post('turno/{id}/presente','TurnoController@presente');
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
 	Route::get('turno/{id}/traza','TurnoController@traza');
 	Route::resource('turno', 'TurnoController');
@@ -190,6 +192,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('grupos-dentales-piezas-dentales', 'GrupoDentalPiezaDentalController');
 
 // ordenes de trabajo
+	Route::get('laboratorio/{id}/precios','LaboratorioController@precios');
 	Route::post('laboratorio/buscar','LaboratorioController@postBuscar');
 	Route::resource('laboratorio', 'LaboratorioController');
 
@@ -218,6 +221,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('tipo-mov-caja/buscar','TipoMovCajaController@postBuscar');
 	Route::resource('tipo-mov-caja', 'TipoMovCajaController');
 
+	Route::post('movimiento-caja/transferencia','MovimientoCajaController@transferencia');
 	Route::post('movimiento-caja/buscar','MovimientoCajaController@postBuscar');
 	Route::resource('movimiento-caja', 'MovimientoCajaController');
 

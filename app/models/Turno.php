@@ -33,7 +33,7 @@ class Turno extends Maestro {
 			'derivado_por' => 'max:50',
 			'observaciones' => 'max:250',
 			'user_id' => 'exists:users,id',
-			'presente' =>'integer|in:0,1'
+			'presente' =>'integer|in:0,1',
 			'fuera_de_agenda'=>'boolean',
                 );
 

@@ -84,7 +84,7 @@ class TurnoController extends MaestroController {
 			
 			//si son muchos turnos
 			if (count($turnos) > 1){
-				$affectedRows = Turno::whereIn('id',$turnos)->where('estado','A')->update(array('estado' => 'L','paciente_prepaga_id'=>NULL, 'user_id'=>Auth::user()->id,"motivo_turno_id"=>NULL,'piezas'=>NULL,'derivado_por'=>NULL,'observaciones'=>NULL));
+				$affectedRows = Turno::whereIn('id',$turnos)->where('estado','A')->update(array('estado' => 'L','paciente_prepaga_id'=>NULL, 'user_id'=>Auth::user()->id,"motivo_turno_id"=>NULL,'piezas'=>NULL,'derivado_por'=>NULL,'observaciones'=>NULL,'fuera_de_agenda'=>NULL));
 				if ($affectedRows == count($turnos)){
 					$objTurnos = Turno::whereIn('id',$turnos)->where('estado','L')->get();	
 					foreach($objTurnos as $cadaTurno)	{
@@ -117,6 +117,7 @@ class TurnoController extends MaestroController {
 				"piezas" => null,
 				"derivado_por" => null,
 				"observaciones" => null,
+				"fuera_de_agenda" => null,
 				"user_id" => Auth::user()->id,
 				);
 				$modelo->fill($data);
@@ -159,5 +160,30 @@ class TurnoController extends MaestroController {
 			    );
 		}
 	}
+	public function presente($id){
+		try{
+			$modelo = $this->modelo->findOrFail($id);
+			$modelo->presente = ($modelo->presente== 1)?0:1;
+			if ($modelo->save() !== false){
+				$this->eventoAuditar($modelo);
+				return Response::json(array(
+				'error'=>false,
+				'listado'=>array($modelo->toArray())),
+				200);
+			}else {
+				return Response::json(array(
+				'error'=>true,
+				'mensaje' => HerramientasController::getErrores($modelo->validator),
+				'listado'=>$modelo->toArray(),
+				),200);
+			}	
 
+		} catch(Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			    );
+		}
+	}
 }
