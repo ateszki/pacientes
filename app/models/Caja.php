@@ -2,7 +2,7 @@
 
 class Caja extends Maestro {
 
-	protected $table = 'caja'; 	
+	protected $table = 'cajas'; 	
 
 	protected $fillable = array(
 			'caja',
@@ -17,7 +17,7 @@ class Caja extends Maestro {
                         'caja' => 'Required|Max:100',
 			'descripcion' => 'max:255',
 			'controlador_fiscal' => 'max:25',
-			'punto_de_venta'=>'max:4'
+			'punto_de_venta'=>'max:4',
 			'centro_id' => 'exists:centros,id',
                 );
 

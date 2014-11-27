@@ -276,6 +276,7 @@ class CtacteController extends MaestroController {
 					
 					}
 				}
+				MovimientoCaja::ingresoCtacte($referencia);
 				}
 				DB::commit();
 				return Response::json(array(

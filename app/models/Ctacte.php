@@ -26,6 +26,7 @@ class Ctacte extends Maestro {
 			'impresora_fiscal',
 			'cancelado',
 			'tipo_prev',
+			'caja_id',
 		);
 
 
@@ -45,7 +46,7 @@ class Ctacte extends Maestro {
 			'importe_total'=>'required|numeric',
 			'print_ok'=>'Required|boolean',				
 			'cancelado'=>'boolean',				
-
+			'caja_id'=>'exists:cajas,id',
                 );
 
     public static function boot()
@@ -61,6 +62,7 @@ class Ctacte extends Maestro {
             foreach ($ctacte->lineas_recibo()->get() as $lr) {
                 $lr->delete();
             }
+	    $ctacte->mov_caja()->first()->delete();
         });
 
         // Setup event bindings...
@@ -73,6 +75,13 @@ class Ctacte extends Maestro {
 		return $this->hasMany('CtacteRecLin');
 	}
 
+	public function mov_caja(){
+		return $this->hasOne('MovimientoCaja');
+	}
+
+	public function caja(){
+		return $this->belongsTo('Caja');
+	}
 	public function paciente_prepaga(){
 		return $this->belongsTo('PacientePrepaga');
 	}
