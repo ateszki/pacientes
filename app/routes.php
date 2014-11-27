@@ -55,6 +55,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
 	Route::get('paciente/{paciente_id}/turnos','PacienteController@turnos');
+	Route::get('paciente/{paciente_id}/tratamientos','PacienteController@tratamientos');
 	Route::get('paciente/{paciente_id}/fichados-vista','PacienteController@fichadosVista');
 	Route::get('paciente/{paciente_id}/fichados-items/{pieza_dental_id}','PacienteController@fichadosItems');
 	Route::get('paciente/{paciente_id}/fichados','PacienteController@fichados');

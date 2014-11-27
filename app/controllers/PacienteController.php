@@ -238,4 +238,81 @@ if(!empty($hasta)){
 
 	}
 
+	public function tratamientos($id){
+		try{	
+			$data = Input::all();
+			$desde = (isset($data["desde"])?$data["desde"]:NULL);
+			$hasta = (isset($data["hasta"])?$data["hasta"]:NULL);
+			$presente = (isset($data["presente"])?$data["presente"]:NULL);
+
+			$query = Paciente::findOrFail($id)->turnos();
+if(!empty($presente)){
+	$query->where("presente","=",$presente);
+}
+
+if(!empty($desde)){
+	$query->wherehas('Agenda',function($q) use ($desde){
+		$q->where('fecha','>=',$desde);
+	});
+}
+
+if(!empty($hasta)){
+	$query->wherehas('Agenda',function($q) use ($hasta){
+		$q->where('fecha','<=',$hasta);
+	});
+}
+			$turnos = $query->get();
+			$salida = array();
+			$turnos_salida = array();
+			foreach ($turnos as $t){
+				$agenda = $t->agenda()->first();
+				$coe = $agenda->centroOdontologoEspecialidad()->first();
+				$centro = $coe->centro;
+				$odontologo = $coe->odontologo;
+				$especialidad = $coe->especialidad;
+				$salida["id"] = $t->id;
+				$salida["presente"] = ($t->presente)?"SI":"NO";
+				$salida["fecha"] = $agenda->fecha_arg;
+				$salida["estado"] = $t->estado;
+				$salida["hora_desde"] = $t->hora_desde;
+				$salida["hora_hasta"] = $t->hora_hasta;
+				$salida["fuera_de_agenda"] = ($t->fuera_de_agenda)?"SI":"NO";
+				$salida["odontologo_id"] = $odontologo->id;
+				$salida["odontologo"] = $odontologo->nombre_completo;
+				$salida["especialidad_od"] = $especialidad->id;
+				$salida["especialidad"] = $especialidad->especialidad;
+				$salida["centro_id"] = $centro->id;
+				$salida["centro"] = $centro->razonsocial;
+				$salida["tratamiento_id"] = NULL;
+				$salida["codigo_nomenclador"] = NULL;
+				$salida["descripcion_nomenclador"] = NULL;
+				$salida["diente"] = NULL;
+				$salida["caras"] = NULL;
+				$salida["fecha_carga_tratamiento"] = NULL;
+				$tratamientos = $t->tratamientos()->get();
+				if(count($tratamientos)){
+					foreach($tratamientos as $t1){
+						$salida["tratamiento_id"] = $t1->id;
+						$salida["codigo_nomenclador"] = $t1->nomenclador()->first()->codigo;
+						$salida["descripcion_nomenclador"] = $t1->nomenclador()->first()->descripcion;
+						$salida["diente"] = $t1->pieza_dental()->first()->diente;
+						$salida["caras"] = $t1->caras;
+						$salida["fecha_carga_tratamiento"] = $t1->fecha_carga;
+						$turnos_salida[] = $salida;
+					}
+				} else {
+					$turnos_salida[] = $salida;
+				}
+			}
+			return Response::json(array(
+			'error' => false,
+			'listado' => $turnos_salida),
+			200
+		    );
+		}catch (Exception $e){
+			return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()?:'No se encuentra el recurso:'.$id),200);
+		}
+		
+
+	}
 }

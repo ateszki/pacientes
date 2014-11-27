@@ -49,6 +49,10 @@ class Turno extends Maestro {
 		return $this->hasOne('Motivo');
 	}
 
+	public function tratamientos(){
+		return $this->hasMany('Tratamiento');
+	}
+
 	public static function turnos_libres($especialidad_id,$parametros){
 		$odontologos = (isset($parametros["odontologos"]) && !empty($parametros["odontologos"]))?$parametros["odontologos"]:NULL;
 		$centros = (isset($parametros["centros"]) && !empty($parametros["centros"]))?$parametros["centros"]:NULL;
