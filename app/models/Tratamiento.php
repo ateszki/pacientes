@@ -12,11 +12,13 @@ class Tratamiento  extends Maestro {
 		'valor',
 		'user_id_carga',
 		'fecha_carga',
+		'hora_carga',
 		'resultado_auditoria',
 		'fecha_auditoria',
 		'user_id_auditor',
 		);
 
+	protected $appends = array('numero_pieza_dental','codigo_nomenclador','descripcion_nomenclador');
 
 	public $rules = array(
 			'turno_id' => 'required|integer|exists:turnos,id',
@@ -26,6 +28,7 @@ class Tratamiento  extends Maestro {
 			'valor'=>'numeric',
 			'user_id_carga' => 'required|integer|exists:users,id',
 			'fecha_carga' =>'required|date',	
+			'hora_carga' =>'date_format:H:i:s',	
 			'resultado_auditoria' => 'max:1',
 			'fecha_auditoria'=>'date',	
 			'user_id_auditor' => 'integer|exists:users,id',
@@ -38,5 +41,45 @@ class Tratamiento  extends Maestro {
 	public function nomenclador(){
 		return $this->belongsTo('Nomenclador');
 	}
+	public function pieza_dental(){
+		return $this->belongsTo('PiezaDental');
+	}
 	
+	public function getNumeroPiezaDentalAttribute(){
+		return $this->pieza_dental()->first()->diente;
+	}
+	public function getCodigoNomencladorAttribute(){
+		return $this->nomenclador()->first()->codigo;
+	}
+	public function getDescripcionNomencladorAttribute(){
+		return $this->nomenclador()->first()->descripcion;
+	}
+	public function getEsquema(){
+		$esquema = parent::getEsquema();
+		$esquema[] = array(
+			      "Field"=> "codigo_nomenclador",
+				"Type"=> "varchar(8)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "descripcion_nomenclador",
+				"Type"=> "varchar(100)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "numero_pieza_dental",
+				"Type"=> "varchar(2)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		return $esquema;
+	}
 }

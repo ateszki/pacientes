@@ -137,6 +137,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::resource('motivo-turno', 'MotivoTurnoController');
 
+	Route::post('turno/{id}/tratamientos','TurnoController@tratamientos');
 	Route::post('turno/{id}/presente','TurnoController@presente');
 	Route::post('turno/{id}/liberar','TurnoController@liberar');
 	Route::get('turno/{id}/traza','TurnoController@traza');
@@ -161,6 +162,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('nomenclador/buscar','NomencladorController@postBuscar');
 	Route::resource('nomenclador', 'NomencladorController');
+	
+	Route::post('tratamiento/buscar','TratamientoController@postBuscar');
+	Route::resource('tratamiento', 'TratamientoController');
 
 	Route::post('planes-cobertura/buscar','PlanesCoberturaController@postBuscar');
 	Route::get('planes-cobertura/{id}/especialidades','PlanesCoberturaController@vista_especialidades');
@@ -222,7 +226,10 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('tipo-mov-caja/buscar','TipoMovCajaController@postBuscar');
 	Route::resource('tipo-mov-caja', 'TipoMovCajaController');
 
-	Route::post('movimiento-caja/transferencia','MovimientoCajaController@transferencia');
+	Route::post('medio-pago-caja/buscar','MedioPagoCajaController@postBuscar');
+	Route::resource('medio-pago-caja', 'MedioPagoCajaController');
+
+	Route::get('movimiento-caja/informe','MovimientoCajaController@informe');
 	Route::post('movimiento-caja/buscar','MovimientoCajaController@postBuscar');
 	Route::resource('movimiento-caja', 'MovimientoCajaController');
 

@@ -32,6 +32,9 @@ class MovimientoCajaController extends MaestroController {
 	 */
 	public function store()
 	{
+		if(Input::get("tipo_mov_caja_id")==1){
+			return $this->transferencia();
+		}
 		return parent::store();
 	}
 
@@ -84,12 +87,13 @@ class MovimientoCajaController extends MaestroController {
                         $data = Input::all();
 			unset($data['apikey']);
 			unset($data['session_key']);
+			$data = array_map(function($n){return ($n == 'NULL')?NULL:$n;}, $data);
 			$MC_salida = new MovimientoCaja();
 			$MC_entrada = new MovimientoCaja();
 			$salida = $data;
-			$salida["fecha"] = date("Y-m-d");
-			$salida["hora"] = date("H:i");
-			$salida["user_id"] = Auth::user()->id;
+			//$salida["fecha"] = date("Y-m-d");
+			//$salida["hora"] = date("H:i:s");
+			//$salida["user_id"] = Auth::user()->id;
 			$entrada = $salida;
 			$entrada["caja_ref_id"] = $data["caja_id"];
 			$entrada["caja_id"] = $data["caja_ref_id"];
@@ -106,9 +110,16 @@ class MovimientoCajaController extends MaestroController {
 				200);
 			} else {
 				DB::rollback();
+				$mensaje = array();
+				if($MC_entrada->validator != NULL){
+					$mensaje[] = HerramientasController::getErrores($MC_entrada->validator);
+				}
+				if($MC_salida->validator != NULL){
+					$mensaje[] = HerramientasController::getErrores($MC_salida->validator);
+				}
 				return Response::json(array(
 				'error'=>true,
-				'mensaje' => array_merge(HerramientasController::getErrores($MC_salida->validator),HerramientasController::getErrores($MC_entrada->validator)),
+				'mensaje' => $mensaje,
 				'listado'=>$data,
 				),200);
 			}
@@ -122,52 +133,27 @@ class MovimientoCajaController extends MaestroController {
                 }
         }
 
-	public function ingresoCtaCte($ctacte_id){
-		DB::begintransaction();
-		try {
-			$CC = Ctacte::findOrFail($ctacte_id);
-			$data = array(
-				"caja_id" => $CC->caja_id,
-				"importe" => 0,
-				"ingreso_egreso" => "I",
-				"fecha" => date("Y-m-d"),
-				"hora" => date("H:i"),
-				"user_id" => Auth::user()->id,
-				"tipo_mov_caja_id" => 2, //ingreso por ctacte
-				"medios_pago_caja_id" => NULL, 
-				
-			);
-			$lineas_rec = $CC->->lineas_recibo()->get();
-			foreach ($lineas_rec as $pago){
-				$MC = new MovimientoCaja();
-				$data_pago = $data;
-				$data_pago["importe"]=> $pago->importe;
-				$query = MedioPagoCaja::where('tipo','=',$pago->tipo);
-				if($pago->tipo_cambio > 0){
-					$query->where('moneda','=','DOL');
-				} else {
-					$query->where('moneda','=','ARS');
-				}
-				$MP = $query->first();
-				$data_pago["medios_pago_caja_id"] = $MP->id;
-				$MC->fill($data_pago);
-				if($MC->save){
-				if ($MC->save()){
-					$this->eventoAuditar($MC);
-					DB::commit();
-					return Response::json(array(
-					'error'=>false,
-					'listado'=>array($this->modelo->find($MC->id)->toArray())),
-					200);
-				} else {
-					DB::rollback();
-					return Response::json(array(
-					'error'=>true,
-					'mensaje' => HerramientasController::getErrores($MC->validator),
-					'listado'=>$data,
-					),200);
-				}
+	public function informe(){
+		try{
+			$data = Input::all();
+			$desde = $data["desde"];
+			$hasta = $data["hasta"];
+			$query = MovimientoCaja::where('fecha','>=',$desde)->where('fecha','<=',$hasta);
+
+			if(isset($data["caja_id"]) && !empty($data["caja_id"])){
+				$query->where("caja_id","=",$data["caja_id"]);
 			}
+
+			if(isset($data["tipo_mov_caja_id"]) && !empty($data["tipo_mov_caja_id"])){
+				$query->where("tipo_mov_caja_id","=",$data["tipo_mov_caja_id"]);
+			}
+
+
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$query->get()),
+			200);
+
                 } catch (Exception $e){
 			DB::rollback();
                         return Response::json(array(

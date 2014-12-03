@@ -186,4 +186,23 @@ class TurnoController extends MaestroController {
 			    );
 		}
 	}
+
+	public function tratamientos($id){
+		try{
+			$modelo = $this->modelo->findOrFail($id);
+			$tratamientos = $modelo->tratamientos()->get();			
+			$this->eventoAuditar($modelo);
+			return Response::json(array(
+			'error'=>false,
+			'listado'=>$tratamientos),
+			200);
+
+		} catch(Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			    );
+		}
+	}
 }

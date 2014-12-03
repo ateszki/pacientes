@@ -229,6 +229,7 @@ class CtacteController extends MaestroController {
 						'error'=>true,
 						'mensaje' => HerramientasController::getErrores($fac_lin->validator),
 						'listado'=>$data,
+						'paso'=>1,
 						),200);
 					
 					}
@@ -257,6 +258,7 @@ class CtacteController extends MaestroController {
 							return Response::json(array(
 							'error'=>true,
 							'mensaje' => HerramientasController::getErrores($ctacte1->validator),
+							'paso'=>2,
 							'listado'=>$data,
 							),200);
 					
@@ -272,11 +274,19 @@ class CtacteController extends MaestroController {
 						'error'=>true,
 						'mensaje' => HerramientasController::getErrores($rec_lin->validator),
 						'listado'=>$data,
+						'pas'=>3,
 						),200);
 					
 					}
 				}
-				MovimientoCaja::ingresoCtacte($referencia);
+					if (!MovimientoCaja::ingresoCtacte($referencia)){
+							DB::rollback();
+							return Response::json(array(
+							'error'=>true,
+							'mensaje' => "No se pudo grabar movimiento de caja asociado",
+							'listado'=>$data,
+							),200);
+					}
 				}
 				DB::commit();
 				return Response::json(array(
@@ -289,6 +299,7 @@ class CtacteController extends MaestroController {
 				return Response::json(array(
 				'error'=>true,
 				'mensaje' => HerramientasController::getErrores($ctacte->validator),
+				'paso' => 4,
 				'listado'=>$data,
 				),200);
 			}
