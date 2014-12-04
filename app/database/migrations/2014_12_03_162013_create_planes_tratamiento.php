@@ -16,7 +16,7 @@ class CreatePlanesTratamiento extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('paciente_id')->unsigned();
-			$table->integer('centro_odontologo_especialidad_id')->unsigned()->nullable();
+			$table->integer('centro_odontologo_especialidad_id')->unsigned();
 			$table->date('fecha');
 			$table->text('diagnostico')->nullable();
 			$table->timestamps();

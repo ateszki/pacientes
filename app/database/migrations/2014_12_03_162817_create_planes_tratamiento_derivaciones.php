@@ -18,7 +18,7 @@ class CreatePlanesTratamientoDerivaciones extends Migration {
 			$table->integer('planes_tratamiento_id')->unsigned();
 			$table->integer('especialidad_id')->unsigned();
 			$table->integer('numero_orden');
-			$table->integer('centro_odontologo_especialidad_id')->unsigned();
+			$table->integer('centro_odontologo_especialidad_id')->unsigned()->nullable();
 			$table->text('observaciones_odontologo_quederiva')->nullable();
 			$table->text('observaciones_odontologo_queatiende')->nullable();
 			$table->char('estado_derivacion',1);

@@ -132,4 +132,8 @@ class User extends Maestro implements UserInterface, RemindableInterface {
 		}
 
 
+	public function centros(){
+		return $this->hasManyThrough('Centro','UserCentro');
+	}
+
 }
