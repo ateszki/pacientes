@@ -23,7 +23,7 @@ class Tratamiento  extends Maestro {
 	public $rules = array(
 			'turno_id' => 'required|integer|exists:turnos,id',
 			'nomenclador_id' => 'required|integer|exists:nomencladores,id',
-			'pieza_dental_id' => 'required|integer|exists:piezas_dentales,id',
+			'pieza_dental_id' => 'integer|exists:piezas_dentales,id',
 			'caras' => 'max:5',
 			'valor'=>'numeric',
 			'user_id_carga' => 'required|integer|exists:users,id',
@@ -42,11 +42,11 @@ class Tratamiento  extends Maestro {
 		return $this->belongsTo('Nomenclador');
 	}
 	public function pieza_dental(){
-		return $this->belongsTo('PiezaDental');
+		return ($this->pieza_dental_id !== null)?$this->belongsTo('PiezaDental'):null;
 	}
 	
 	public function getNumeroPiezaDentalAttribute(){
-		return $this->pieza_dental()->first()->diente;
+		return ($this->pieza_dental_id !== null)?$this->pieza_dental()->first()->diente:null;
 	}
 	public function getCodigoNomencladorAttribute(){
 		return $this->nomenclador()->first()->codigo;

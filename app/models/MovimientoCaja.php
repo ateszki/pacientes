@@ -32,6 +32,8 @@ class MovimientoCaja extends Maestro {
 			'tipo_mov_caja_id' => 'required|integer|exists:tipo_mov_cajas,id',
 			'medios_pago_caja_id' => 'required|integer|exists:medios_pago_caja,id',
                 );
+	
+	protected $appends = array("nombre_caja","tipo_movimiento","medio_pago");
 
 	public function caja(){
 		return $this->belongsTo('Caja');	
@@ -46,7 +48,20 @@ class MovimientoCaja extends Maestro {
 		return $this->belongsTo('Caja','caja_ref_id');
 	}
 	public function tipo(){
-		return $this->belongsTo('TipoMovCaja');
+		return $this->belongsTo('TipoMovCaja','tipo_mov_caja_id');
+	}
+	public function medio(){
+		return $this->belongsTo('MedioPagoCaja','medios_pago_caja_id');
+	}
+	public function getNombreCajaAttribute(){
+		return $this->caja()->first()->caja;
+	}
+	public function getTipoMovimientoAttribute(){
+		return $this->tipo()->first()->tipo;
+	}
+	
+	public function getMedioPagoAttribute(){
+		return $this->medio()->first()->medio_pago_moneda;
 	}
 	public static function ingresoCtaCte($ctacte_id){
 		DB::begintransaction();

@@ -4,6 +4,8 @@ class MedioPagoCaja extends Maestro {
 
 	protected $table = 'medios_pago_caja'; 	
 
+	protected $appends = array("medio_pago_moneda");
+
 	protected $fillable = array(
 			'medio_pago',
 			'moneda',
@@ -17,4 +19,7 @@ class MedioPagoCaja extends Maestro {
 
 
 	
+	public function getMedioPagoMonedaAttribute(){
+		return $this->medio_pago." (".$this->moneda.")";
+	}
 }
