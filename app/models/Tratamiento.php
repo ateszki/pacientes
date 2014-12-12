@@ -42,7 +42,7 @@ class Tratamiento  extends Maestro {
 		return $this->belongsTo('Nomenclador');
 	}
 	public function pieza_dental(){
-		return ($this->pieza_dental_id !== null)?$this->belongsTo('PiezaDental'):null;
+		return ($this->pieza_dental_id !== null)?$this->belongsTo('PiezaDental','pieza_dental_id'):null;
 	}
 	
 	public function getNumeroPiezaDentalAttribute(){

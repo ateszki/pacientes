@@ -166,6 +166,17 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('tratamiento/buscar','TratamientoController@postBuscar');
 	Route::resource('tratamiento', 'TratamientoController');
 
+	Route::get('planes-tratamiento/{plan_tratamiento_id}/seguimiento','PlanTratamientoController@seguimiento');
+	Route::get('planes-tratamiento/{plan_tratamiento_id}/derivaciones','PlanTratamientoController@derivaciones');
+	Route::post('planes-tratamiento/buscar','PlanTratamientoController@postBuscar');
+	Route::resource('planes-tratamiento', 'PlanTratamientoController');
+
+	Route::post('planes-tratamiento-derivacion/buscar','PlanTratamientoDerivacionController@postBuscar');
+	Route::resource('planes-tratamiento-derivacion', 'PlanTratamientoDerivacionController');
+
+	Route::post('planes-tratamiento-seguimiento/buscar','PlanTratamientoSeguimientoController@postBuscar');
+	Route::resource('planes-tratamiento-seguimiento', 'PlanTratamientoSeguimientoController');
+
 	Route::post('planes-cobertura/buscar','PlanesCoberturaController@postBuscar');
 	Route::get('planes-cobertura/{id}/especialidades','PlanesCoberturaController@vista_especialidades');
 	Route::resource('planes-cobertura', 'PlanesCoberturaController');

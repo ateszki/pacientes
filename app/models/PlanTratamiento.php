@@ -2,7 +2,7 @@
 
 class PlanTratamiento extends Maestro {
 
-	protected $table = 'planes_tratamientos'; 	
+	protected $table = 'planes_tratamiento'; 	
 
 	protected $fillable = array(
 		'paciente_id',

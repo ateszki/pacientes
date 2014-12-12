@@ -82,7 +82,7 @@ class CierreCajaController extends MaestroController {
 	public function cerrar($caja_id){
 		DB::beginTransaction();
 		try {
-			$movimientos = DB::select('select medios_pago_caja_id,sum(importe) as importe from movimientos_cajas where caja_id = ? and cierres_cajas_id is null group by medios_pago_caja_id',array($caja_id));
+			$movimientos = DB::select("select medios_pago_caja_id,sum(case ingreso_egreso when 'i' then importe else importe * -1 end ) as importe from movimientos_cajas where caja_id = ? and cierres_cajas_id is null group by medios_pago_caja_id",array($caja_id));
 			if(count($movimientos)){
 				$cierre = new CierreCaja();
 				$data = array('user_id'=>Auth::user()->id,'caja_id'=>$caja_id,'fecha'=>date("Y-m-d"),"hora"=>date("H:i:s"));
@@ -106,7 +106,7 @@ class CierreCajaController extends MaestroController {
 						DB::commit();
 						return Response::json(array(
 					'error'=>false,
-					'listado'=>$cierre->toArray()),
+					'listado'=>$cierre->items()->get()->toArray()),
 					200);
 				} else {
 					DB::rollback();
@@ -131,15 +131,16 @@ class CierreCajaController extends MaestroController {
 	public function saldos($caja_id){
 		try {
 			$ultimo_cierre = CierreCaja::where('caja_id','=',$caja_id)->orderBy('fecha', 'desc')->orderBy('hora','desc')->take(1)->first();
-			$movimientos = DB::select("select m.medios_pago_caja_id,concat(mp.medio_pago,' (',mp.moneda,')') as medio_pago,sum(m.importe) as importe from movimientos_cajas m inner join medios_pago_caja mp on m.medios_pago_caja_id = mp.id where m.caja_id = ? and m.cierres_cajas_id is null group by m.medios_pago_caja_id",array($caja_id));
-			
+			$movimientos = DB::select("select m.medios_pago_caja_id,concat(mp.medio_pago,' (',mp.moneda,')') as medio_pago,sum(case m.ingreso_egreso when 'i' then m.importe else m.importe * -1 end ) as importe from movimientos_cajas m inner join medios_pago_caja mp on m.medios_pago_caja_id = mp.id where m.caja_id = ? and m.cierres_cajas_id is null group by m.medios_pago_caja_id",array($caja_id));
 			if(count($ultimo_cierre)){
-				dd($ultimo_cierre->items());$cierre_items = $ultimo_cierre->items();
-				$movimientos = array_merge($movimientos,$cierre_items);
+				$cierre_items = $ultimo_cierre->items()->get();
+				$cierre_items->each(function($it){
+					(in_array($it->toArray(),$movimientos))?dd($it->toArray()):var_dump(null);
+				});
 			}
 			return Response::json(array(
 					'error'=>false,
-					'listado'=>$movimientos),
+					'listado'=>array($movimientos)),
 					200);
 		} catch(\Exception $e)
 		{

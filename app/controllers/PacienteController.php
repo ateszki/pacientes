@@ -295,7 +295,7 @@ if(!empty($hasta)){
 						$salida["tratamiento_id"] = $t1->id;
 						$salida["codigo_nomenclador"] = $t1->nomenclador()->first()->codigo;
 						$salida["descripcion_nomenclador"] = $t1->nomenclador()->first()->descripcion;
-						$salida["diente"] = $t1->pieza_dental()->first()->diente;
+						$salida["diente"] = ($t1->pieza_dental()!=null)?$t1->pieza_dental()->first()->diente:null;
 						$salida["caras"] = $t1->caras;
 						$salida["fecha_carga_tratamiento"] = $t1->fecha_carga;
 						$turnos_salida[] = $salida;
