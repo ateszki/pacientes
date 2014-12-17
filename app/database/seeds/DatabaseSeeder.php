@@ -119,6 +119,59 @@ class ProvinciaTableSeeder extends Seeder {
 
 }
 
+
+class AnamnesisPreguntasTableSeeder extends Seeder {
+	public function run(){
+		DB::table('anamnesis_respuestas')->delete();
+		DB::table('anamnesis_preguntas')->delete();
+		$preguntas = array(
+			"01" => "Alergia a analgésicos",
+			"02" => "Alergia a drogas o medicamentos",
+			"02b" => "Indicar cuales",
+			"03" => "Anemia",
+			"04" => "Asma Bronquial",
+			"05" => "Ataques convulsivos",
+			"06" => "Diabetes",
+			"07" => "Dolencia crónica",
+			"08" => "Embarazo",
+			"09" => "Enfermedades venéreas (sífilis)", 
+			"10" => "Fierbe reumática",
+			"11" => "Hepatitis A o B",
+			"12" => "Hipertensión",
+			"13" => "Presión ocular",
+			"14" => "Problemas hepáticos",
+			"15" => "Problemas neurológicos",
+			"16" => "Problemas renales",
+			"17" => "Sangrado excesivo por heridas",
+			"18" => "HIV",
+			"19" => "Trastornos psiquiátricos",
+			"20" => "Tratamientos por radiación",
+			"21" => "Tumores",
+			"22" => "Ulcera gastroduodenal",
+			"23" => "Recibió tratamiento odontológico",
+			"24" => "De periodoncia",
+			"25" => "De endodoncia",
+			"26" => "De extracionas dentarias",
+			"27" => "De prótesis dentarias",
+			"28" => "¿Toma anticoagulantes?",
+			"101" => "Si está tomando algún medicamento indique cual (es)",
+			"102" => "Si está actualmete en tratamiento indique el problema",
+		);
+		$i = 0;
+		foreach ($preguntas as $nro=>$preg){
+			$i++;
+			AnamnesisPregunta::create(array(
+				'id' => $i,
+				'numero' => $nro,
+				'pregunta' => $preg,
+				'created_at' => new DateTime,
+				'updated_at' => new DateTime
+			));
+		}
+
+	}
+}
+
  
 class FeriadoTableSeeder extends Seeder {
     public function run()

@@ -63,4 +63,8 @@ class Paciente extends Maestro {
 	public function turnos(){
 		return $this->hasManyThrough('Turno','PacientePrepaga');
 	}
+	public function planes_tratamientos(){
+		return $this->hasMany('PlanTratamiento');
+	}
+
 }

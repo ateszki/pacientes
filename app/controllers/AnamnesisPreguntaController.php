@@ -1,9 +1,9 @@
 <?php
 
-class PlanTratamientoController extends MaestroController {
+class AnamnesisPreguntaController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'PlanTratamiento';
+		$this->classname= 'AnamnesisPregunta';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,36 +79,4 @@ class PlanTratamientoController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function derivaciones($plan_tratamiento_id){
-		try{
-			$pt = PlanTratamiento::findOrFail($plan_tratamiento_id);
-			$derivaciones = $pt->derivaciones()->get();
-			return Response::json(array(
-				'error'=>false,
-				'listado'=>$derivaciones),
-				200);
-		} catch(\Exception $e){
-			return Response::json(array(
-			'error' => true,
-			'mensaje' => $e->getMessage()),
-			200
-			);
-		}
-	}
-	public function seguimiento($plan_tratamiento_id){
-		try{
-			$pt = PlanTratamiento::findOrFal($plan_tratamiento_id);
-			$seguimiento = $pt->seguimiento()->get();
-			return Response::json(array(
-				'error'=>false,
-				'listado'=>$seguimiento),
-				200);
-		} catch(\Exception $e){
-			return Response::json(array(
-			'error' => true,
-			'mensaje' => $e->getMessage()),
-			200
-			);
-		}
-	}
 }

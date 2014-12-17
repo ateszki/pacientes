@@ -246,21 +246,21 @@ if(!empty($hasta)){
 			$presente = (isset($data["presente"])?$data["presente"]:NULL);
 
 			$query = Paciente::findOrFail($id)->turnos();
-if(!empty($presente)){
-	$query->where("presente","=",$presente);
-}
+			if(!empty($presente)){
+				$query->where("presente","=",$presente);
+			}
 
-if(!empty($desde)){
-	$query->wherehas('Agenda',function($q) use ($desde){
-		$q->where('fecha','>=',$desde);
-	});
-}
+			if(!empty($desde)){
+				$query->wherehas('Agenda',function($q) use ($desde){
+					$q->where('fecha','>=',$desde);
+				});
+			}
 
-if(!empty($hasta)){
-	$query->wherehas('Agenda',function($q) use ($hasta){
-		$q->where('fecha','<=',$hasta);
-	});
-}
+			if(!empty($hasta)){
+				$query->wherehas('Agenda',function($q) use ($hasta){
+					$q->where('fecha','<=',$hasta);
+				});
+			}
 			$turnos = $query->get();
 			$salida = array();
 			$turnos_salida = array();
@@ -314,5 +314,32 @@ if(!empty($hasta)){
 		}
 		
 
+	}
+
+	public function planes_tratamientos($paciente_id){
+		try {
+			$pax = Paciente::findOrFail($paciente_id);
+			$pts = $pax->planes_tratamientos()->get();
+			$salida = array();
+			if(count($pts)){
+				foreach ($pts as $pt){
+					$p = $pt->toArray();
+					//$p = array();
+					//$p["fecha"] = $pt->fecha;
+					//$p["diagnostico"] = $pt->diagnostico;
+					$p["odontologo"] = $pt->odontologo()->first()->nombre_completo;
+					$p["especialidad"] = $pt->especialidad()->first()->especialidad;
+					$p["centro"] = $pt->centro()->first()->razonsocial;
+					$salida[] = $p;
+				}
+			}	
+			return Response::json(array(
+				'error' => false,
+				'listado' => $salida),
+				200
+		    	);
+		}catch (Exception $e){
+			return Response::json(array('error'=>true,'mensaje'=>$e->getMessage()?:'No se encuentra el recurso:'.$id),200);
+		}
 	}
 }

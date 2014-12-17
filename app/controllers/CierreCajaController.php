@@ -82,23 +82,36 @@ class CierreCajaController extends MaestroController {
 	public function cerrar($caja_id){
 		DB::beginTransaction();
 		try {
-			$movimientos = DB::select("select medios_pago_caja_id,sum(case ingreso_egreso when 'i' then importe else importe * -1 end ) as importe from movimientos_cajas where caja_id = ? and cierres_cajas_id is null group by medios_pago_caja_id",array($caja_id));
+			$salida = array();
+			$medios_pagos = MedioPagoCaja::all();
+			$ultimo_cierre = CierreCaja::where('caja_id','=',$caja_id)->orderBy('fecha', 'desc')->orderBy('hora','desc')->take(1)->first();
+			$movimientos = DB::select("select m.medios_pago_caja_id,concat(mp.medio_pago,' (',mp.moneda,')') as medio_pago,sum(case m.ingreso_egreso when 'i' then m.importe else m.importe * -1 end ) as importe from movimientos_cajas m inner join medios_pago_caja mp on m.medios_pago_caja_id = mp.id where m.caja_id = ? and m.cierres_cajas_id is null group by m.medios_pago_caja_id",array($caja_id));
 			if(count($movimientos)){
 				$cierre = new CierreCaja();
 				$data = array('user_id'=>Auth::user()->id,'caja_id'=>$caja_id,'fecha'=>date("Y-m-d"),"hora"=>date("H:i:s"));
 				$cierre->fill($data);
 				if ($cierre->save()){
+					foreach ($medios_pagos as $mp){
+						$salida[$mp->id] = array("cierres_cajas_id"=>$cierre->id,"medios_pago_caja_id"=> $mp->id,"importe"=> 0);
+					}
 					foreach ($movimientos as $mov){
+						$salida[$mov->medios_pago_caja_id]["importe"] += $mov->importe;
+					}
+					if(count($ultimo_cierre)){
+						$cierre_items = $ultimo_cierre->items()->get();
+						foreach($cierre_items as $it){
+							$salida[$it->medios_pago_caja_id]["importe"] += $it->importe;
+						}
+					}
+					foreach ($salida as $ci_data){
 						$cci = new CierreCajaItem();
-						$mov->cierres_cajas_id= $cierre->id;
-						$mov = (array) $mov;
-						$cci->fill($mov);
+						$cci->fill($ci_data);
 						if(!$cci->save()){
 							DB::rollback();
 							return Response::json(array(
 								'error'=>true,
 								'mensaje' => HerramientasController::getErrores($cci->validator),
-								'listado'=>$mov,
+								'listado'=>$ci_data,
 								),200);
 						}
 					}
@@ -116,6 +129,11 @@ class CierreCajaController extends MaestroController {
 						'listado'=>$data,
 						),200);
 				}
+			} else {
+				return Response::json(array(
+					'error'=>true,
+					'mensaje' => "La caja no registra movimientos desde el ultimo cierre",
+					),200);
 			}
 		} catch(\Exception $e)
 		{
@@ -130,17 +148,25 @@ class CierreCajaController extends MaestroController {
 	}
 	public function saldos($caja_id){
 		try {
+			$salida = array();
+			$medios_pagos = MedioPagoCaja::all();
+			foreach ($medios_pagos as $mp){
+				$salida[$mp->id] = array("medios_pago_caja_id"=> $mp->id,"medio_pago"=>$mp->medio_pago_moneda,"importe"=> 0);
+			}
 			$ultimo_cierre = CierreCaja::where('caja_id','=',$caja_id)->orderBy('fecha', 'desc')->orderBy('hora','desc')->take(1)->first();
 			$movimientos = DB::select("select m.medios_pago_caja_id,concat(mp.medio_pago,' (',mp.moneda,')') as medio_pago,sum(case m.ingreso_egreso when 'i' then m.importe else m.importe * -1 end ) as importe from movimientos_cajas m inner join medios_pago_caja mp on m.medios_pago_caja_id = mp.id where m.caja_id = ? and m.cierres_cajas_id is null group by m.medios_pago_caja_id",array($caja_id));
+			foreach ($movimientos as $m){
+				$salida[$m->medios_pago_caja_id]["importe"] += $m->importe;
+			}
 			if(count($ultimo_cierre)){
 				$cierre_items = $ultimo_cierre->items()->get();
-				$cierre_items->each(function($it){
-					(in_array($it->toArray(),$movimientos))?dd($it->toArray()):var_dump(null);
-				});
+				foreach($cierre_items as $it){
+					$salida[$it->medios_pago_caja_id]["importe"] =(float) $salida[$it->medios_pago_caja_id]["importe"] + (float) $it->importe;
+				}
 			}
 			return Response::json(array(
 					'error'=>false,
-					'listado'=>array($movimientos)),
+					'listado'=>array_values($salida)),
 					200);
 		} catch(\Exception $e)
 		{

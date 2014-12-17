@@ -1,9 +1,9 @@
 <?php
 
-class PlanTratamientoController extends MaestroController {
+class AnamnesisRespuestaController extends MaestroController {
 
 	function __construct(){
-		$this->classname= 'PlanTratamiento';
+		$this->classname= 'AnamnesisRespuesta';
 		$this->modelo = new $this->classname();
 	}
 	/**
@@ -79,36 +79,52 @@ class PlanTratamientoController extends MaestroController {
 		return parent::destroy($id);
 	}
 
-	public function derivaciones($plan_tratamiento_id){
-		try{
-			$pt = PlanTratamiento::findOrFail($plan_tratamiento_id);
-			$derivaciones = $pt->derivaciones()->get();
+	public function responder(){
+		try {
+			DB::beginTransaction();
+
+			$data = Input::all();
+			$new = $data;
+			unset($new['apikey']);
+			unset($new['session_key']);
+			
+
+			if(isset($new["respuesta"])){
+ 
+			foreach ($new["respuesta"] as $i => $r){
+				$respuesta = array(
+					"paciente_id" => $new["paciente_id"],
+					"anamnesis_pregunta_id" => $new["pregunta"][$i],
+					"respuesta" => $r,
+				);
+				$AR = AnamnesisRespuesta::create($respuesta);
+				if ($AR->save()){
+					$this->eventoAuditar($AR);
+				} else{ 
+					DB::rollback();
+					return Response::json(array(
+					'error'=>true,
+					'mensaje' => HerramientasController::getErrores($AR->validator),
+					'listado'=>$data,
+					),200);
+				}
+			}
+			DB::commit();
 			return Response::json(array(
-				'error'=>false,
-				'listado'=>$derivaciones),
-				200);
-		} catch(\Exception $e){
-			return Response::json(array(
-			'error' => true,
-			'mensaje' => $e->getMessage()),
-			200
-			);
-		}
-	}
-	public function seguimiento($plan_tratamiento_id){
-		try{
-			$pt = PlanTratamiento::findOrFal($plan_tratamiento_id);
-			$seguimiento = $pt->seguimiento()->get();
-			return Response::json(array(
-				'error'=>false,
-				'listado'=>$seguimiento),
-				200);
-		} catch(\Exception $e){
-			return Response::json(array(
-			'error' => true,
-			'mensaje' => $e->getMessage()),
-			200
-			);
+			'error'=>false,
+			'listado'=>$new),
+			200);
+
+
+			}
+
+		}  catch(\Exception $e){
+				DB::rollback();
+				return Response::json(array(
+				'error' => true,
+				'mensaje' => $e->getMessage()),
+				200
+				);
 		}
 	}
 }

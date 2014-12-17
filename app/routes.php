@@ -54,6 +54,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('ausencia-odontologo/buscar','AusenciaOdontologoController@postBuscar');
 	Route::resource('ausencia-odontologo', 'AusenciaOdontologoController');
 
+	Route::get('paciente/{paciente_id}/planes-tratamientos','PacienteController@planes_tratamientos');
 	Route::get('paciente/{paciente_id}/turnos','PacienteController@turnos');
 	Route::get('paciente/{paciente_id}/tratamientos','PacienteController@tratamientos');
 	Route::get('paciente/{paciente_id}/fichados-vista','PacienteController@fichadosVista');
@@ -203,6 +204,13 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 
 	Route::post('grupos-dentales/buscar','GrupoDentalController@postBuscar');
 	Route::resource('grupos-dentales', 'GrupoDentalController');
+
+	Route::post('anamnesis-pregunta/buscar','AnamnesisPreguntaController@postBuscar');
+	Route::resource('anamnesis-pregunta', 'AnamnesisPreguntaController');
+
+	Route::post('anamnesis-respuesta/respoder','AnamnesisRespuestaController@responder');
+	Route::post('anamnesis-respuesta/buscar','AnamnesisRespuestaController@postBuscar');
+	Route::resource('anamnesis-respuesta', 'AnamnesisRespuestaController');
 
 	Route::post('grupos-dentales-piezas-dentales/buscar','GrupsDentalPiezaDentalController@postBuscar');
 	Route::resource('grupos-dentales-piezas-dentales', 'GrupoDentalPiezaDentalController');

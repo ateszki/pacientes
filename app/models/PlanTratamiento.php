@@ -14,7 +14,7 @@ class PlanTratamiento extends Maestro {
 
 	public $rules = array(
 			'paciente_id' => 'required|integer|exists:pacientes,id',
-			'centro_odontologo_especialidad_id' => 'integer|exists:centros_odontologogs_especialidades,id',
+			'centro_odontologo_especialidad_id' => 'integer|exists:centros_odontologos_especialidades,id',
 			'fecha' => 'required|date',
                 );
 
@@ -27,11 +27,48 @@ class PlanTratamiento extends Maestro {
 	}
 
 	public function derivaciones(){
-		return $this->hasMany('PlanTratamientoDerivacion');
+		return $this->hasMany('PlanTratamientoDerivacion','planes_tratamiento_id');
 	}
 	
 	public function seguimiento(){
-		return $this->hasMany('PlanTratamientoSeguimiento');
+		return $this->hasMany('PlanTratamientoSeguimiento','planes_tratamiento_id');
 	}
-	
+
+	public function odontologo(){
+		return $this->centro_odontologo_especialidad()->first()->odontologo();
+	}	
+	public function especialidad(){
+		return $this->centro_odontologo_especialidad()->first()->especialidad();
+	}	
+	public function centro(){
+		return $this->centro_odontologo_especialidad()->first()->centro();
+	}	
+	public function getEsquema(){
+		$esquema = parent::getEsquema();
+		$esquema[] = array(
+			      "Field"=> "odontologo",
+				"Type"=> "varchar(255)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "especialidad",
+				"Type"=> "varchar(255)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		$esquema[] = array(
+			      "Field"=> "centro",
+				"Type"=> "varchar(255)",
+			      "Null"=> "YES",
+			      "Key"=> "",
+			      "Default"=> null,
+			      "Extra"=> ""
+		);
+		return $esquema;
+	}
 }

@@ -2,7 +2,7 @@
 
 class PlanTratamientoDerivacion extends Maestro {
 
-	protected $table = 'planes_tratamiento_derivacion'; 	
+	protected $table = 'planes_tratamiento_derivaciones'; 	
 
 	protected $fillable = array(
 		'planes_tratamiento_id',
@@ -31,7 +31,7 @@ class PlanTratamientoDerivacion extends Maestro {
 		return $this->belongsTo('Especialidad');
 	}
 	public function coe(){
-		return ($this->centro_odontologo_especialidad_id !== null)?$this->belongsTo('CentroOdontologoEspecialidad'):null;
+		return $this->belongsTo('CentroOdontologoEspecialidad','centro_odontologo_especialidad_id');
 	}
 
 	public function getEspecialidadAttribute(){
@@ -39,7 +39,11 @@ class PlanTratamientoDerivacion extends Maestro {
 	}
 
 	public function getOdontologoAttribute(){
-		return ($this->centro_odontologo_especialidad_id !== null)?$this->coe()->first()->odontologo()->first()->nombre_completo:null;
+		//dd("bb",$this->centro_odontologo_especialidad_id !=NULL, $this->centro_odontologo_especialidad_id);
+		//dd($this->coe() == NULL,$this->centro_odontologo_especialidad_id);
+		//return ($this->centro_odontologo_especialidad_id != NULL)?$this->coe()->first()->odontologo()->first()->nombre_completo:null;
+		
+		return ($this->coe()->first() == NULL)?null:$this->coe()->first()->odontologo()->first()->nombre_completo;;
 	}
 	public function getEsquema(){
 		$esquema = parent::getEsquema();
