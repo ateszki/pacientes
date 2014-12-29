@@ -178,4 +178,32 @@ class CierreCajaController extends MaestroController {
 		}
 
 	}
+	public function ultimo($caja_id){
+		try {
+			$salida = array();
+			$listado = array();
+			$medios_pagos = MedioPagoCaja::all();
+			foreach ($medios_pagos as $mp){
+				$salida[$mp->id] = array("medios_pago_caja_id"=> $mp->id,"medio_pago"=>$mp->medio_pago_moneda,"importe"=> 0);
+			}
+			$ultimo_cierre = CierreCaja::where('caja_id','=',$caja_id)->orderBy('fecha', 'desc')->orderBy('hora','desc')->take(1)->first();
+			if(count($ultimo_cierre)){
+				$uc = $ultimo_cierre->toArray();
+				$cierre_items = $ultimo_cierre->items()->get();
+				foreach($cierre_items as $it){
+					$uc[$salida[$it->medios_pago_caja_id]["medio_pago"]]= $it->importe;
+				}
+				$listado[] = $uc;
+			}
+			return Response::json(array(
+					'error'=>false,
+					'listado'=>$listado),
+					200);
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200);
+		}
+	}
 }

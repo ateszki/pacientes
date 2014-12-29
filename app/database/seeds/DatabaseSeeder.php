@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder {
 	public function run()
 	{
 		Eloquent::unguard();
+		$this->call('CodigErroresAuditoriaTableSeeder');
 		$this->call('FeriadoTableSeeder');
 		$this->call('UserTableSeeder');
 		$this->call('OdontologoTableSeeder');
@@ -244,3 +245,48 @@ foreach ($feriados as $fecha=>$feriado){
 }
      }
 }
+class CodigoErroresAuditoriaTableSeeder extends Seeder {
+    public function run()
+    {
+        DB::table('codigo_errores_auditoria')->delete();
+			$errores = array(
+			"01" =>	"Trabajo realizado c/posteri. a la Baja del Afiliad",
+			"02" => "Edad fuera de rango permitido",
+			"03"=>"No Cumple con Period de garant¡a c/tram.anterior",
+			"04"=>"Mayor Cantidad de las permitidas por sesion",
+			"05"=>"Tratamiento realizado NO se paga",
+			"06"=>"No Cumple c/period. de garantia dentro presentac.",
+			"07"=>"Tratamiento NO cumple con obligaciones",
+			"08"=>"Tratamiento NO cumple con restricciones",
+			"09"=>"Ficha Odo. c/errores de confeccion Inexistente",
+			"10"=>"Fichado NO coincide c/tratam. anterior o a realiz.",
+			"11"=>"Falta identificar la pieza dental",
+			"12"=>"Falta identificar el codigo de nomenclador",
+			"13"=>"Falta identificar la cara de la pieza",
+			"14"=>"Empresa inexistente o faltante",
+			"15"=>"Falta identificar credencial",
+			"16"=>"Falta fecha de tratamiento",
+			"17"=>"Empresa dada de Baja",
+			"18"=>"Afiliado Inexistente",
+			"19"=>"Tratamiento fuera de piezas permitidas",
+			"20"=>"Codigo nomenclador desconocido",
+			"21"=>"Afiliado pertenece a otra empresa",
+			"24"=>"Afiliado empresa sin Servicio de Odontologia ",
+			"35"=>"Trat. anter. al Fichado, NO registrado en el mismo",
+			"47"=>"No se reconoce paso intermedio",
+			"70"=>"Prestacion NO Registrada en el Fichado",
+			"91"=>"Afiliado no pago el Coseguro Correspondiente",
+			"92"=>"Tratamiento no cumple con Prohibiciones",
+			"A7"=>"Comparacion fichados Ayacucho-Zonales-Interior",
+			"C4"=>"No Corresponde % Derivacion",
+			);
+			foreach ($errores as $codigo=>$desc){
+				 CodigoErroresAuditoria::create(array(
+					'codigo'=> $codigo,
+					'descripcion'=>$desc,
+					'created_at' => new DateTime,
+					'updated_at' => new DateTime
+				));
+			}
+    }
+} 

@@ -252,6 +252,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('movimiento-caja/buscar','MovimientoCajaController@postBuscar');
 	Route::resource('movimiento-caja', 'MovimientoCajaController');
 
+	Route::get('cierre-caja/{caja_id}/ultimo','CierreCajaController@ultimo');
 	Route::get('cierre-caja/{caja_id}/saldos','CierreCajaController@saldos');
 	Route::post('cierre-caja/{caja_id}/cerrar','CierreCajaController@cerrar');
 	Route::post('cierre-caja/buscar','CierreCajaController@postBuscar');

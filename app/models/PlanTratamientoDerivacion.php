@@ -10,7 +10,7 @@ class PlanTratamientoDerivacion extends Maestro {
 		'numero_orden',
 		'centro_odontologo_especialidad_id',
 		'observaciones_odontologo_quederiva',
-		'observaciones_odontologog_queatiende',
+		'observaciones_odontologo_queatiende',
 		'estado_derivacion',
 		);
 
@@ -19,7 +19,7 @@ class PlanTratamientoDerivacion extends Maestro {
 			'planes_tratamiento_id' => 'required|integer|exists:planes_tratamiento,id',
 			'especialidad_id' => 'required|integer|exists:especialidades,id',
 			'numero_orden'=>'required|integer',
-			'centro_odontologo_especialidad_id' => 'integer|exists:centro_odontologo_especialidades,id',
+			'centro_odontologo_especialidad_id' => 'integer|exists:centros_odontologos_especialidades,id',
 			'estado_derivacion' => 'required|max:1',
                 );
 

@@ -82,7 +82,7 @@ class PlanTratamientoController extends MaestroController {
 	public function derivaciones($plan_tratamiento_id){
 		try{
 			$pt = PlanTratamiento::findOrFail($plan_tratamiento_id);
-			$derivaciones = $pt->derivaciones()->get();
+			$derivaciones = $pt->derivaciones()->orderBy('id')->get();
 			return Response::json(array(
 				'error'=>false,
 				'listado'=>$derivaciones),
