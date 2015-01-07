@@ -13,6 +13,7 @@ class Evento extends Eloquent {
 		'usuario',
 		);
 
+	protected $appends = array('accion');
 /*
 	public $rules = array(
 		'modelo_id' => 'Required',
@@ -24,5 +25,15 @@ class Evento extends Eloquent {
                 );
 
 */
-	
+	public function getAccionAttribute(){
+		if(strtolower(substr($this->query,0,3)) == 'ins'){ 
+			return	"crear";
+		} elseif(strtolower(substr($this->query,0,3)) == 'del'){ 
+			return	"eliminar";
+		} elseif(strtolower(substr($this->query,0,3)) == 'ins'){ 
+			return	"actualizar";
+		} else {
+			return "otro";
+		}
+	}	
 }

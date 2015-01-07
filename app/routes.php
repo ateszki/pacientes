@@ -262,6 +262,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::get('fecha-hora', 'HerramientasController@getFechaHora');
 	Route::get('esquema/{modelo}', 'HerramientasController@getEsquema');
 	Route::get('iniciar-formulario','MaestroController@iniciarFormulario');
+	Route::get('traza/{modelo}/{id}','TrazasController@traza');
 });
 
 
