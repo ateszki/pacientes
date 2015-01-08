@@ -97,7 +97,7 @@ class PlanTratamientoController extends MaestroController {
 	}
 	public function seguimiento($plan_tratamiento_id){
 		try{
-			$pt = PlanTratamiento::findOrFal($plan_tratamiento_id);
+			$pt = PlanTratamiento::findOrFail($plan_tratamiento_id);
 			$seguimiento = $pt->seguimiento()->get();
 			return Response::json(array(
 				'error'=>false,
