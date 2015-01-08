@@ -23,7 +23,7 @@ class PlanTratamiento extends Maestro {
 	}
 	
 	public function centro_odontologo_especialidad(){
-		return $this->belongsTo('CentroOdontologoEspecialidad');
+		return ($this->centro_odontologo_especialidad_id != null)?$this->belongsTo('CentroOdontologoEspecialidad'):NULL;
 	}
 
 	public function derivaciones(){
@@ -35,7 +35,7 @@ class PlanTratamiento extends Maestro {
 	}
 
 	public function odontologo(){
-		return $this->centro_odontologo_especialidad()->first()->odontologo();
+		return ($this->centro_odontologo_especialidad() != NULL)?$this->centro_odontologo_especialidad()->first()->odontologo():NULL;
 	}	
 	public function especialidad(){
 		return $this->centro_odontologo_especialidad()->first()->especialidad();

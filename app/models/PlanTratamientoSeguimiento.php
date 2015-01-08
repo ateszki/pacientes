@@ -24,7 +24,7 @@ class PlanTratamientoSeguimiento extends Maestro {
 		return $this->belongsTo('PlanTratamiento');
 	}
 	public function coe(){
-		return $this->belongsTo('CentroOdontologoEspecialidad');
+		return $this->belongsTo('CentroOdontologoEspecialidad','centro_odontologo_especialidad_id');
 	}
         public function getOdontologoAttribute(){
                 return $this->coe()->first()->odontologo()->first()->nombre_completo;
