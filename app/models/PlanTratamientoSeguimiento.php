@@ -15,7 +15,7 @@ class PlanTratamientoSeguimiento extends Maestro {
 	public $rules = array(
 			'planes_tratamiento_id' => 'required|integer|exists:planes_tratamiento,id',
 			'fecha'=>'required|date',
-			'centro_odontologo_especialidad_id' => 'required|integer|exists:centro_odontologo_especialidades,id',
+			'centro_odontologo_especialidad_id' => 'required|integer|exists:centros_odontologos_especialidades,id',
                 );
 
 	protected $appends = array('odontologo','especialidad');
