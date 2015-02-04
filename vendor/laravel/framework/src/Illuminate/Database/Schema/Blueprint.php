@@ -663,13 +663,13 @@ class Blueprint {
 	 * @param  string  $name
 	 * @return void
 	 */
-	public function morphs($name)
+	public function morphs($name, $indexName = null)
 	{
 		$this->unsignedInteger("{$name}_id");
 
 		$this->string("{$name}_type");
 
-		$this->index(array("{$name}_id", "{$name}_type"));
+		$this->index(array("{$name}_id", "{$name}_type"), $indexName);
 	}
 
 	/**
@@ -696,7 +696,7 @@ class Blueprint {
 
 		// If the given "index" is actually an array of columns, the developer means
 		// to drop an index merely by specifying the columns involved without the
-		// conventional name, so we will built the index name from the columns.
+		// conventional name, so we will build the index name from the columns.
 		if (is_array($index))
 		{
 			$columns = $index;

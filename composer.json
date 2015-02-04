@@ -19,16 +19,16 @@
 	},
 	"scripts": {
 		"post-install-cmd": [
-			"php54 artisan optimize"
+			"php artisan optimize"
 		],
 		"pre-update-cmd": [
-			"php54 artisan clear-compiled"
+			"php artisan clear-compiled"
 		],
 		"post-update-cmd": [
-			"php54 artisan optimize"
+			"php artisan optimize"
 		],
 		"post-create-project-cmd": [
-			"php54 artisan key:generate"
+			"php artisan key:generate"
 		]
 	},
 	"config": {

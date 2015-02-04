@@ -177,7 +177,7 @@ class Command extends \Symfony\Component\Console\Command\Command {
 	 * @param  bool    $default
 	 * @return bool
 	 */
-	public function confirm($question, $default = true)
+	public function confirm($question, $default = false)
 	{
 		$helper = $this->getHelperSet()->get('question');
 
@@ -260,14 +260,14 @@ class Command extends \Symfony\Component\Console\Command\Command {
 		return $helper->ask($this->input, $this->output, $question);
 	}
 
-    /**
-     * Format input to textual table
-     *
-     * @param  array   $headers
-     * @param  array   $rows
-     * @param  string  $style
-     * @return void
-     */
+	/**
+	 * Format input to textual table
+	 *
+	 * @param  array   $headers
+	 * @param  array   $rows
+	 * @param  string  $style
+	 * @return void
+	 */
 	public function table(array $headers, array $rows, $style = 'default')
 	{
 		$table = new Table($this->output);

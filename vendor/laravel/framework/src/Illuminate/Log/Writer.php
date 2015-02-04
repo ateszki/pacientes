@@ -126,7 +126,7 @@ class Writer {
 	}
 
 	/**
-	 * Get a defaut Monolog formatter instance.
+	 * Get a default Monolog formatter instance.
 	 *
 	 * @return \Monolog\Formatter\LineFormatter
 	 */
@@ -248,7 +248,7 @@ class Writer {
 	/**
 	 * Dynamically pass log calls into the writer.
 	 *
-	 * @param  dynamic (level, param, param)
+	 * @param  mixed (level, param, param)
 	 * @return mixed
 	 */
 	public function write()

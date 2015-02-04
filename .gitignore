@@ -4,6 +4,7 @@
 .gitaddcommitpush
 bootstrap/environment.php
 app/config/webfaction
+app/config/consulmed
 app/config/development
 #################
 ## Database info
