@@ -32,7 +32,7 @@ class Prepaga extends Maestro {
 			'codigo' => 'Required|max:5',
                         'razon_social' => 'Required|Max:50',
 			'denominacion_comercial' => 'Required|max:50',
-			'cuit' => 'min:11|max:11|integer',
+			'cuit' => 'min:11|max:11',
 			'domicilio' => 'max:50',
 			'localidad' => 'max:50',
 			'provincia_id' => 'integer',

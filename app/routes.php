@@ -108,6 +108,7 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('agenda/buscar','AgendaController@postBuscar');
 	Route::resource('agenda', 'AgendaController');
 
+	Route::match(array('POST','GET'),'user/{id}/esquema-color','UserController@setEsquemaColor');
 	Route::post('user/validar','UserController@validarSimple');	
 	Route::post('user/buscar','UserController@postBuscar');
 	Route::get('user/{id}/groups','UserController@grupos');
@@ -123,6 +124,9 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::resource('group', 'GroupController');
 	Route::post('role/buscar','RoleController@postBuscar');
 	Route::resource('role', 'RoleController');
+	
+	Route::post('esquema-color/buscar','EsquemaColorController@postBuscar');
+	Route::resource('esquema-color', 'EsquemaColorController');
 	
 	Route::post('pais/buscar','PaisController@postBuscar');
 	Route::resource('pais', 'PaisController');
@@ -257,6 +261,10 @@ Route::group(array('before' => 'apiauth|usuarioauth'), function()
 	Route::post('cierre-caja/{caja_id}/cerrar','CierreCajaController@cerrar');
 	Route::post('cierre-caja/buscar','CierreCajaController@postBuscar');
 	Route::resource('cierre-caja', 'CierreCajaController');
+
+//auditoria
+	Route::get('auditar/tratamiento/{id}','AuditoriaController@auditar');
+
 
 // generales
 	Route::get('fecha-hora', 'HerramientasController@getFechaHora');

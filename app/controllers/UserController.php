@@ -84,7 +84,7 @@ class UserController extends MaestroController {
 		unset($data["apikey"]);
 		if( Auth::attempt($data)){
 			$key = Auth::user()->createSessionKey();
-			return Response::json(array('error'=>false,"listado"=>array('id'=>Auth::user()->id,'nombre'=>Auth::user()->nombre,'session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
+			return Response::json(array('error'=>false,"listado"=>array('id'=>Auth::user()->id,'esquema_color_id'=>Auth::user()->esquema_color_id,'nombre'=>Auth::user()->nombre,'session_key'=>$key["session_key"],'session_expira'=>$key["session_expira"])),200);
 		} else {
 			return Response::json(array('error'=>true,'mensaje'=>"Usuario o clave incorrectos."),200);
 		}
@@ -154,6 +154,31 @@ class UserController extends MaestroController {
 				return Response::json(array('error'=>false,"listado"=>$u->toArray()),200);
 			} else {
 				return Response::json(array('error'=>true,'mensaje'=>'ocurrio un error.'),200);
+			}
+		} catch(\Exception $e){
+			return Response::json(array(
+			'error' => true,
+			'mensaje' => $e->getMessage()),
+			200
+			);
+		}
+
+	}
+	
+	public function setEsquemaColor($id){
+		try {
+			$u = $this->modelo->findOrfail($id);
+			if (Request::isMethod('post')){
+				$esquema_color_id = Input::get('esquema_color_id');
+				$u->esquema_color_id = $esquema_color_id;
+				if ($u->save()){
+					return Response::json(array('error'=>false,"listado"=>$u->toArray()),200);
+				} else {
+					return Response::json(array('error'=>true,'mensaje'=>'ocurrio un error.'),200);
+				}
+			} else {
+				$esquema = (NULL != $u->esquema_color_id)?$u->esquema_color()->first()->toArray():[];
+				return Response::json(array('error'=>false,"listado"=>$esquema),200);
 			}
 		} catch(\Exception $e){
 			return Response::json(array(

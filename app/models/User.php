@@ -17,6 +17,7 @@ class User extends Maestro implements UserInterface, RemindableInterface {
 		'session_expira',
 		'es_admin',
 		'habilitado',
+		'esquema_color_id',
 		);
 
 
@@ -28,6 +29,7 @@ class User extends Maestro implements UserInterface, RemindableInterface {
 		'session_expira'=>'date',
 		'es_admin'=>'required|boolean',
 		'habilitado'=>'required|boolean',
+		'esquema_color_id' => 'exists:esquema_color,id',
                 );
 
 /**
@@ -134,6 +136,10 @@ class User extends Maestro implements UserInterface, RemindableInterface {
 
 	public function centros(){
 		return $this->hasManyThrough('Centro','UserCentro');
+	}
+
+	public function esquema_color(){
+		return ($this->esquema_color_id != NULL)?$this->belongsTo('EsquemaColor'):NULL;
 	}
 
 }
